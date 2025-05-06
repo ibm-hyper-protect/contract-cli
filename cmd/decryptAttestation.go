@@ -16,15 +16,7 @@ var decryptAttestationCmd = &cobra.Command{
 	Short: common.DecryptAttestParamShortDescription,
 	Long:  common.DecryptAttestParamLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		encAttestPath, err := cmd.Flags().GetString(common.FileInFlagName)
-		if err != nil {
-			log.Fatal(err)
-		}
-		privateKeyPath, err := cmd.Flags().GetString(common.PrivateKeyFlagName)
-		if err != nil {
-			log.Fatal(err)
-		}
-		decryptedAttestPath, err := cmd.Flags().GetString(common.FileOutFlagName)
+		encAttestPath, privateKeyPath, decryptedAttestPath, err := ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -42,6 +34,23 @@ func init() {
 	decryptAttestationCmd.PersistentFlags().String(common.FileInFlagName, common.DecryptAttestFileInDefaultPath, common.DecryptAttestFileInDescription)
 	decryptAttestationCmd.PersistentFlags().String(common.PrivateKeyFlagName, "", common.PrivateKeyFlagDescription)
 	decryptAttestationCmd.PersistentFlags().String(common.FileOutFlagName, common.DecryptAttestFileOutDefaultPath, common.DecryptAttestFlagDescription)
+}
+
+func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
+	encAttestPath, err := cmd.Flags().GetString(common.FileInFlagName)
+	if err != nil {
+		return "", "", "", err
+	}
+	privateKeyPath, err := cmd.Flags().GetString(common.PrivateKeyFlagName)
+	if err != nil {
+		return "", "", "", err
+	}
+	decryptedAttestPath, err := cmd.Flags().GetString(common.FileOutFlagName)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	return encAttestPath, privateKeyPath, decryptedAttestPath, nil
 }
 
 func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath, decryptedAttestationPath string) error {
