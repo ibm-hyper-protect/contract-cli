@@ -36,5 +36,5 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	ImageParamLongDescription    = `Get latest HPCR image ID in IBM Cloud from IBM images JSON output from IBM Cloud API or CLI`
 	IbmCloudJsonInputDescription = "Path to Terraform output or CLI or API result of image list"
 	HpcrVersionFlagDescription   = "Get IBM Cloud Image details of specified HPCR version"
-	IbmCloudApiKeyEnvName        = "IC_API_KEY"
+	HpcrImageFlagDescription     = "Path to store HPCR image details"
 )

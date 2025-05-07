@@ -41,6 +41,10 @@ var imageCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+		hpcrImagePath, err := cmd.Flags().GetString(common.FileOutFlagName)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		imageDetail, err := GetImageDetails(imageListJsonPath, versionName)
 		if err != nil {
@@ -52,7 +56,12 @@ var imageCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		fmt.Println(result)
+		err = common.WriteDataToFile(hpcrImagePath, result)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println("Successfully stored HPCR image details")
 	},
 }
 
@@ -62,6 +71,7 @@ func init() {
 	imageCmd.PersistentFlags().String(common.FileInFlagName, "", common.IbmCloudJsonInputDescription)
 	imageCmd.PersistentFlags().String(common.VersionFlagName, "", common.HpcrVersionFlagDescription)
 	imageCmd.PersistentFlags().String(common.DataFormatFlagName, common.DataFormatDefault, common.DataFormatFlagDescription)
+	imageCmd.PersistentFlags().String(common.FileOutFlagName, "", common.HpcrImageFlagDescription)
 }
 
 func GetImageDetails(imageDetailsJsonPath, versionName string) (ImageDetails, error) {
