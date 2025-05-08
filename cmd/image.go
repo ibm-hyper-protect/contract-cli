@@ -44,12 +44,15 @@ var imageCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		err = common.WriteDataToFile(hpcrImagePath, result)
-		if err != nil {
-			log.Fatal(err)
+		if hpcrImagePath != "" {
+			err = common.WriteDataToFile(hpcrImagePath, result)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println("Successfully stored HPCR image details")
+		} else {
+			fmt.Println(result)
 		}
-
-		fmt.Println("Successfully stored HPCR image details")
 	},
 }
 
@@ -85,7 +88,7 @@ func ValidateInputImage(cmd *cobra.Command) (string, string, string, string, err
 
 func GetImageDetails(imageDetailsJsonPath, versionName string) (ImageDetails, error) {
 	if !common.CheckFileFolderExists(imageDetailsJsonPath) {
-		log.Fatal("The Image details path doesn't file")
+		log.Fatal("The Image details path doesn't exists")
 	}
 
 	imageDataJson, err := common.ReadDataFromFile(imageDetailsJsonPath)

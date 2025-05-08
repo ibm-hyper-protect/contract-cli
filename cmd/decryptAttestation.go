@@ -33,7 +33,7 @@ func init() {
 
 	decryptAttestationCmd.PersistentFlags().String(common.FileInFlagName, common.DecryptAttestFileInDefaultPath, common.DecryptAttestFileInDescription)
 	decryptAttestationCmd.PersistentFlags().String(common.PrivateKeyFlagName, "", common.PrivateKeyFlagDescription)
-	decryptAttestationCmd.PersistentFlags().String(common.FileOutFlagName, common.DecryptAttestFileOutDefaultPath, common.DecryptAttestFlagDescription)
+	decryptAttestationCmd.PersistentFlags().String(common.FileOutFlagName, "", common.DecryptAttestFlagDescription)
 }
 
 func ValidateInputDecryptedAttestation(cmd *cobra.Command) (string, string, string, error) {
@@ -41,10 +41,12 @@ func ValidateInputDecryptedAttestation(cmd *cobra.Command) (string, string, stri
 	if err != nil {
 		return "", "", "", err
 	}
+
 	privateKeyPath, err := cmd.Flags().GetString(common.PrivateKeyFlagName)
 	if err != nil {
 		return "", "", "", err
 	}
+
 	decryptedAttestPath, err := cmd.Flags().GetString(common.FileOutFlagName)
 	if err != nil {
 		return "", "", "", err
@@ -62,6 +64,7 @@ func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath, 
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	privateKey, err := common.ReadDataFromFile(privateKeyPath)
 	if err != nil {
 		log.Fatal(err)
@@ -72,11 +75,15 @@ func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath, 
 		log.Fatal(err)
 	}
 
-	err = common.WriteDataToFile(decryptedAttestationPath, decryptedAttestationRecords)
-	if err != nil {
-		log.Fatal(err)
+	if decryptedAttestationPath != "" {
+		err = common.WriteDataToFile(decryptedAttestationPath, decryptedAttestationRecords)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("Successfully decrypted attestation records")
+	} else {
+		fmt.Println(decryptedAttestationRecords)
 	}
 
-	fmt.Println("Successfully decrypted attestation records")
 	return nil
 }
