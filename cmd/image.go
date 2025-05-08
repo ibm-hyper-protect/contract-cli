@@ -29,19 +29,7 @@ var imageCmd = &cobra.Command{
 	Short: common.ImageParamShortDescription,
 	Long:  common.ImageParamLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		imageListJsonPath, err := cmd.Flags().GetString(common.FileInFlagName)
-		if err != nil {
-			log.Fatal()
-		}
-		versionName, err := cmd.Flags().GetString(common.VersionFlagName)
-		if err != nil {
-			log.Fatal()
-		}
-		formatType, err := cmd.Flags().GetString(common.DataFormatFlagName)
-		if err != nil {
-			log.Fatal(err)
-		}
-		hpcrImagePath, err := cmd.Flags().GetString(common.FileOutFlagName)
+		imageListJsonPath, versionName, formatType, hpcrImagePath, err := ValidateInputImage(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -72,6 +60,27 @@ func init() {
 	imageCmd.PersistentFlags().String(common.VersionFlagName, "", common.HpcrVersionFlagDescription)
 	imageCmd.PersistentFlags().String(common.DataFormatFlagName, common.DataFormatDefault, common.DataFormatFlagDescription)
 	imageCmd.PersistentFlags().String(common.FileOutFlagName, "", common.HpcrImageFlagDescription)
+}
+
+func ValidateInputImage(cmd *cobra.Command) (string, string, string, string, error) {
+	imageListJsonPath, err := cmd.Flags().GetString(common.FileInFlagName)
+	if err != nil {
+		return "", "", "", "", err
+	}
+	versionName, err := cmd.Flags().GetString(common.VersionFlagName)
+	if err != nil {
+		return "", "", "", "", err
+	}
+	formatType, err := cmd.Flags().GetString(common.DataFormatFlagName)
+	if err != nil {
+		return "", "", "", "", err
+	}
+	hpcrImagePath, err := cmd.Flags().GetString(common.FileOutFlagName)
+	if err != nil {
+		return "", "", "", "", err
+	}
+
+	return imageListJsonPath, versionName, formatType, hpcrImagePath, nil
 }
 
 func GetImageDetails(imageDetailsJsonPath, versionName string) (ImageDetails, error) {

@@ -26,6 +26,9 @@ var (
 		"image", "--in", sampleCliImageJson,
 		"--version", sampleVersion, "--format", sampleFormatYaml,
 		"--out", sampleOutputYaml}
+	sampleValidCommandJsonWithoutVersion = []string{
+		"image", "--in", sampleTerraformImageJson,
+		"--format", sampleFormatJson, "--out", sampleOutputJson}
 )
 
 func TestImageCmdSuccess1(t *testing.T) {
@@ -47,6 +50,18 @@ func TestImageCmdSuccess2(t *testing.T) {
 	rootCmd.SetErr(buf)
 
 	rootCmd.SetArgs(sampleValidCommandYaml)
+	err := imageCmd.Execute()
+
+	assert.NoError(t, err)
+}
+
+func TestImageCmdSuccessWithoutVersion(t *testing.T) {
+	// Capture output
+	buf := new(bytes.Buffer)
+	rootCmd.SetOut(buf)
+	rootCmd.SetErr(buf)
+
+	rootCmd.SetArgs(sampleValidCommandJsonWithoutVersion)
 	err := imageCmd.Execute()
 
 	assert.NoError(t, err)
