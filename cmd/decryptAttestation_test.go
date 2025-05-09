@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,7 +15,7 @@ const (
 )
 
 var (
-	sampleValidCommand = []string{"decryptAttestation", "--in", sampleEncryptedAttestationFilePath, "--priv", samplePrivateKeyFilePath, "--out", sampleDecryptedAttestationFilePath}
+	sampleValidCommand = []string{common.DecryptAttestParamName, "--in", sampleEncryptedAttestationFilePath, "--priv", samplePrivateKeyFilePath, "--out", sampleDecryptedAttestationFilePath}
 )
 
 func TestDecryptAttestationCmdSucess(t *testing.T) {

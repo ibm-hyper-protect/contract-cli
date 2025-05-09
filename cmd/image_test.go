@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,15 +20,15 @@ const (
 
 var (
 	sampleValidCommandJson = []string{
-		"image", "--in", sampleTerraformImageJson,
+		common.ImageParamName, "--in", sampleTerraformImageJson,
 		"--version", sampleVersion, "--format", sampleFormatJson,
 		"--out", sampleOutputJson}
 	sampleValidCommandYaml = []string{
-		"image", "--in", sampleCliImageJson,
+		common.ImageParamName, "--in", sampleCliImageJson,
 		"--version", sampleVersion, "--format", sampleFormatYaml,
 		"--out", sampleOutputYaml}
 	sampleValidCommandJsonWithoutVersion = []string{
-		"image", "--in", sampleTerraformImageJson,
+		common.ImageParamName, "--in", sampleTerraformImageJson,
 		"--format", sampleFormatJson, "--out", sampleOutputJson}
 )
 
