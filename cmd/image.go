@@ -39,7 +39,7 @@ var imageCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		result, err := PrintData(imageDetail, formatType)
+		result, err := PrintDataImage(imageDetail, formatType)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -104,7 +104,7 @@ func GetImageDetails(imageDetailsJsonPath, versionName string) (ImageDetails, er
 	return ImageDetails{imageId, imageName, imageChecksum, ImageVersion}, nil
 }
 
-func PrintData(imageDetail ImageDetails, format string) (string, error) {
+func PrintDataImage(imageDetail ImageDetails, format string) (string, error) {
 	if format == FormatTypeJson {
 		imageJson, err := json.MarshalIndent(imageDetail, "", "  ")
 		if err != nil {

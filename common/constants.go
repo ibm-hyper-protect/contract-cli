@@ -14,7 +14,7 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 
 	DataFormatFlagName        = "format"
 	DataFormatDefault         = "json"
-	DataFormatFlagDescription = "Format in which the data needs to STDOUT"
+	DataFormatFlagDescription = "Format in which the data needs to STDOUT or saved in file"
 
 	PrivateKeyFlagName        = "priv"
 	PrivateKeyFlagDescription = "Path to private key"
@@ -36,4 +36,11 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	IbmCloudJsonInputDescription = "Path to Terraform output or CLI or API result of image list"
 	HpcrVersionFlagDescription   = "Get IBM Cloud Image details of specified HPCR version"
 	HpcrImageFlagDescription     = "Path to store HPCR image details"
+
+	// Download Encryption certificates
+	DownloadCertParamName                = "downloadCertificates"
+	DownloadCertParamShortDescription    = "Download encryption certificate"
+	DownloadCertParamLongDescription     = `Download encryption certificate for HPCR from IBM Hyper Protect Repository`
+	EncryptionCertVersionFlagDescription = "Versions of Encryption Certificates to download, Seperated by coma(,)"
+	EncryptionCertsFlagDescription       = "Path to save the encryption certificates"
 )
