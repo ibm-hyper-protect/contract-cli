@@ -1,4 +1,9 @@
-default: test
+TOOL_NAME=contract-cli
+
+default: test build
+
+build:
+	go build -o ${TOOL_NAME} .
 
 test: 
 	go test ./...

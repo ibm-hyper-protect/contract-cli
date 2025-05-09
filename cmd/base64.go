@@ -20,8 +20,9 @@ var base64Cmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		if inputData == "" {
-			log.Fatal("Input data is missing")
+		formatType, err := cmd.Flags().GetString(common.DataFormatFlagName)
+		if err != nil {
+			log.Fatal(err)
 		}
 
 		outputPath, err := cmd.Flags().GetString(common.FileOutFlagName)
@@ -29,9 +30,24 @@ var base64Cmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		base64String, _, _, err := contract.HpcrText(inputData)
-		if err != nil {
-			log.Fatal(err)
+		if inputData == "" {
+			log.Fatal("Input data is missing")
+		}
+
+		var base64String string
+
+		if formatType == common.DataFormatText {
+			base64String, _, _, err = contract.HpcrText(inputData)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else if formatType == common.DataFormatJson {
+			base64String, _, _, err = contract.HpcrJson(inputData)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			log.Fatal("Invalid input format")
 		}
 
 		if outputPath != "" {
@@ -49,6 +65,7 @@ var base64Cmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(base64Cmd)
 
-	base64Cmd.PersistentFlags().String(common.FileInFlagName, "", common.Base64InputDescription)
-	base64Cmd.PersistentFlags().String(common.FileOutFlagName, "", common.Base64OutputPathDescription)
+	base64Cmd.PersistentFlags().String(common.FileInFlagName, "", common.Base64InputFlagDescription)
+	base64Cmd.PersistentFlags().String(common.DataFormatFlagName, common.DataFormatText, common.Base64InputFormatFlagDescription)
+	base64Cmd.PersistentFlags().String(common.FileOutFlagName, "", common.Base64OutputPathFlagDescription)
 }

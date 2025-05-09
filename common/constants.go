@@ -14,6 +14,9 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 
 	DataFormatFlagName        = "format"
 	DataFormatDefault         = "json"
+	DataFormatJson            = "json"
+	DataFormatYaml            = "yaml"
+	DataFormatText            = "text"
 	DataFormatFlagDescription = "Format in which the data needs to STDOUT or saved in file"
 
 	PrivateKeyFlagName        = "priv"
@@ -45,9 +48,10 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	EncryptionCertsFlagDescription       = "Path to save the encryption certificates"
 
 	// Base64
-	Base64ParamName             = "base64"
-	Base64ParamShortDescription = "Generate base64 of input"
-	Base64ParamLongDescription  = `Generate base64 of input text`
-	Base64InputDescription      = "Input data that needs to be converted to string"
-	Base64OutputPathDescription = "Path to store Base64 output"
+	Base64ParamName                  = "base64"
+	Base64ParamShortDescription      = "Generate base64 of input"
+	Base64ParamLongDescription       = `Generate base64 of input text`
+	Base64InputFlagDescription       = "Input data that needs to be converted to string"
+	Base64InputFormatFlagDescription = "Format of input data (default: text)"
+	Base64OutputPathFlagDescription  = "Path to store Base64 output"
 )
