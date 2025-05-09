@@ -43,4 +43,11 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	DownloadCertParamLongDescription     = `Download encryption certificate for HPCR from IBM Hyper Protect Repository`
 	EncryptionCertVersionFlagDescription = "Versions of Encryption Certificates to download, Seperated by coma(,)"
 	EncryptionCertsFlagDescription       = "Path to save the encryption certificates"
+
+	// Base64
+	Base64ParamName             = "base64"
+	Base64ParamShortDescription = "Generate base64 of input"
+	Base64ParamLongDescription  = `Generate base64 of input text`
+	Base64InputDescription      = "Input data that needs to be converted to string"
+	Base64OutputPathDescription = "Path to store Base64 output"
 )
