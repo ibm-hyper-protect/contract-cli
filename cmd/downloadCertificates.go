@@ -9,6 +9,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	successMessageDownloadCertificate = "Successfully stored certificates"
+)
+
 var (
 	versions []string
 
@@ -17,7 +21,7 @@ var (
 		Short: common.DownloadCertParamShortDescription,
 		Long:  common.DownloadCertParamLongDescription,
 		Run: func(cmd *cobra.Command, args []string) {
-			formatType, certificatePath, err := ValidateInputDownloadCertificates(cmd)
+			formatType, certificatePath, err := validateInputDownloadCertificates(cmd)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -32,7 +36,7 @@ var (
 				if err != nil {
 					log.Fatal(err)
 				}
-				fmt.Println("Successfully stored certificates")
+				fmt.Println(successMessageDownloadCertificate)
 			} else {
 				fmt.Println(certificates)
 			}
@@ -48,7 +52,7 @@ func init() {
 	downloadCertificatesCmd.PersistentFlags().String(common.FileOutFlagName, "", common.EncryptionCertsFlagDescription)
 }
 
-func ValidateInputDownloadCertificates(cmd *cobra.Command) (string, string, error) {
+func validateInputDownloadCertificates(cmd *cobra.Command) (string, string, error) {
 	formatType, err := cmd.Flags().GetString(common.DataFormatFlagName)
 	if err != nil {
 		return "", "", err

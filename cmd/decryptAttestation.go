@@ -10,18 +10,22 @@ import (
 	"github.com/ibm-hyper-protect/contract-cli/common"
 )
 
+const (
+	successMessageDecryptAttestation = "Successfully decrypted attestation records"
+)
+
 // decryptAttestationCmd represents the decryptAttestation command
 var decryptAttestationCmd = &cobra.Command{
 	Use:   common.DecryptAttestParamName,
 	Short: common.DecryptAttestParamShortDescription,
 	Long:  common.DecryptAttestParamLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		encAttestPath, privateKeyPath, decryptedAttestPath, err := ValidateInputDecryptedAttestation(cmd)
+		encAttestPath, privateKeyPath, decryptedAttestPath, err := validateInputDecryptedAttestation(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		err = DecryptAttestationRecords(encAttestPath, privateKeyPath, decryptedAttestPath)
+		err = decryptAttestationRecords(encAttestPath, privateKeyPath, decryptedAttestPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -36,7 +40,7 @@ func init() {
 	decryptAttestationCmd.PersistentFlags().String(common.FileOutFlagName, "", common.DecryptAttestFlagDescription)
 }
 
-func ValidateInputDecryptedAttestation(cmd *cobra.Command) (string, string, string, error) {
+func validateInputDecryptedAttestation(cmd *cobra.Command) (string, string, string, error) {
 	encAttestPath, err := cmd.Flags().GetString(common.FileInFlagName)
 	if err != nil {
 		return "", "", "", err
@@ -55,7 +59,7 @@ func ValidateInputDecryptedAttestation(cmd *cobra.Command) (string, string, stri
 	return encAttestPath, privateKeyPath, decryptedAttestPath, nil
 }
 
-func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath, decryptedAttestationPath string) error {
+func decryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath, decryptedAttestationPath string) error {
 	if !common.CheckFileFolderExists(encryptedAttestationRecordsPath) || !common.CheckFileFolderExists(privateKeyPath) {
 		log.Fatal("The path to encrypted attestation records file or private key doesn't exists")
 	}
@@ -80,7 +84,7 @@ func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath, 
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("Successfully decrypted attestation records")
+		fmt.Println(successMessageDecryptAttestation)
 	} else {
 		fmt.Println(decryptedAttestationRecords)
 	}

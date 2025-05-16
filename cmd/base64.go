@@ -9,6 +9,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	inputMissingMessageBase64 = "Input data is missing"
+	invalidInputMessageBase64 = "Invalid input format"
+	successMessageBase64      = "Successfully generated Base64"
+)
+
 // base64Cmd represents the base64 command
 var base64Cmd = &cobra.Command{
 	Use:   common.Base64ParamName,
@@ -31,7 +37,7 @@ var base64Cmd = &cobra.Command{
 		}
 
 		if inputData == "" {
-			log.Fatal("Input data is missing")
+			log.Fatal(inputMissingMessageBase64)
 		}
 
 		var base64String string
@@ -47,7 +53,7 @@ var base64Cmd = &cobra.Command{
 				log.Fatal(err)
 			}
 		} else {
-			log.Fatal("Invalid input format")
+			log.Fatal(invalidInputMessageBase64)
 		}
 
 		if outputPath != "" {
@@ -55,7 +61,7 @@ var base64Cmd = &cobra.Command{
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println("Successfully generated Base64")
+			fmt.Println(successMessageBase64)
 		} else {
 			fmt.Println(base64String)
 		}
