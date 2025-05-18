@@ -94,4 +94,11 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	ValidateContractParamShortDescription = "Validate unencrypted contract"
 	ValidateContractParamLongDescription  = `Validate unencrypted contract with schema`
 	ValidateContractInputFlagDescription  = "Path to Hyper Protect encrypted contract contract"
+
+	// Signed and Encrypted Contract
+	EncryptParamName             = "encrypt"
+	EncryptParamShortDescription = "Generate signed and encrypted contract"
+	EncryptParamLongDescription  = `Generate signed and encrypted contract`
+	EncryptInputFlagDescription  = "Path to contract"
+	EncryptOutputFlagDescription = "Path to store signed and encrypted contract"
 )

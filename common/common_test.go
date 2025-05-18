@@ -34,3 +34,17 @@ func TestWriteDataToFile(t *testing.T) {
 	err := WriteDataToFile(simpleSampleWritePath, simpleSampleText)
 	assert.NoError(t, err)
 }
+
+func TestExecCommand(t *testing.T) {
+	_, err := ExecCommand("openssl", "", "version")
+	if err != nil {
+		t.Errorf("failed to execute command - %v", err)
+	}
+}
+
+func TestOpensslCheck(t *testing.T) {
+	err := OpensslCheck()
+	if err != nil {
+		t.Errorf("openssl check failed - %v", err)
+	}
+}
