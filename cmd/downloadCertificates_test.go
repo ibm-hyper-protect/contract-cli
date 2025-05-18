@@ -9,13 +9,12 @@ import (
 )
 
 const (
-	sampleEncryptionCertPath = "../build/enc-cert.yaml"
+	sampleDownloadCertificateFormat = "yaml"
+	sampleEncryptionCertPath        = "../build/enc-cert.yaml"
 )
 
 var (
-	sampleValidDownloadCertCommand = []string{
-		common.DownloadCertParamName, "--version", "1.0.21,1.0.22",
-		"--format", "yaml", "--out", sampleEncryptionCertPath}
+	sampleValidDownloadCertCommand = []string{common.DownloadCertParamName, "--version", "1.0.21,1.0.22", "--format", sampleDownloadCertificateFormat, "--out", sampleEncryptionCertPath}
 )
 
 func TestDownloadCertificatesSuccess(t *testing.T) {

@@ -14,22 +14,14 @@ const (
 	sampleVersion            = "1.0.22"
 	sampleFormatJson         = "json"
 	sampleFormatYaml         = "yaml"
-	sampleOutputJson         = "../build/hpcr_image.json"
-	sampleOutputYaml         = "../build/hpcr_image.yaml"
+	sampleImageOutputJson    = "../build/hpcr_image.json"
+	sampleImageOutputYaml    = "../build/hpcr_image.yaml"
 )
 
 var (
-	sampleValidCommandJson = []string{
-		common.ImageParamName, "--in", sampleTerraformImageJson,
-		"--version", sampleVersion, "--format", sampleFormatJson,
-		"--out", sampleOutputJson}
-	sampleValidCommandYaml = []string{
-		common.ImageParamName, "--in", sampleCliImageJson,
-		"--version", sampleVersion, "--format", sampleFormatYaml,
-		"--out", sampleOutputYaml}
-	sampleValidCommandJsonWithoutVersion = []string{
-		common.ImageParamName, "--in", sampleTerraformImageJson,
-		"--format", sampleFormatJson, "--out", sampleOutputJson}
+	sampleValidCommandJson               = []string{common.ImageParamName, "--in", sampleTerraformImageJson, "--version", sampleVersion, "--format", sampleFormatJson, "--out", sampleImageOutputJson}
+	sampleValidCommandYaml               = []string{common.ImageParamName, "--in", sampleCliImageJson, "--version", sampleVersion, "--format", sampleFormatYaml, "--out", sampleImageOutputYaml}
+	sampleValidCommandJsonWithoutVersion = []string{common.ImageParamName, "--in", sampleTerraformImageJson, "--format", sampleFormatJson, "--out", sampleImageOutputJson}
 )
 
 func TestImageCmdSuccess1(t *testing.T) {
