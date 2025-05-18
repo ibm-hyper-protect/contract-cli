@@ -32,3 +32,5 @@ tidy:
 
 clean:
 	find ./build ! -name '.gitkeep' -type f -delete
+
+.PHONY: default test build release test-cover update-packages tidy clean
