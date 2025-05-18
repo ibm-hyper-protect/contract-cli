@@ -88,4 +88,10 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	Base64TgzOutputFormatencrypted       = "encrypt"
 	Base64TgzOutputFormatDefault         = Base64TgzOutputFormatUnencrypted
 	Base64TgzOutputPathDescription       = "Path to store the encrypted or encrypted base64 tar tgz"
+
+	// Validate contract
+	ValidateContractParamName             = "validate-contract"
+	ValidateContractParamShortDescription = "Validate unencrypted contract"
+	ValidateContractParamLongDescription  = `Validate unencrypted contract with schema`
+	ValidateContractInputFlagDescription  = "Path to Hyper Protect encrypted contract contract"
 )
