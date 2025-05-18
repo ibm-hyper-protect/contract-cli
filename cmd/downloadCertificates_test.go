@@ -17,7 +17,7 @@ var (
 	sampleValidDownloadCertCommand = []string{common.DownloadCertParamName, "--version", "1.0.21,1.0.22", "--format", sampleDownloadCertificateFormat, "--out", sampleEncryptionCertPath}
 )
 
-func TestDownloadCertificatesSuccess(t *testing.T) {
+func TestDownloadCertificatesCmdSuccess(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
 	rootCmd.SetOut(buf)

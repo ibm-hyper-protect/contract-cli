@@ -24,7 +24,7 @@ var (
 	sampleEncryptStringValidCommandJson = []string{common.EncryptStrParamName, "--in", sampleEncryptStringJson, "--format", sampleEncryptStringFormatJson, "--out", sampleEncryptStringOutputJson}
 )
 
-func TestEncryptStringText(t *testing.T) {
+func TestEncryptStringCmdText(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
 	rootCmd.SetOut(buf)
@@ -36,7 +36,7 @@ func TestEncryptStringText(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestEncryptStringYaml(t *testing.T) {
+func TestEncryptStringCmdYaml(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
 	rootCmd.SetOut(buf)
