@@ -53,6 +53,14 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	EncryptionCertVersionFlagDescription = "Versions of Encryption Certificates to download, Seperated by coma(,)"
 	EncryptionCertsFlagDescription       = "Path to save the encryption certificates"
 
+	// Get Encryption Certificate
+	GetCertParamName              = "get-certificate"
+	GetCertParamShortDescription  = "Get version specific encryption certificate from download-certificate JSON ouput"
+	GetCertParamLongDescription   = `Get version specific encryption certificate from JSON output of download-certificate`
+	GetCertFileInFlagDescription  = "Path to the saved encryption certificates JSON"
+	GetCertVersionFlagDescription = "Encryption certificate version to select"
+	GetCertFileOutFlagDescription = "Path to store the selected encryption certificate"
+
 	// Base64
 	Base64ParamName                  = "base64"
 	Base64ParamShortDescription      = "Generate base64 of input"
