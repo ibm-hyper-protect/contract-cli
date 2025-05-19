@@ -5,9 +5,9 @@
 
 ## Introduction
 
-The CLI tool has been developed to automate the process of provisioning HPVS on both IBM Cloud and On Prem. This CLI tool leverages [contract-go](https://github.com/ibm-hyper-protect/contract-go) for all the features.
+The CLI tool has been developed to automate the process of provisioning HPVS on both IBM Cloud and On Prem. This CLI tool leverages [ibm-hyper-protect/contract-go](https://github.com/ibm-hyper-protect/contract-go) for all the features.
 
-To download the CLI tool for respective OS, please refer the [release page](https://github.com/ibm-hyper-protect/contract-cli/releases). 
+To download the CLI tool for your respective OS, please refer the [release page](https://github.com/ibm-hyper-protect/contract-cli/releases). 
 
 For more details on Hyper Protect Virtual Servers for VPC and Hyper Protect Container Runtime, refer [Confidential computing with LinuxONE](https://cloud.ibm.com/docs/vpc?topic=vpc-about-se) and [IBM Hyper Protect Virtual Servers](https://www.ibm.com/docs/en/hpvs/2.2.x).
 
