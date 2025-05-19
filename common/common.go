@@ -88,3 +88,56 @@ func OpensslCheck() error {
 
 	return nil
 }
+
+func GetPrivateKey(privateKeyPath string) (string, error) {
+	var privateKey string
+	var err error
+
+	if privateKeyPath == "" {
+		privateKey, err = generatePrivateKey()
+		if err != nil {
+			return "", err
+		}
+	} else {
+		if CheckFileFolderExists(privateKeyPath) {
+			privateKey, err = ReadDataFromFile(privateKeyPath)
+			if err != nil {
+				return "", err
+			}
+		} else {
+			return "", fmt.Errorf("private key path doesn't exist")
+		}
+	}
+
+	return privateKey, nil
+}
+
+func generatePrivateKey() (string, error) {
+	err := OpensslCheck()
+	if err != nil {
+		return "", fmt.Errorf("openssl not found - %v", err)
+	}
+
+	privateKey, err := ExecCommand("openssl", "", "genrsa", "4096")
+	if err != nil {
+		return "", fmt.Errorf("failed to generate private key - %v", err)
+	}
+
+	return privateKey, nil
+}
+
+func GetEncryptionCertificate(certPath string) (string, error) {
+	var encCert string
+	var err error
+
+	if certPath != "" {
+		encCert, err = ReadDataFromFile(certPath)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		encCert = ""
+	}
+
+	return encCert, nil
+}

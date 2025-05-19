@@ -25,7 +25,12 @@ var decryptAttestationCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		err = decryptAttestationRecords(encAttestPath, privateKeyPath, decryptedAttestPath)
+		decryptedAttestationRecords, err := decryptAttestationRecords(encAttestPath, privateKeyPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = printDecryptAttestation(decryptedAttestationRecords, decryptedAttestPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -59,30 +64,34 @@ func validateInputDecryptedAttestation(cmd *cobra.Command) (string, string, stri
 	return encAttestPath, privateKeyPath, decryptedAttestPath, nil
 }
 
-func decryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath, decryptedAttestationPath string) error {
+func decryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath string) (string, error) {
 	if !common.CheckFileFolderExists(encryptedAttestationRecordsPath) || !common.CheckFileFolderExists(privateKeyPath) {
 		log.Fatal("The path to encrypted attestation records file or private key doesn't exists")
 	}
 
 	encryptedChecksum, err := common.ReadDataFromFile(encryptedAttestationRecordsPath)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	privateKey, err := common.ReadDataFromFile(privateKeyPath)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	decryptedAttestationRecords, err := attestation.HpcrGetAttestationRecords(encryptedChecksum, privateKey)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
+	return decryptedAttestationRecords, nil
+}
+
+func printDecryptAttestation(decryptedAttestationRecords, decryptedAttestationPath string) error {
 	if decryptedAttestationPath != "" {
-		err = common.WriteDataToFile(decryptedAttestationPath, decryptedAttestationRecords)
+		err := common.WriteDataToFile(decryptedAttestationPath, decryptedAttestationRecords)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 		fmt.Println(successMessageDecryptAttestation)
 	} else {

@@ -24,39 +24,14 @@ var encryptStringCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		var encCert string
-		if encCertPath != "" {
-			encCert, err = common.ReadDataFromFile(encCertPath)
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else {
-			encCert = ""
+		encryptedString, err := processEncryptString(inputData, inputFormat, hyperProtectVersion, encCertPath)
+		if err != nil {
+			log.Fatal(err)
 		}
 
-		var encryptedString string
-		if inputFormat == common.DataFormatText {
-			encryptedString, _, _, err = contract.HpcrTextEncrypted(inputData, hyperProtectVersion, encCert)
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else if inputFormat == common.DataFormatJson {
-			encryptedString, _, _, err = contract.HpcrJsonEncrypted(inputData, hyperProtectVersion, encCert)
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else {
-			log.Fatal("Invalid input format")
-		}
-
-		if outputPath != "" {
-			err = common.WriteDataToFile(outputPath, encryptedString)
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Println(successMessageEncryptString)
-		} else {
-			fmt.Println(encryptedString)
+		err = printEncrypt(outputPath, encryptedString)
+		if err != nil {
+			log.Fatal(err)
 		}
 	},
 }
@@ -98,4 +73,42 @@ func validateInputEncryptString(cmd *cobra.Command) (string, string, string, str
 	}
 
 	return inputData, inputFormat, hyperProtectVersion, encCertPath, outputPath, nil
+}
+
+func processEncryptString(inputData, inputFormat, hyperProtectVersion, encCertPath string) (string, error) {
+	encCert, err := common.GetEncryptionCertificate(encCertPath)
+	if err != nil {
+		return "", err
+	}
+
+	var encryptedString string
+	if inputFormat == common.DataFormatText {
+		encryptedString, _, _, err = contract.HpcrTextEncrypted(inputData, hyperProtectVersion, encCert)
+		if err != nil {
+			return "", err
+		}
+	} else if inputFormat == common.DataFormatJson {
+		encryptedString, _, _, err = contract.HpcrJsonEncrypted(inputData, hyperProtectVersion, encCert)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		return "", fmt.Errorf("invalid input format")
+	}
+
+	return encryptedString, nil
+}
+
+func printEncrypt(outputPath, encryptedString string) error {
+	if outputPath != "" {
+		err := common.WriteDataToFile(outputPath, encryptedString)
+		if err != nil {
+			return err
+		}
+		fmt.Println(successMessageEncryptString)
+	} else {
+		fmt.Println(encryptedString)
+	}
+
+	return nil
 }

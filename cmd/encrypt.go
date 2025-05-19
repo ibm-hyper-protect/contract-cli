@@ -81,43 +81,22 @@ func generateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKe
 		return "", err
 	}
 
-	var privateKey string
-	if privateKeyPath == "" {
-		privateKey, err = generatePrivateKey()
-		if err != nil {
-			return "", err
-		}
-	} else {
-		if common.CheckFileFolderExists(privateKeyPath) {
-			privateKey, err = common.ReadDataFromFile(privateKeyPath)
-			if err != nil {
-				return "", err
-			}
-		} else {
-			return "", fmt.Errorf("private key path doesn't exist")
-		}
+	cert, err := common.GetEncryptionCertificate(certPath)
+	if err != nil {
+		return "", err
 	}
 
-	signedEncryptContract, _, _, err := contract.HpcrContractSignedEncrypted(inputData, osVersion, certPath, privateKey)
+	privateKey, err := common.GetPrivateKey(privateKeyPath)
+	if err != nil {
+		return "", err
+	}
+
+	signedEncryptContract, _, _, err := contract.HpcrContractSignedEncrypted(inputData, osVersion, cert, privateKey)
 	if err != nil {
 		return "", err
 	}
 
 	return signedEncryptContract, nil
-}
-
-func generatePrivateKey() (string, error) {
-	err := common.OpensslCheck()
-	if err != nil {
-		return "", fmt.Errorf("openssl not found - %v", err)
-	}
-
-	privateKey, err := common.ExecCommand("openssl", "", "genrsa", "4096")
-	if err != nil {
-		return "", fmt.Errorf("failed to generate private key - %v", err)
-	}
-
-	return privateKey, nil
 }
 
 func printSignedEncryptContract(signedEncryptContract, outputPath string) error {

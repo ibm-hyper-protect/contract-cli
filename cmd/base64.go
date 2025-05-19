@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	inputMissingMessageBase64 = "Input data is missing"
-	invalidInputMessageBase64 = "Invalid input format"
-	successMessageBase64      = "Successfully generated Base64"
+	inputMissingMessageBase64 = "input data is missing"
+	invalidInputMessageBase64 = "invalid input format"
+	successMessageBase64      = "successfully generated Base64"
 )
 
 // base64Cmd represents the base64 command
@@ -21,49 +21,19 @@ var base64Cmd = &cobra.Command{
 	Short: common.Base64ParamShortDescription,
 	Long:  common.Base64ParamLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputData, err := cmd.Flags().GetString(common.FileInFlagName)
+		inputData, formatType, outputPath, err := validateInputBase64(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		formatType, err := cmd.Flags().GetString(common.DataFormatFlagName)
+		base64String, err := processBase64(inputData, formatType)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		outputPath, err := cmd.Flags().GetString(common.FileOutFlagName)
+		err = printBase64(base64String, outputPath)
 		if err != nil {
 			log.Fatal(err)
-		}
-
-		if inputData == "" {
-			log.Fatal(inputMissingMessageBase64)
-		}
-
-		var base64String string
-
-		if formatType == common.DataFormatText {
-			base64String, _, _, err = contract.HpcrText(inputData)
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else if formatType == common.DataFormatJson {
-			base64String, _, _, err = contract.HpcrJson(inputData)
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else {
-			log.Fatal(invalidInputMessageBase64)
-		}
-
-		if outputPath != "" {
-			err := common.WriteDataToFile(outputPath, base64String)
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Println(successMessageBase64)
-		} else {
-			fmt.Println(base64String)
 		}
 	},
 }
@@ -74,4 +44,62 @@ func init() {
 	base64Cmd.PersistentFlags().String(common.FileInFlagName, "", common.Base64InputFlagDescription)
 	base64Cmd.PersistentFlags().String(common.DataFormatFlagName, common.DataFormatText, common.Base64InputFormatFlagDescription)
 	base64Cmd.PersistentFlags().String(common.FileOutFlagName, "", common.Base64OutputPathFlagDescription)
+}
+
+func validateInputBase64(cmd *cobra.Command) (string, string, string, error) {
+	inputData, err := cmd.Flags().GetString(common.FileInFlagName)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	formatType, err := cmd.Flags().GetString(common.DataFormatFlagName)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	outputPath, err := cmd.Flags().GetString(common.FileOutFlagName)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	return inputData, formatType, outputPath, nil
+}
+
+func processBase64(inputData, formatType string) (string, error) {
+	var base64String string
+	var err error
+
+	if inputData == "" {
+		return "", fmt.Errorf(inputMissingMessageBase64)
+	}
+
+	if formatType == common.DataFormatText {
+		base64String, _, _, err = contract.HpcrText(inputData)
+		if err != nil {
+			return "", err
+		}
+	} else if formatType == common.DataFormatJson {
+		base64String, _, _, err = contract.HpcrJson(inputData)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		return "", fmt.Errorf(invalidInputMessageBase64)
+	}
+
+	return base64String, nil
+}
+
+func printBase64(base64String, outputPath string) error {
+	if outputPath != "" {
+		err := common.WriteDataToFile(outputPath, base64String)
+		if err != nil {
+			return err
+		}
+		fmt.Println(successMessageBase64)
+	} else {
+		fmt.Println(base64String)
+	}
+
+	return nil
 }

@@ -25,8 +25,10 @@ var base64TgzCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		printBase64Tgz(base64TgzData, outputPath)
-
+		err = printBase64Tgz(base64TgzData, outputPath)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 
@@ -60,26 +62,21 @@ func validateInputBase64Tgz(cmd *cobra.Command) (string, string, string, string,
 	if err != nil {
 		return "", "", "", "", "", err
 	}
-	var encCert string
-	if encCertPath != "" {
-		encCert, err = common.ReadDataFromFile(encCertPath)
-		if err != nil {
-			return "", "", "", "", "", err
-		}
-	} else {
-		encCert = ""
-	}
 
 	outputPath, err := cmd.Flags().GetString(common.FileOutFlagName)
 	if err != nil {
 		return "", "", "", "", "", err
 	}
 
-	return inputData, outputFormat, hyperProtectVersion, encCert, outputPath, nil
+	return inputData, outputFormat, hyperProtectVersion, encCertPath, outputPath, nil
 }
 
 func processBase64Tgz(inputData, outputFormat, hyperProtectVersion, encCertPath string) (string, error) {
 	if outputFormat == common.Base64TgzOutputFormatUnencrypted {
+		if !common.CheckFileFolderExists(inputData) {
+			return "", fmt.Errorf("the path to docker-compose.yaml or pods.yaml is not accessible")
+		}
+
 		base64Data, _, _, err := contract.HpcrTgz(inputData)
 		if err != nil {
 			return "", fmt.Errorf("failed to generate base64 tar - %v", err)
@@ -87,7 +84,12 @@ func processBase64Tgz(inputData, outputFormat, hyperProtectVersion, encCertPath 
 
 		return base64Data, nil
 	} else if outputFormat == common.Base64TgzOutputFormatencrypted {
-		encryptedBase64Data, _, _, err := contract.HpcrTgzEncrypted(inputData, hyperProtectVersion, encCertPath)
+		encCert, err := common.GetEncryptionCertificate(encCertPath)
+		if err != nil {
+			return "", err
+		}
+
+		encryptedBase64Data, _, _, err := contract.HpcrTgzEncrypted(inputData, hyperProtectVersion, encCert)
 		if err != nil {
 			return "", fmt.Errorf("failed to generate encrypted base64 tar - %v", err)
 		}
@@ -98,14 +100,16 @@ func processBase64Tgz(inputData, outputFormat, hyperProtectVersion, encCertPath 
 	}
 }
 
-func printBase64Tgz(tarTgzData, outputPath string) {
+func printBase64Tgz(tarTgzData, outputPath string) error {
 	if outputPath != "" {
 		err := common.WriteDataToFile(outputPath, tarTgzData)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 		fmt.Println("Successfully stored tar tgz data")
 	} else {
 		fmt.Println(tarTgzData)
 	}
+
+	return nil
 }

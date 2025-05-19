@@ -31,14 +31,9 @@ var (
 				log.Fatal(err)
 			}
 
-			if certificatePath != "" {
-				err := common.WriteDataToFile(certificatePath, certificates)
-				if err != nil {
-					log.Fatal(err)
-				}
-				fmt.Println(successMessageDownloadCertificate)
-			} else {
-				fmt.Println(certificates)
+			err = printDownloadCertificates(certificates, certificatePath)
+			if err != nil {
+				log.Fatal(err)
 			}
 		},
 	}
@@ -64,4 +59,18 @@ func validateInputDownloadCertificates(cmd *cobra.Command) (string, string, erro
 	}
 
 	return formatType, certificatePath, nil
+}
+
+func printDownloadCertificates(certificates, certificatePath string) error {
+	if certificatePath != "" {
+		err := common.WriteDataToFile(certificatePath, certificates)
+		if err != nil {
+			return err
+		}
+		fmt.Println(successMessageDownloadCertificate)
+	} else {
+		fmt.Println(certificates)
+	}
+
+	return nil
 }

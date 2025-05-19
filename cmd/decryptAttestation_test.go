@@ -29,9 +29,3 @@ func TestDecryptAttestationCmdSucess(t *testing.T) {
 
 	assert.NoError(t, err)
 }
-
-func TestDecryptAttestationRecordsSuccess(t *testing.T) {
-	err := decryptAttestationRecords(sampleEncryptedAttestationFilePath, samplePrivateKeyFilePath, sampleDecryptedAttestationFilePath)
-
-	assert.NoError(t, err)
-}
