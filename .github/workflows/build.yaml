@@ -1,0 +1,114 @@
+name: contract-cli CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: 'Dry-Run'
+        default: 'true'
+        required: false
+
+env:
+  # Currently no way to detect automatically
+  DEFAULT_BRANCH: main
+  GO_VERSION: 1.22.4 # renovate: datasource=golang-version depName=golang
+  NODE_VERSION: 20
+  DRY_RUN: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.22.x']
+    steps:
+      # full checkout for semantic-release
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Tests
+        run: |
+          make tidy
+          make test
+
+  release:
+    needs: [build]
+    if: github.repository == 'ibm-hyper-protect/contract-cli' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      # full checkout for semantic-release
+      - name: Full checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      # Install cyclonedx for SBOM
+      - name: Install cyclonedx-gomod
+        run: |
+          go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      # The dry-run evaluation is only made for non PR events. Manual trigger w/dryRun true, main branch and any tagged branches will set DRY run to false
+      - name: Check dry run
+        run: |
+          if [[ "${{github.event_name}}" == "workflow_dispatch" && "${{ github.event.inputs.dryRun }}" != "true"  ]]; then
+              echo "DRY_RUN=false" >> $GITHUB_ENV
+          elif [[ "${{github.ref}}" == "refs/heads/${{env.DEFAULT_BRANCH}}" ]]; then
+            echo "DRY_RUN=false" >> $GITHUB_ENV
+          elif [[ "${{github.ref}}" =~ ^refs/heads/v[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "DRY_RUN=false" >> $GITHUB_ENV
+          fi
+
+      - name: Semantic Release
+        run: |
+          npx -p conventional-changelog-conventionalcommits -p semantic-release semantic-release --dry-run ${{env.DRY_RUN}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate SBOM
+        if: env.DRY_RUN != 'true'
+        run: |
+          cyclonedx-gomod mod -licenses -json -output contract-cli.sbom.json
+
+      # Get the latest Git tag (created by semantic-release)
+      - name: Get latest Git tag
+        id: get_tag
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+
+      # Upload SBOM to GitHub Release
+      - name: Upload SBOM to GitHub Release
+        if: env.DRY_RUN != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: contract-cli.sbom.json
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
