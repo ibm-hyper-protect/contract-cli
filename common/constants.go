@@ -95,10 +95,20 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	ValidateContractParamLongDescription  = `Validate unencrypted contract with schema`
 	ValidateContractInputFlagDescription  = "Path to Hyper Protect encrypted contract contract"
 
-	// Signed and Encrypted Contract
-	EncryptParamName             = "encrypt"
-	EncryptParamShortDescription = "Generate signed and encrypted contract"
-	EncryptParamLongDescription  = `Generate signed and encrypted contract`
-	EncryptInputFlagDescription  = "Path to contract"
-	EncryptOutputFlagDescription = "Path to store signed and encrypted contract"
+	// Signed and Encrypted Contract (With contract expiry)
+	EncryptParamName                 = "encrypt"
+	EncryptParamShortDescription     = "Generate signed and encrypted contract"
+	EncryptParamLongDescription      = `Generate signed and encrypted contract`
+	EncryptInputFlagDescription      = "Path to contract"
+	EncryptOutputFlagDescription     = "Path to store signed and encrypted contract"
+	EncryptCaCertFlagName            = "cacert"
+	EncryptCaCertFlagDescription     = "Path to CA Certificate"
+	EncryptCaKeyFlagName             = "cakey"
+	EncryptCaKeyFlagDescription      = "Path to CA Key"
+	EncryptCsrDataFlagName           = "csrParam"
+	EncryptCsrDataFlagDescription    = "Path to CSR details JSON file"
+	EncryptCsrFlagName               = "csr"
+	EncryptCsrFlagDescription        = "Path to CSR file"
+	EncryptExpiryDaysFlagName        = "expiry"
+	EncryptExpiryDaysFlagDescription = "Expiry of the contract in number of days"
 )

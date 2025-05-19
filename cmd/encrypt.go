@@ -40,6 +40,12 @@ func init() {
 	encryptCmd.PersistentFlags().String(common.CertFlagName, "", common.CertFlagDescription)
 	encryptCmd.PersistentFlags().String(common.PrivateKeyFlagName, "", common.PrivateKeyFlagDescription)
 	encryptCmd.PersistentFlags().String(common.FileOutFlagName, "", common.EncryptOutputFlagDescription)
+
+	encryptCmd.PersistentFlags().String(common.EncryptCaCertFlagName, "", common.EncryptCaCertFlagDescription)
+	encryptCmd.PersistentFlags().String(common.EncryptCaKeyFlagName, "", common.EncryptCaKeyFlagDescription)
+	encryptCmd.PersistentFlags().String(common.EncryptCsrDataFlagName, "", common.EncryptCsrDataFlagDescription)
+	encryptCmd.PersistentFlags().String(common.EncryptCsrFlagName, "", common.EncryptCsrFlagDescription)
+	encryptCmd.PersistentFlags().String(common.EncryptExpiryDaysFlagName, "", common.EncryptExpiryDaysFlagDescription)
 }
 
 func validateInputEncrypt(cmd *cobra.Command) (string, string, string, string, string, error) {
