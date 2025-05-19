@@ -89,26 +89,39 @@ jobs:
         run: |
           npx -p conventional-changelog-conventionalcommits -p semantic-release semantic-release --dry-run ${{env.DRY_RUN}}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Generate SBOM
-        if: env.DRY_RUN != 'true'
-        run: |
-          cyclonedx-gomod mod -licenses -json -output contract-cli.sbom.json
-
-      # Get the latest Git tag (created by semantic-release)
       - name: Get latest Git tag
         id: get_tag
         run: |
           tag=$(git describe --tags --abbrev=0)
           echo "tag=$tag" >> $GITHUB_OUTPUT
 
-      # Upload SBOM to GitHub Release
+      - name: Generate SBOM
+        if: env.DRY_RUN != 'true'
+        run: |
+          cyclonedx-gomod mod -licenses -json -output contract-cli-${{steps.get_tag.outputs.tag}}.sbom.json
+
+      - name: Build release binaries
+        if: env.DRY_RUN != 'true'
+        run: |
+          make clean
+          make release VERSION=${{steps.get_tag.outputs.tag}}
+
+      - name: Upload binaries to GitHub Release
+        if: env.DRY_RUN != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{steps.get_tag.outputs.tag}}
+          files: build/*
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
       - name: Upload SBOM to GitHub Release
         if: env.DRY_RUN != 'true'
         uses: softprops/action-gh-release@v2
         with:
-          files: contract-cli.sbom.json
-          tag_name: ${{ steps.get_tag.outputs.tag }}
+          files: contract-cli-${{steps.get_tag.outputs.tag}}.sbom.json
+          tag_name: ${{steps.get_tag.outputs.tag}}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
