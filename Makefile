@@ -17,8 +17,8 @@ release:
 	GOOS=linux   GOARCH=ppc64le go build -o ${OUTPUT}/${APP_NAME}_${VERSION}_linux_ppc64le
 	GOOS=darwin  GOARCH=amd64   go build -o ${OUTPUT}/${APP_NAME}_${VERSION}_darwin_amd64
 	GOOS=darwin  GOARCH=arm64   go build -o ${OUTPUT}/${APP_NAME}_${VERSION}_darwin_arm64
-	GOOS=windows GOARCH=amd64   go build -o ${OUTPUT}/${APP_NAME}_${VERSION}_windows_amd64
-	GOOS=windows GOARCH=arm64   go build -o ${OUTPUT}/${APP_NAME}_${VERSION}_windows_arm64
+	GOOS=windows GOARCH=amd64   go build -o ${OUTPUT}/${APP_NAME}_${VERSION}_windows_amd64.exe
+	GOOS=windows GOARCH=arm64   go build -o ${OUTPUT}/${APP_NAME}_${VERSION}_windows_arm64.exe
 
 test-cover:
 	go test -coverprofile build/cover.out ./...
