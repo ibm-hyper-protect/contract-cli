@@ -1,15 +1,21 @@
-module github.com/ibm-hyper-protect/contract-cli-go
+module github.com/ibm-hyper-protect/contract-cli
 
-go 1.21.1
+go 1.22.4
 
 require (
-	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
+	github.com/ibm-hyper-protect/contract-go v1.7.0
+	github.com/spf13/cobra v1.9.1
+	github.com/stretchr/testify v1.10.0
+	gopkg.in/yaml.v3 v3.0.1
+)
+
+require (
+	github.com/Masterminds/semver/v3 v3.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
-	github.com/stretchr/testify v1.8.4 // indirect
-	github.com/urfave/cli/v2 v2.25.7 // indirect
-	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
+	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
+	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
+	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 )
