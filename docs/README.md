@@ -160,3 +160,55 @@ The following is an example to download multiple encryption certificate.
 ```bash
 $ contract-cli download-certificate --version 1.0.21,1.0.22,1.0.23
 ```
+
+### encrypt
+
+This feature is used to generate signed and encrypted contract.
+
+```bash
+contract-cli encrypt --help
+Generate signed and encrypted contract
+
+Usage:
+  contract-cli encrypt [flags]
+
+Flags:
+      --cacert string     Path to CA Certificate
+      --cakey string      Path to CA Key
+      --cert string       Path to encryption certificate
+      --contract-expiry   Boolean flag to enable contract expiry
+      --csr string        Path to CSR file
+      --csrParam string   Path to CSR details JSON file
+      --expiry int        Expiry of the contract in number of days
+  -h, --help              help for encrypt
+      --in string         Path to contract
+      --os string         Hyper Protect OS version (hpvs/hpcr-rhvs)
+      --out string        Path to store signed and encrypted contract
+      --priv string       Path to private key
+```
+
+To generate a signed and encrypted contract with latest encryption certificate.
+```bash
+$ contract-cli encrypt --in <path-to-contract> 
+```
+
+To generate a signed and encrypted with custom encryption certificate.
+```bash
+$ contract-cli encrypt --in <path-to-contract> --cert <path-to-encryption-certificate>
+```
+
+To generate a signed and encrypted contract with custom private key.
+```bash
+$ contract-cli encrypt --in <path-to-contract> --priv <path-to-private-key>
+```
+
+To generate a signed and encrypted contract with contract expiry.
+```bash
+$ contract-cli encrypt --contract-expiry --in <path-to-contract> --priv <path-to-private-key> --cacert <path-to-ca-cert> --cakey <path-to-ca-key> --csr <path-to-csr-path> --expiry <expiry-number>
+```
+
+The following is an example of generating signed and encrypted contract.
+```bash
+$ contract-cli encrypt --in samples/contract.yaml --priv samples/contract-expiry/private.pem # Generate signed and encrypted contract
+$ contract-cli encrypt --contract-expiry --in samples/contract.yaml --priv samples/contract-expiry/private.pem --cacert samples/contract-expiry/personal_ca.crt --cakey samples/contract-expiry/personal_ca.pem --csr samples/contract-expiry/csr.pem --expiry 100 # Generate signed and encrypted contract with contract expiry
+```
