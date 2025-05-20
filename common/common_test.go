@@ -13,6 +13,8 @@ const (
 	simpleSampleText     = "Testing"
 
 	simpleSampleWritePath = "../build/simple_file.txt"
+
+	sampleCertPath = "../samples/contract-expiry/personal_ca.crt"
 )
 
 func TestCheckFileFolderExists(t *testing.T) {
@@ -32,7 +34,9 @@ func TestReadDataFromFile(t *testing.T) {
 
 func TestWriteDataToFile(t *testing.T) {
 	err := WriteDataToFile(simpleSampleWritePath, simpleSampleText)
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("failed to write data to file - %v", err)
+	}
 }
 
 func TestExecCommand(t *testing.T) {
@@ -47,4 +51,31 @@ func TestOpensslCheck(t *testing.T) {
 	if err != nil {
 		t.Errorf("openssl check failed - %v", err)
 	}
+}
+
+func TestGetPrivateKey(t *testing.T) {
+	result, err := GetPrivateKey("")
+	if err != nil {
+		t.Errorf("failed to get private key - %v", err)
+	}
+
+	assert.NotEmpty(t, result)
+}
+
+func TestGeneratePrivateKey(t *testing.T) {
+	result, err := generatePrivateKey()
+	if err != nil {
+		t.Errorf("failed to generate private key - %v", err)
+	}
+
+	assert.NotEmpty(t, result)
+}
+
+func TestGetDataFromFile(t *testing.T) {
+	result, err := GetDataFromFile(sampleCertPath)
+	if err != nil {
+		t.Errorf("failed to get data from file - %v", err)
+	}
+
+	assert.NotEmpty(t, result)
 }
