@@ -170,7 +170,7 @@ $ contract-cli download-certificate --version 1.0.21,1.0.22,1.0.23
 This feature is used to generate signed and encrypted contract.
 
 ```bash
-contract-cli encrypt --help
+$ contract-cli encrypt --help
 Generate signed and encrypted contract
 
 Usage:
@@ -259,12 +259,13 @@ $ contract-cli encrypt-string --in sample-workload # Generate encrypted string f
 $ contract-cli encrypt-string --in '{"type":"workload"}' --format json # Generate encrypt string from json input
 ```
 
+
 ### get-certificate
 
 This feature will help users to select specific encryption certificate from JSON output of `contract-cli download-certificate`.
 
 ```bash
-contract-cli get-certificate --help
+$ contract-cli get-certificate --help
 Get version specific encryption certificate from JSON output of download-certificate
 
 Usage:
@@ -285,4 +286,45 @@ $ contract-cli get-certificate --in <path-to-json-output-of-download-certificate
 The following is an example to select encryption certificate.
 ```bash
 $ contract-cli get-certificate --in samples/certificate/certs.json --version 1.0.21
+```
+
+
+### image
+
+This feature helps to get Image details of specific version of latest version of HPVS on IBM Cloud from Terraform, CLI or API JSON output.
+
+```bash
+$ contract-cli image --help
+Get latest HPCR image ID in IBM Cloud from IBM images JSON output from IBM Cloud API or CLI
+
+Usage:
+  contract-cli image [flags]
+
+Flags:
+      --format string    Format in which the data needs to STDOUT or saved in file (default "json")
+  -h, --help             help for image
+      --in string        Path to Terraform output or CLI or API result of image list
+      --out string       Path to store HPCR image details
+      --version string   Get IBM Cloud Image details of specified HPCR version
+```
+
+To get image details of latest HPVS image.
+
+```bash
+$ contract-cli image --in <path-to-json-file>
+```
+
+To get image details and store it in a file.
+```bash
+$ contract-cli image --in <path-to-json-file> --out <path-to-output-file>
+```
+
+To get image details in YAML format.
+```bash
+$ contract-cli image --in <path-to-json-file> --format yaml
+```
+
+The following is an example to get latest image details.
+```bash
+$ contract-cli image --in samples/images/terraform_image.json
 ```
