@@ -81,7 +81,7 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	Base64ParamShortDescription      = "Generate base64 of input"
 	Base64ParamLongDescription       = `Generate base64 of input text`
 	Base64InputFlagDescription       = "Input data that needs to be converted to string"
-	Base64InputFormatFlagDescription = "Format of input data (default: text)"
+	Base64InputFormatFlagDescription = "Format of input data (options: text/json)"
 	Base64OutputPathFlagDescription  = "Path to store Base64 output"
 
 	// Encrypt String
