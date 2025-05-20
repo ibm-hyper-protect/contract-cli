@@ -127,3 +127,36 @@ The following is an example to decrypt attestation records.
 ```bash
 $ contract-cli decrypt-attestation --in se-checksums.txt.enc --priv private.pem
 ```
+
+### download-certificate
+
+This feature is used to download encryption certificate from IBM HPVS portal.
+
+```bash
+$ contract-cli download-certificate --help
+Download encryption certificate for HPCR from IBM Hyper Protect Repository
+
+Usage:
+  contract-cli download-certificate [flags]
+
+Flags:
+      --format string     Format in which the data needs to STDOUT or saved in file (default "json")
+  -h, --help              help for download-certificate
+      --out string        Path to save the encryption certificates
+      --version strings   Versions of Encryption Certificates to download, Seperated by coma(,)
+```
+
+To download a specific encryption certificate.
+```bash
+$ contract-cli download-certificate --version <hpcr-version-name>
+```
+
+To download an encryption certificate and save it to a file
+```bash
+$ contract-cli download-certificate --version <hpcr-version-name> --out <path-to-output-file>
+```
+
+The following is an example to download multiple encryption certificate.
+```bash
+$ contract-cli download-certificate --version 1.0.21,1.0.22,1.0.23
+```
