@@ -328,3 +328,31 @@ The following is an example to get latest image details.
 ```bash
 $ contract-cli image --in samples/images/terraform_image.json
 ```
+
+
+### validate-contract
+
+This feature will help to validate if the hyper protect contract is valid or not schematically.
+
+```bash
+$ contract-cli validate-contract --help                                    
+Validate unencrypted contract with schema
+
+Usage:
+  contract-cli validate-contract [flags]
+
+Flags:
+  -h, --help        help for validate-contract
+      --in string   Path to Hyper Protect encrypted contract contract
+      --os string   Hyper Protect OS version (hpvs/hpcr-rhvs)
+```
+
+To validate a contract.
+```bash
+$ contract-cli validate-contract --in <path-to-contract>
+```
+
+The following is an example to validate a contract.
+```bash
+$ contract-cli validate-contract --in samples/contract.yaml
+```
