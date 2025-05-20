@@ -8,7 +8,7 @@ The CLI has been developed to automate the process for generating contracts for 
 
 ### Base64
 
-This feature will help you to generate base64 of your plain text or JSON input.
+This feature will help customer to generate base64 of your plain text or JSON input.
 
 ```bash
 $ contract-cli base64 --help
@@ -43,4 +43,54 @@ The following is an example to generate base64.
 ```bash
 $ contract-cli base64 --in sampleText --format plain # For plain text
 $ contract-cli base64 --in {"type": "workload"} --format json # For JSON text
+```
+
+### base64-tgz
+
+This feature will help customer to generate base64 tar tgz (plain or encrypted) of `docker-compose.yaml` or `pods.yaml`. The input is the path to the folder where the mentioned files are present.
+
+```bash
+$ contract-cli base64-tgz --help
+Generate base64 tar.tgz of folder containing docker-compose.yaml or pods.yaml
+
+Usage:
+  contract-cli base64-tgz [flags]
+
+Flags:
+      --cert string     Path to encryption certificate
+  -h, --help            help for base64-tgz
+      --in string       Path to folder containing docker-compose.yaml or pods.yaml
+      --os string       Hyper Protect OS version (hpvs/hpcr-rhvs)
+      --out string      Path to store the encrypted or encrypted base64 tar tgz
+      --output string   output format (unencrypted or encrypted) (default "plain")
+```
+
+To generate plain base64 tar tgz.
+```bash
+$ contract-cli base64-tgz --in <path-to-folder-of-yaml> 
+```
+
+To generate plain base64 tar tgz and redirect to a file.
+```bash
+$ contract-cli base64-tgz --in <path-to-folder-of-yaml> --out <path-to-output-file>
+```
+
+To generate encrypted tar tgz with the latest encryption certificate.
+```bash
+$ contract-cli base64-tgz --in <path-to-folder-of-yaml> --output encrypt
+```
+
+To generate encrypted tar tgz with custom encryption certificate.
+```bash
+$ contract-cli base64-tgz --in <path-to-folder-of-yaml> --output encrypt --cert <path-to-encryption-certificate>
+```
+
+To generate encrypted tar tgz for hpcr-rhvs.
+```bash
+$ contract-cli base64-tgz --in <path-to-folder-of-yaml> --output encrypt --os hpcr-rhvs
+```
+
+The following is an example to generate base64 tar tgz.
+```bash
+$ contract-cli base64-tgz --in pods # Generate base64 tar tgz
 ```
