@@ -258,3 +258,31 @@ The following is an example to generate encrypted string.
 $ contract-cli encrypt-string --in sample-workload # Generate encrypted string from plain text
 $ contract-cli encrypt-string --in '{"type":"workload"}' --format json # Generate encrypt string from json input
 ```
+
+### get-certificate
+
+This feature will help users to select specific encryption certificate from JSON output of `contract-cli download-certificate`.
+
+```bash
+contract-cli get-certificate --help
+Get version specific encryption certificate from JSON output of download-certificate
+
+Usage:
+  contract-cli get-certificate [flags]
+
+Flags:
+  -h, --help             help for get-certificate
+      --in string        Path to the saved encryption certificates JSON
+      --out string       Path to store the selected encryption certificate
+      --version string   Encryption certificate version to select
+```
+
+To get a specific version.
+```bash
+$ contract-cli get-certificate --in <path-to-json-output-of-download-certificate> --version <version-number>
+```
+
+The following is an example to select encryption certificate.
+```bash
+$ contract-cli get-certificate --in samples/certificate/certs.json --version 1.0.21
+```
