@@ -126,21 +126,7 @@ func validateInputEncryptContractExpiry(cmd *cobra.Command) (bool, string, strin
 }
 
 func generateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKeyPath string) (string, error) {
-	if !common.CheckFileFolderExists(inputDataPath) {
-		log.Fatal("The contract path doesn't exist")
-	}
-
-	inputData, err := common.ReadDataFromFile(inputDataPath)
-	if err != nil {
-		return "", err
-	}
-
-	cert, err := common.GetDataFromFile(certPath)
-	if err != nil {
-		return "", err
-	}
-
-	privateKey, err := common.GetPrivateKey(privateKeyPath)
+	inputData, cert, privateKey, err := commonParameters(inputDataPath, certPath, privateKeyPath)
 	if err != nil {
 		return "", err
 	}
@@ -154,21 +140,8 @@ func generateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKe
 }
 
 func generateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, privateKeyPath, caCertPath, caKeyPath, csrParamPath, csrPath string, expiryDays int) (string, error) {
-	if !common.CheckFileFolderExists(inputDataPath) {
-		return "", fmt.Errorf("the contract path doesn't exist")
-	}
 
-	inputData, err := common.ReadDataFromFile(inputDataPath)
-	if err != nil {
-		return "", err
-	}
-
-	cert, err := common.GetDataFromFile(certPath)
-	if err != nil {
-		return "", err
-	}
-
-	privateKey, err := common.GetPrivateKey(privateKeyPath)
+	inputData, cert, privateKey, err := commonParameters(inputDataPath, certPath, privateKeyPath)
 	if err != nil {
 		return "", err
 	}
@@ -199,6 +172,29 @@ func generateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, pri
 	}
 
 	return signedEncryptContract, nil
+}
+
+func commonParameters(inputDataPath, certPath, privateKeyPath string) (string, string, string, error) {
+	if !common.CheckFileFolderExists(inputDataPath) {
+		return "", "", "", fmt.Errorf("the contract path doesn't exist")
+	}
+
+	inputData, err := common.ReadDataFromFile(inputDataPath)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	cert, err := common.GetDataFromFile(certPath)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	privateKey, err := common.GetPrivateKey(privateKeyPath)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	return inputData, cert, privateKey, nil
 }
 
 func printSignedEncryptContract(signedEncryptContract, outputPath string) error {
