@@ -14,6 +14,8 @@ const (
 
 	simpleSampleWritePath = "../build/simple_file.txt"
 
+	samplePrivateKeyPath = "../samples/sign/private.pem"
+
 	sampleCertPath = "../samples/contract-expiry/personal_ca.crt"
 )
 
@@ -53,6 +55,15 @@ func TestOpensslCheck(t *testing.T) {
 	}
 }
 
+func TestGetPrivateKeyNoKey(t *testing.T) {
+	result, err := GetPrivateKey(samplePrivateKeyPath)
+	if err != nil {
+		t.Errorf("failed to get private key - %v", err)
+	}
+
+	assert.NotEmpty(t, result)
+}
+
 func TestGetPrivateKey(t *testing.T) {
 	result, err := GetPrivateKey("")
 	if err != nil {
@@ -71,11 +82,20 @@ func TestGeneratePrivateKey(t *testing.T) {
 	assert.NotEmpty(t, result)
 }
 
-func TestGetDataFromFile(t *testing.T) {
+func TestGetDataFromFileWithData(t *testing.T) {
 	result, err := GetDataFromFile(sampleCertPath)
 	if err != nil {
 		t.Errorf("failed to get data from file - %v", err)
 	}
 
 	assert.NotEmpty(t, result)
+}
+
+func TestGetDataFromFileWithoutData(t *testing.T) {
+	result, err := GetDataFromFile("")
+	if err != nil {
+		t.Errorf("failed to get data from file - %v", err)
+	}
+
+	assert.Empty(t, result)
 }
