@@ -45,6 +45,7 @@ $ contract-cli base64 --in sampleText --format plain # For plain text
 $ contract-cli base64 --in {"type": "workload"} --format json # For JSON text
 ```
 
+
 ### base64-tgz
 
 This feature will help customer to generate base64 tar tgz (plain or encrypted) of `docker-compose.yaml` or `pods.yaml`. The input is the path to the folder where the mentioned files are present.
@@ -95,6 +96,7 @@ The following is an example to generate base64 tar tgz.
 $ contract-cli base64-tgz --in pods # Generate base64 tar tgz
 ```
 
+
 ### decrypt-attestation
 
 This features helps customer to decrypt encrypted attestation records.
@@ -128,6 +130,7 @@ The following is an example to decrypt attestation records.
 $ contract-cli decrypt-attestation --in se-checksums.txt.enc --priv private.pem
 ```
 
+
 ### download-certificate
 
 This feature is used to download encryption certificate from IBM HPVS portal.
@@ -160,6 +163,7 @@ The following is an example to download multiple encryption certificate.
 ```bash
 $ contract-cli download-certificate --version 1.0.21,1.0.22,1.0.23
 ```
+
 
 ### encrypt
 
@@ -211,4 +215,46 @@ The following is an example of generating signed and encrypted contract.
 ```bash
 $ contract-cli encrypt --in samples/contract.yaml --priv samples/contract-expiry/private.pem # Generate signed and encrypted contract
 $ contract-cli encrypt --contract-expiry --in samples/contract.yaml --priv samples/contract-expiry/private.pem --cacert samples/contract-expiry/personal_ca.crt --cakey samples/contract-expiry/personal_ca.pem --csr samples/contract-expiry/csr.pem --expiry 100 # Generate signed and encrypted contract with contract expiry
+```
+
+
+### encrypt-string
+
+This feature will help to generate encrypted string.
+
+```bash
+$ contract-cli encrypt-string --help
+Encrypt string in format hyper-protect-basic.<encrypted-password>.<encrypted-string>
+
+Usage:
+  contract-cli encrypt-string [flags]
+
+Flags:
+      --cert string     Path to encryption certificate
+      --format string   The input string format (supported: text/json) (default "text")
+  -h, --help            help for encrypt-string
+      --in string       Data to encrypt
+      --os string       Hyper Protect OS version (hpvs/hpcr-rhvs)
+      --out string      Path to store the encrypted data
+```
+
+To generate an encrypted plain text with latest encryption certificate.
+```bash
+$ contract-cli encrypt-string --in <sample-string>
+```
+
+To generate and encrypted plain text and redirect the output to file.
+```bash
+$ contract-cli encrypt-string --in <sample-string> --out <path-to-output-file>
+```
+
+To generate an encrypted plain text with custom encryption certificate.
+```bash
+$ contract-cli encrypt-string --in <sample-string> --cert <path-to-encryption-certificate>
+```
+
+The following is an example to generate encrypted string.
+```bash
+$ contract-cli encrypt-string --in sample-workload # Generate encrypted string from plain text
+$ contract-cli encrypt-string --in '{"type":"workload"}' --format json # Generate encrypt string from json input
 ```
