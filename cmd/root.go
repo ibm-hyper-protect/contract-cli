@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
@@ -8,11 +9,22 @@ import (
 )
 
 // rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   common.ContractCliName,
-	Short: common.ContractCliShortDescription,
-	Long:  common.ContractCliLongDescription,
-}
+var (
+	cliVersion   = "dev"
+	cliOsName    = "unknown"
+	cliOsArch    = "unknown"
+	cliBuildDate = "unknown"
+
+	rootCmd = &cobra.Command{
+		Use:     common.ContractCliName,
+		Short:   common.ContractCliShortDescription,
+		Long:    common.ContractCliLongDescription,
+		Version: cliVersion,
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Printf("%s version %s %s %s\nRelease: %s\n", common.ContractCliName, cliVersion, cliOsName, cliOsArch, cliBuildDate)
+		},
+	}
+)
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
@@ -24,4 +36,13 @@ func Execute() {
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func SetVersionInfo(version, osName, osArch, buildDate string) {
+	cliVersion = version
+	cliOsName = osName
+	cliOsArch = osArch
+	cliBuildDate = buildDate
+
+	rootCmd.Version = fmt.Sprintf("%s %s %s build %s", version, osName, osArch, buildDate)
 }
