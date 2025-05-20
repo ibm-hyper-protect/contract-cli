@@ -1,3 +1,18 @@
+// Copyright (c) 2025 IBM Corp.
+// All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package cmd
 
 import (
@@ -20,9 +35,22 @@ var encryptCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		signedEncryptContract, err := generateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKeyPath)
+		contractExpiryFlag, caCert, caKey, csrParam, csr, expiryDays, err := validateInputEncryptContractExpiry(cmd)
 		if err != nil {
 			log.Fatal(err)
+		}
+
+		var signedEncryptContract string
+		if !contractExpiryFlag {
+			signedEncryptContract, err = generateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKeyPath)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			signedEncryptContract, err = generateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, privateKeyPath, caCert, caKey, csrParam, csr, expiryDays)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		err = printSignedEncryptContract(signedEncryptContract, outputPath)
@@ -41,11 +69,12 @@ func init() {
 	encryptCmd.PersistentFlags().String(common.PrivateKeyFlagName, "", common.PrivateKeyFlagDescription)
 	encryptCmd.PersistentFlags().String(common.FileOutFlagName, "", common.EncryptOutputFlagDescription)
 
+	encryptCmd.PersistentFlags().Bool(common.EncryptContractExpiryFlagName, common.EncryptContractExpiryFlagDefault, common.EncryptContractExpiryFlagDescription)
 	encryptCmd.PersistentFlags().String(common.EncryptCaCertFlagName, "", common.EncryptCaCertFlagDescription)
 	encryptCmd.PersistentFlags().String(common.EncryptCaKeyFlagName, "", common.EncryptCaKeyFlagDescription)
 	encryptCmd.PersistentFlags().String(common.EncryptCsrDataFlagName, "", common.EncryptCsrDataFlagDescription)
 	encryptCmd.PersistentFlags().String(common.EncryptCsrFlagName, "", common.EncryptCsrFlagDescription)
-	encryptCmd.PersistentFlags().String(common.EncryptExpiryDaysFlagName, "", common.EncryptExpiryDaysFlagDescription)
+	encryptCmd.PersistentFlags().Int(common.EncryptExpiryDaysFlagName, 0, common.EncryptExpiryDaysFlagDescription)
 }
 
 func validateInputEncrypt(cmd *cobra.Command) (string, string, string, string, string, error) {
@@ -77,22 +106,42 @@ func validateInputEncrypt(cmd *cobra.Command) (string, string, string, string, s
 	return inputData, osVersion, certPath, privateKeyPath, outputPath, nil
 }
 
+func validateInputEncryptContractExpiry(cmd *cobra.Command) (bool, string, string, string, string, int, error) {
+	contractExpiryFlag, err := cmd.Flags().GetBool(common.EncryptContractExpiryFlagName)
+	if err != nil {
+		return false, "", "", "", "", 0, err
+	}
+
+	caCert, err := cmd.Flags().GetString(common.EncryptCaCertFlagName)
+	if err != nil {
+		return false, "", "", "", "", 0, err
+	}
+
+	caKey, err := cmd.Flags().GetString(common.EncryptCaKeyFlagName)
+	if err != nil {
+		return false, "", "", "", "", 0, err
+	}
+
+	csrParam, err := cmd.Flags().GetString(common.EncryptCsrDataFlagName)
+	if err != nil {
+		return false, "", "", "", "", 0, err
+	}
+
+	csr, err := cmd.Flags().GetString(common.EncryptCsrFlagName)
+	if err != nil {
+		return false, "", "", "", "", 0, err
+	}
+
+	expiryDays, err := cmd.Flags().GetInt(common.EncryptExpiryDaysFlagName)
+	if err != nil {
+		return false, "", "", "", "", 0, err
+	}
+
+	return contractExpiryFlag, caCert, caKey, csrParam, csr, expiryDays, nil
+}
+
 func generateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKeyPath string) (string, error) {
-	if !common.CheckFileFolderExists(inputDataPath) {
-		log.Fatal("The contract path doesn't exist")
-	}
-
-	inputData, err := common.ReadDataFromFile(inputDataPath)
-	if err != nil {
-		return "", err
-	}
-
-	cert, err := common.GetEncryptionCertificate(certPath)
-	if err != nil {
-		return "", err
-	}
-
-	privateKey, err := common.GetPrivateKey(privateKeyPath)
+	inputData, cert, privateKey, err := commonParameters(inputDataPath, certPath, privateKeyPath)
 	if err != nil {
 		return "", err
 	}
@@ -103,6 +152,64 @@ func generateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKe
 	}
 
 	return signedEncryptContract, nil
+}
+
+func generateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, privateKeyPath, caCertPath, caKeyPath, csrParamPath, csrPath string, expiryDays int) (string, error) {
+
+	inputData, cert, privateKey, err := commonParameters(inputDataPath, certPath, privateKeyPath)
+	if err != nil {
+		return "", err
+	}
+
+	caCert, err := common.GetDataFromFile(caCertPath)
+	if err != nil {
+		return "", err
+	}
+
+	caKey, err := common.GetDataFromFile(caKeyPath)
+	if err != nil {
+		return "", err
+	}
+
+	csrParam, err := common.GetDataFromFile(csrParamPath)
+	if err != nil {
+		return "", err
+	}
+
+	csr, err := common.GetDataFromFile(csrPath)
+	if err != nil {
+		return "", err
+	}
+
+	signedEncryptContract, _, _, err := contract.HpcrContractSignedEncryptedContractExpiry(inputData, osVersion, cert, privateKey, caCert, caKey, csrParam, csr, expiryDays)
+	if err != nil {
+		return "", err
+	}
+
+	return signedEncryptContract, nil
+}
+
+func commonParameters(inputDataPath, certPath, privateKeyPath string) (string, string, string, error) {
+	if !common.CheckFileFolderExists(inputDataPath) {
+		return "", "", "", fmt.Errorf("the contract path doesn't exist")
+	}
+
+	inputData, err := common.ReadDataFromFile(inputDataPath)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	cert, err := common.GetDataFromFile(certPath)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	privateKey, err := common.GetPrivateKey(privateKeyPath)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	return inputData, cert, privateKey, nil
 }
 
 func printSignedEncryptContract(signedEncryptContract, outputPath string) error {

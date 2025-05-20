@@ -1,3 +1,18 @@
+// Copyright (c) 2025 IBM Corp.
+// All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package common
 
 const (
@@ -96,19 +111,22 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	ValidateContractInputFlagDescription  = "Path to Hyper Protect encrypted contract contract"
 
 	// Signed and Encrypted Contract (With contract expiry)
-	EncryptParamName                 = "encrypt"
-	EncryptParamShortDescription     = "Generate signed and encrypted contract"
-	EncryptParamLongDescription      = `Generate signed and encrypted contract`
-	EncryptInputFlagDescription      = "Path to contract"
-	EncryptOutputFlagDescription     = "Path to store signed and encrypted contract"
-	EncryptCaCertFlagName            = "cacert"
-	EncryptCaCertFlagDescription     = "Path to CA Certificate"
-	EncryptCaKeyFlagName             = "cakey"
-	EncryptCaKeyFlagDescription      = "Path to CA Key"
-	EncryptCsrDataFlagName           = "csrParam"
-	EncryptCsrDataFlagDescription    = "Path to CSR details JSON file"
-	EncryptCsrFlagName               = "csr"
-	EncryptCsrFlagDescription        = "Path to CSR file"
-	EncryptExpiryDaysFlagName        = "expiry"
-	EncryptExpiryDaysFlagDescription = "Expiry of the contract in number of days"
+	EncryptParamName                     = "encrypt"
+	EncryptParamShortDescription         = "Generate signed and encrypted contract"
+	EncryptParamLongDescription          = `Generate signed and encrypted contract`
+	EncryptInputFlagDescription          = "Path to contract"
+	EncryptOutputFlagDescription         = "Path to store signed and encrypted contract"
+	EncryptContractExpiryFlagName        = "contract-expiry"
+	EncryptContractExpiryFlagDefault     = false
+	EncryptContractExpiryFlagDescription = "Boolean flag to enable contract expiry"
+	EncryptCaCertFlagName                = "cacert"
+	EncryptCaCertFlagDescription         = "Path to CA Certificate"
+	EncryptCaKeyFlagName                 = "cakey"
+	EncryptCaKeyFlagDescription          = "Path to CA Key"
+	EncryptCsrDataFlagName               = "csrParam"
+	EncryptCsrDataFlagDescription        = "Path to CSR details JSON file"
+	EncryptCsrFlagName                   = "csr"
+	EncryptCsrFlagDescription            = "Path to CSR file"
+	EncryptExpiryDaysFlagName            = "expiry"
+	EncryptExpiryDaysFlagDescription     = "Expiry of the contract in number of days"
 )

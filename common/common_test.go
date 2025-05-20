@@ -1,3 +1,18 @@
+// Copyright (c) 2025 IBM Corp.
+// All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package common
 
 import (
@@ -13,6 +28,10 @@ const (
 	simpleSampleText     = "Testing"
 
 	simpleSampleWritePath = "../build/simple_file.txt"
+
+	samplePrivateKeyPath = "../samples/sign/private.pem"
+
+	sampleCertPath = "../samples/contract-expiry/personal_ca.crt"
 )
 
 func TestCheckFileFolderExists(t *testing.T) {
@@ -32,7 +51,9 @@ func TestReadDataFromFile(t *testing.T) {
 
 func TestWriteDataToFile(t *testing.T) {
 	err := WriteDataToFile(simpleSampleWritePath, simpleSampleText)
-	assert.NoError(t, err)
+	if err != nil {
+		t.Errorf("failed to write data to file - %v", err)
+	}
 }
 
 func TestExecCommand(t *testing.T) {
@@ -47,4 +68,49 @@ func TestOpensslCheck(t *testing.T) {
 	if err != nil {
 		t.Errorf("openssl check failed - %v", err)
 	}
+}
+
+func TestGetPrivateKeyNoKey(t *testing.T) {
+	result, err := GetPrivateKey(samplePrivateKeyPath)
+	if err != nil {
+		t.Errorf("failed to get private key - %v", err)
+	}
+
+	assert.NotEmpty(t, result)
+}
+
+func TestGetPrivateKey(t *testing.T) {
+	result, err := GetPrivateKey("")
+	if err != nil {
+		t.Errorf("failed to get private key - %v", err)
+	}
+
+	assert.NotEmpty(t, result)
+}
+
+func TestGeneratePrivateKey(t *testing.T) {
+	result, err := generatePrivateKey()
+	if err != nil {
+		t.Errorf("failed to generate private key - %v", err)
+	}
+
+	assert.NotEmpty(t, result)
+}
+
+func TestGetDataFromFileWithData(t *testing.T) {
+	result, err := GetDataFromFile(sampleCertPath)
+	if err != nil {
+		t.Errorf("failed to get data from file - %v", err)
+	}
+
+	assert.NotEmpty(t, result)
+}
+
+func TestGetDataFromFileWithoutData(t *testing.T) {
+	result, err := GetDataFromFile("")
+	if err != nil {
+		t.Errorf("failed to get data from file - %v", err)
+	}
+
+	assert.Empty(t, result)
 }

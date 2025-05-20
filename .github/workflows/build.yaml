@@ -106,7 +106,7 @@ jobs:
         if: env.DRY_RUN != 'true'
         run: |
           make clean
-          make release VERSION=${{steps.get_tag.outputs.tag}}
+          make release VERSION=${{steps.get_tag.outputs.tag}} BUILD_DATE="$(date -u)"
 
       - name: Upload binaries to GitHub Release
         if: env.DRY_RUN != 'true'
