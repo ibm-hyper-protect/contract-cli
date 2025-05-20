@@ -126,7 +126,7 @@ func generatePrivateKey() (string, error) {
 	return privateKey, nil
 }
 
-func GetEncryptionCertificate(certPath string) (string, error) {
+func GetDataFromFile(certPath string) (string, error) {
 	var encCert string
 	var err error
 

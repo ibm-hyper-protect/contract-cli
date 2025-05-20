@@ -84,7 +84,7 @@ func processBase64Tgz(inputData, outputFormat, hyperProtectVersion, encCertPath 
 
 		return base64Data, nil
 	} else if outputFormat == common.Base64TgzOutputFormatencrypted {
-		encCert, err := common.GetEncryptionCertificate(encCertPath)
+		encCert, err := common.GetDataFromFile(encCertPath)
 		if err != nil {
 			return "", err
 		}

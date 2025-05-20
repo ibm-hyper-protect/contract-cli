@@ -76,7 +76,7 @@ func validateInputEncryptString(cmd *cobra.Command) (string, string, string, str
 }
 
 func processEncryptString(inputData, inputFormat, hyperProtectVersion, encCertPath string) (string, error) {
-	encCert, err := common.GetEncryptionCertificate(encCertPath)
+	encCert, err := common.GetDataFromFile(encCertPath)
 	if err != nil {
 		return "", err
 	}
