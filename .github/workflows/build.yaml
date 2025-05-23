@@ -115,10 +115,10 @@ jobs:
             do
               [[ "$(basename "$binary")" == .* ]] && continue
 
-              if [[ "$binary" != *darwin* ]]; then
+              if [[ "$binary" != *darwin* && "$binary" != *windows_arm64* && "$binary" != *s390x* ]]; then
                 upx --best --lzma "$binary"
               else
-                echo "Skipping UPX for macOS binary: $binary"
+                echo "Skipping UPX for binary: $binary"
               fi
 
               sha256sum "$binary" > "$binary.sha256"
