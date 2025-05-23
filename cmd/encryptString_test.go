@@ -27,18 +27,16 @@ const (
 	sampleEncryptStringInput = "testing"
 	sampleEncryptStringJson  = `{"type":"workload"}`
 
-	sampleEncryptStringFormatText = "text"
-	sampleEncryptStringFormatJson = "json"
-
-	sampleEncryptStringOutputYaml = "../build/encrypt_string.txt"
-	sampleEncryptStringOutputJson = "../build/encrypt_string.json"
+	sampleEncryptStringOutputPlain = "../build/encrypt_string.txt"
+	sampleEncryptStringOutputJson  = "../build/encrypt_string.json"
 )
 
 var (
-	sampleEncryptStringValidCommandText = []string{common.EncryptStrParamName, "--in", sampleEncryptStringInput, "--format", sampleEncryptStringFormatText, "--out", sampleEncryptStringOutputYaml}
-	sampleEncryptStringValidCommandJson = []string{common.EncryptStrParamName, "--in", sampleEncryptStringJson, "--format", sampleEncryptStringFormatJson, "--out", sampleEncryptStringOutputJson}
+	sampleEncryptStringValidCommandText = []string{common.EncryptStrParamName, "--in", sampleEncryptStringInput, "--format", common.DataFormatText, "--out", sampleEncryptStringOutputPlain}
+	sampleEncryptStringValidCommandJson = []string{common.EncryptStrParamName, "--in", sampleEncryptStringJson, "--format", common.DataFormatJson, "--out", sampleEncryptStringOutputJson}
 )
 
+// Testcase to check if encrypt-string is able to generate encrypted string of plain text
 func TestEncryptStringCmdText(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
@@ -51,7 +49,8 @@ func TestEncryptStringCmdText(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestEncryptStringCmdYaml(t *testing.T) {
+// Testcase to check if encrypt-string is able to generate encrypted string of JSON
+func TestEncryptStringCmdJson(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
 	rootCmd.SetOut(buf)

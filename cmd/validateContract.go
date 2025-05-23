@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// validateContractCmd represents the validateContract command
+// validateContractCmd represents the validate-contract command
 var validateContractCmd = &cobra.Command{
 	Use:   common.ValidateContractParamName,
 	Short: common.ValidateContractParamShortDescription,
@@ -52,6 +52,7 @@ var validateContractCmd = &cobra.Command{
 	},
 }
 
+// init - cobra init function
 func init() {
 	rootCmd.AddCommand(validateContractCmd)
 
@@ -59,6 +60,7 @@ func init() {
 	validateContractCmd.PersistentFlags().String(common.OsVersionFlagName, "", common.OsVersionFlagDescription)
 }
 
+// validateInputContract - function to validate plain contract
 func validateInputContract(cmd *cobra.Command) (string, string, error) {
 	contract, err := cmd.Flags().GetString(common.FileInFlagName)
 	if err != nil {

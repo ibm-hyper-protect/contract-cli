@@ -34,6 +34,7 @@ var (
 	sampleValidBase64JsonCommand = []string{common.Base64ParamName, "--in", sampleBase64InputJson, "--format", common.DataFormatJson, "--out", sampleBase64OutputPath}
 )
 
+// Testcase to check if base64 command is working with plain text
 func TestBase64CmdSuccess1(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
@@ -46,6 +47,7 @@ func TestBase64CmdSuccess1(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+// Testcase to check if base64 command is working with JSON input
 func TestBase64CmdSuccess2(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)

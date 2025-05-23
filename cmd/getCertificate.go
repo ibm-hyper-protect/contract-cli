@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// getCertificateCmd represents the getCertificate command
+// getCertificateCmd represents the get-certificate command
 var getCertificateCmd = &cobra.Command{
 	Use:   common.GetCertParamName,
 	Short: common.GetCertParamShortDescription,
@@ -47,6 +47,7 @@ var getCertificateCmd = &cobra.Command{
 	},
 }
 
+// init - cobra init function
 func init() {
 	rootCmd.AddCommand(getCertificateCmd)
 
@@ -55,6 +56,7 @@ func init() {
 	getCertificateCmd.PersistentFlags().String(common.FileOutFlagName, "", common.GetCertFileOutFlagDescription)
 }
 
+// validateInputGetCertificate - function to validate get-certificate input
 func validateInputGetCertificate(cmd *cobra.Command) (string, string, string, error) {
 	encryptionCertsPath, err := cmd.Flags().GetString(common.FileInFlagName)
 	if err != nil {
@@ -74,6 +76,7 @@ func validateInputGetCertificate(cmd *cobra.Command) (string, string, string, er
 	return encryptionCertsPath, version, encryptionCertificatePath, nil
 }
 
+// getEncryptionCertificate - function to get encryption certificate
 func getEncryptionCertificate(encryptionCertsPath, version string) (string, error) {
 	if !common.CheckFileFolderExists(encryptionCertsPath) {
 		return "", fmt.Errorf("the path to encryption certificates doesn't exist")
@@ -92,6 +95,7 @@ func getEncryptionCertificate(encryptionCertsPath, version string) (string, erro
 	return outputCertificate, nil
 }
 
+// printCertificate - function to print encryption certificate or redirect it to a file
 func printCertificate(cert, certPath string) error {
 	if certPath != "" {
 		err := common.WriteDataToFile(certPath, cert)

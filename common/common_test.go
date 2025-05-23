@@ -34,12 +34,14 @@ const (
 	sampleCertPath = "../samples/contract-expiry/personal_ca.crt"
 )
 
+// Testcase to check if CheckFileFolderExists() is able to check if a folder exists
 func TestCheckFileFolderExists(t *testing.T) {
 	result := CheckFileFolderExists(sampleFile)
 
 	assert.True(t, result)
 }
 
+// Testcase to check if ReadDataFromFile() is able to read data from file
 func TestReadDataFromFile(t *testing.T) {
 	content, err := ReadDataFromFile(simpleSampleTextPath)
 	if err != nil {
@@ -49,6 +51,7 @@ func TestReadDataFromFile(t *testing.T) {
 	assert.Equal(t, content, simpleSampleText)
 }
 
+// Testcase to check if WriteDataToFile() is able to write data to file
 func TestWriteDataToFile(t *testing.T) {
 	err := WriteDataToFile(simpleSampleWritePath, simpleSampleText)
 	if err != nil {
@@ -56,6 +59,7 @@ func TestWriteDataToFile(t *testing.T) {
 	}
 }
 
+// Testcase to check if ExecCommand() is able to execute command
 func TestExecCommand(t *testing.T) {
 	_, err := ExecCommand("openssl", "", "version")
 	if err != nil {
@@ -63,6 +67,7 @@ func TestExecCommand(t *testing.T) {
 	}
 }
 
+// Testcase to check if OpensslCheck() is able to check if openssl is present
 func TestOpensslCheck(t *testing.T) {
 	err := OpensslCheck()
 	if err != nil {
@@ -70,6 +75,7 @@ func TestOpensslCheck(t *testing.T) {
 	}
 }
 
+// Testcase to check if GetPrivateKey() is able to get key from file
 func TestGetPrivateKeyNoKey(t *testing.T) {
 	result, err := GetPrivateKey(samplePrivateKeyPath)
 	if err != nil {
@@ -79,6 +85,7 @@ func TestGetPrivateKeyNoKey(t *testing.T) {
 	assert.NotEmpty(t, result)
 }
 
+// Testcase to check if GetPrivateKey() is able generate private key
 func TestGetPrivateKey(t *testing.T) {
 	result, err := GetPrivateKey("")
 	if err != nil {
@@ -88,6 +95,7 @@ func TestGetPrivateKey(t *testing.T) {
 	assert.NotEmpty(t, result)
 }
 
+// Testcase to check if generatePrivateKey() is able to generate private key
 func TestGeneratePrivateKey(t *testing.T) {
 	result, err := generatePrivateKey()
 	if err != nil {
@@ -97,6 +105,7 @@ func TestGeneratePrivateKey(t *testing.T) {
 	assert.NotEmpty(t, result)
 }
 
+// Testcase to check if GetDataFromFile() is able to get data form file
 func TestGetDataFromFileWithData(t *testing.T) {
 	result, err := GetDataFromFile(sampleCertPath)
 	if err != nil {
@@ -106,6 +115,7 @@ func TestGetDataFromFileWithData(t *testing.T) {
 	assert.NotEmpty(t, result)
 }
 
+// Testcase to check if GetDataFromFile() is throwing error for invalid file path
 func TestGetDataFromFileWithoutData(t *testing.T) {
 	result, err := GetDataFromFile("")
 	if err != nil {

@@ -23,13 +23,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
 var (
-	cliVersion   = "dev"
-	cliOsName    = "unknown"
-	cliOsArch    = "unknown"
-	cliBuildDate = "unknown"
-
+	// rootCmd represents the base command when called without any subcommands
 	rootCmd = &cobra.Command{
 		Use:     common.ContractCliName,
 		Short:   common.ContractCliShortDescription,
@@ -39,6 +34,11 @@ var (
 			fmt.Printf("%s version %s %s %s\nRelease: %s\n", common.ContractCliName, cliVersion, cliOsName, cliOsArch, cliBuildDate)
 		},
 	}
+
+	cliVersion   = "dev"
+	cliOsName    = "unknown"
+	cliOsArch    = "unknown"
+	cliBuildDate = "unknown"
 )
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -53,6 +53,7 @@ func Execute() {
 	}
 }
 
+// SetVersionInfo - function to set CLI details from build parameters
 func SetVersionInfo(version, osName, osArch, buildDate string) {
 	cliVersion = version
 	cliOsName = osName

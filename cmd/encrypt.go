@@ -60,6 +60,7 @@ var encryptCmd = &cobra.Command{
 	},
 }
 
+// init - cobra init function
 func init() {
 	rootCmd.AddCommand(encryptCmd)
 
@@ -77,6 +78,7 @@ func init() {
 	encryptCmd.PersistentFlags().Int(common.EncryptExpiryDaysFlagName, 0, common.EncryptExpiryDaysFlagDescription)
 }
 
+// validateInputEncrypt - function to validate inputs of encrypt
 func validateInputEncrypt(cmd *cobra.Command) (string, string, string, string, string, error) {
 	inputData, err := cmd.Flags().GetString(common.FileInFlagName)
 	if err != nil {
@@ -106,6 +108,7 @@ func validateInputEncrypt(cmd *cobra.Command) (string, string, string, string, s
 	return inputData, osVersion, certPath, privateKeyPath, outputPath, nil
 }
 
+// validateInputEncryptContractExpiry - function to validate input of contract expiry input
 func validateInputEncryptContractExpiry(cmd *cobra.Command) (bool, string, string, string, string, int, error) {
 	contractExpiryFlag, err := cmd.Flags().GetBool(common.EncryptContractExpiryFlagName)
 	if err != nil {
@@ -140,6 +143,7 @@ func validateInputEncryptContractExpiry(cmd *cobra.Command) (bool, string, strin
 	return contractExpiryFlag, caCert, caKey, csrParam, csr, expiryDays, nil
 }
 
+// generateSignedEncryptContract - function to generate signed and encrypted contract
 func generateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKeyPath string) (string, error) {
 	inputData, cert, privateKey, err := commonParameters(inputDataPath, certPath, privateKeyPath)
 	if err != nil {
@@ -154,6 +158,7 @@ func generateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKe
 	return signedEncryptContract, nil
 }
 
+// generateSignedEncryptContractExpiry - function to generated signed and encrypted contract with contract expiry
 func generateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, privateKeyPath, caCertPath, caKeyPath, csrParamPath, csrPath string, expiryDays int) (string, error) {
 
 	inputData, cert, privateKey, err := commonParameters(inputDataPath, certPath, privateKeyPath)
@@ -189,6 +194,7 @@ func generateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, pri
 	return signedEncryptContract, nil
 }
 
+// commonParameters - function to fetch common details
 func commonParameters(inputDataPath, certPath, privateKeyPath string) (string, string, string, error) {
 	if !common.CheckFileFolderExists(inputDataPath) {
 		return "", "", "", fmt.Errorf("the contract path doesn't exist")
@@ -212,6 +218,7 @@ func commonParameters(inputDataPath, certPath, privateKeyPath string) (string, s
 	return inputData, cert, privateKey, nil
 }
 
+// printSignedEncryptContract - function to print signed and encrypted contract or redirect it to a file
 func printSignedEncryptContract(signedEncryptContract, outputPath string) error {
 	if outputPath != "" {
 		err := common.WriteDataToFile(outputPath, signedEncryptContract)

@@ -53,6 +53,7 @@ var base64Cmd = &cobra.Command{
 	},
 }
 
+// init - cobra init function
 func init() {
 	rootCmd.AddCommand(base64Cmd)
 
@@ -61,6 +62,7 @@ func init() {
 	base64Cmd.PersistentFlags().String(common.FileOutFlagName, "", common.Base64OutputPathFlagDescription)
 }
 
+// validateInputBase64 - function to validate base64 command input
 func validateInputBase64(cmd *cobra.Command) (string, string, string, error) {
 	inputData, err := cmd.Flags().GetString(common.FileInFlagName)
 	if err != nil {
@@ -80,6 +82,7 @@ func validateInputBase64(cmd *cobra.Command) (string, string, string, error) {
 	return inputData, formatType, outputPath, nil
 }
 
+// processBase64 - function to process base64 command inputs
 func processBase64(inputData, formatType string) (string, error) {
 	var base64String string
 	var err error
@@ -105,6 +108,7 @@ func processBase64(inputData, formatType string) (string, error) {
 	return base64String, nil
 }
 
+// printBase64 - function to print base64 string or redirect to a file
 func printBase64(base64String, outputPath string) error {
 	if outputPath != "" {
 		err := common.WriteDataToFile(outputPath, base64String)

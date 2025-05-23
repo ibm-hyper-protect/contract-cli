@@ -34,6 +34,7 @@ var (
 	sampleValidBase64TgzEncryptedCommand = []string{common.Base64TgzParamName, "--in", sampleComposeFolderPath, "--output", common.Base64TgzOutputFormatencrypted, "--out", sampleTgzOutputPathEncrypted}
 )
 
+// Testcase to check if base64-tgz is able to generate base64 TGZ of docker-compose.yaml or pods.yaml
 func TestBase64TgzCmdSuccessPlain(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
@@ -46,6 +47,7 @@ func TestBase64TgzCmdSuccessPlain(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+// Testcase to check if base-tgz is able to generated encrypted base64 tgz
 func TestBase64TgzCmdSuccessEncrypted(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)

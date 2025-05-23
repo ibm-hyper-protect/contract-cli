@@ -24,7 +24,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// base64TgzCmd represents the base64Tgz command
+// base64TgzCmd represents the base64-tgz command
 var base64TgzCmd = &cobra.Command{
 	Use:   common.Base64TgzParamName,
 	Short: common.Base64TgzParamShortDescription,
@@ -47,6 +47,7 @@ var base64TgzCmd = &cobra.Command{
 	},
 }
 
+// init - cobra init function
 func init() {
 	rootCmd.AddCommand(base64TgzCmd)
 
@@ -57,6 +58,7 @@ func init() {
 	base64TgzCmd.PersistentFlags().String(common.FileOutFlagName, "", common.Base64TgzOutputPathDescription)
 }
 
+// validateInputBase64Tgz - function to validate base64-tgz inputs
 func validateInputBase64Tgz(cmd *cobra.Command) (string, string, string, string, string, error) {
 	inputData, err := cmd.Flags().GetString(common.FileInFlagName)
 	if err != nil {
@@ -86,6 +88,7 @@ func validateInputBase64Tgz(cmd *cobra.Command) (string, string, string, string,
 	return inputData, outputFormat, hyperProtectVersion, encCertPath, outputPath, nil
 }
 
+// processBase64Tgz - function to process base64-tgz inputs
 func processBase64Tgz(inputData, outputFormat, hyperProtectVersion, encCertPath string) (string, error) {
 	if outputFormat == common.Base64TgzOutputFormatUnencrypted {
 		if !common.CheckFileFolderExists(inputData) {
@@ -115,6 +118,7 @@ func processBase64Tgz(inputData, outputFormat, hyperProtectVersion, encCertPath 
 	}
 }
 
+// printBase64Tgz - function to print base64 tgz or redirect it to a file
 func printBase64Tgz(tarTgzData, outputPath string) error {
 	if outputPath != "" {
 		err := common.WriteDataToFile(outputPath, tarTgzData)

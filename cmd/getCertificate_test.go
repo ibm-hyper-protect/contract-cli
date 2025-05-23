@@ -33,6 +33,7 @@ var (
 	sampleGetCertificateCommand = []string{common.GetCertParamName, "--in", sampleCertificatePath, "--version", sampleCertificateVersion, "--out", sampleCertificateOuputPath}
 )
 
+// Testcase to check if get-certificate is able to fetch encryption certificate from certificate JSON
 func TestGetCertificateCmdSuccess(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
