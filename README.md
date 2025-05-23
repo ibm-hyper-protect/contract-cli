@@ -1,7 +1,9 @@
 # Contract CLI
 
 [![contract-cli CI](https://github.com/ibm-hyper-protect/contract-cli/actions/workflows/build.yaml/badge.svg)](https://github.com/ibm-hyper-protect/contract-cli/actions/workflows/build.yaml)
+[![Latest Release](https://img.shields.io/github/v/release/ibm-hyper-protect/contract-cli?include_prereleases)](https://github.com/ibm-hyper-protect/contract-cli/releases/latest)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ibm-hyper-protect/contract-cli)](https://goreportcard.com/report/ibm-hyper-protect/contract-cli)
+[![GitHub All Releases](https://img.shields.io/github/downloads/ibm-hyper-protect/contract-cli/total.svg)](https://github.com/ibm-hyper-protect/contract-cli/releases/latest)
 
 ## Introduction
 
@@ -14,7 +16,7 @@ For more details on Hyper Protect Virtual Servers for VPC and Hyper Protect Cont
 ## Usage
 
 ```bash
-sashwatk@li-420cce4c-2770-11b2-a85c-81c35d559774 Sashwat-K/contract-cli (main) » ~/Downloads/contract-cli_v1.0.0_linux_amd64 --help           
+$ contract-cli --help
 This tool helps to provision HPVS/RHVS on IBM Cloud and On Prem 
 
 Refer github.com/ibm-hyper-protect/contract-cli for details on features
@@ -61,3 +63,7 @@ Refer [Docs](docs/README.md) for more details on how to leverage this CLI for yo
 - [contract-go](https://github.com/ibm-hyper-protect/contract-go) - Go Library for generating Hyper Protect contracts
 - [terraform-provider-hpcr](https://github.com/ibm-hyper-protect/terraform-provider-hpcr) - Terraform Provider for generating Hyper Protect contracts
 - [k8s-operator-hpcr](https://github.com/ibm-hyper-protect/k8s-operator-hpcr) - Kubernetes operator for generating Hyper Protect contracts
+
+## Contributors
+
+![Contributors](https://contrib.rocks/image?repo=ibm-hyper-protect/contract-cli)
