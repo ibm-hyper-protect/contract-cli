@@ -73,11 +73,6 @@ jobs:
         run: |
           go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
           echo "$HOME/go/bin" >> $GITHUB_PATH
-      
-      # Install upx for compressed executables
-      - name: Install upx
-        run: |
-          sudo apt-get update && sudo apt-get install -y upx
 
       # The dry-run evaluation is only made for non PR events. Manual trigger w/dryRun true, main branch and any tagged branches will set DRY run to false
       - name: Check dry run
