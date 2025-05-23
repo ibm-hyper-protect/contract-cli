@@ -100,7 +100,7 @@ jobs:
       - name: Generate SBOM
         if: env.DRY_RUN != 'true'
         run: |
-          cyclonedx-gomod mod -licenses -json -output build/contract-cli-${{steps.get_tag.outputs.tag}}.sbom.json
+          cyclonedx-gomod mod -licenses -json -output contract-cli-${{steps.get_tag.outputs.tag}}.sbom.json
 
       - name: Build release binaries
         if: env.DRY_RUN != 'true'
@@ -124,7 +124,16 @@ jobs:
               sha256sum "$binary" > "$binary.sha256"
             done
 
-      - name: Upload binaries, sha256 and sbom to GitHub Release
+      - name: Upload SBOM to GitHub Release
+        if: env.DRY_RUN != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: contract-cli-${{steps.get_tag.outputs.tag}}.sbom.json
+          tag_name: ${{steps.get_tag.outputs.tag}}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Upload binaries and sha256 to GitHub Release
         if: env.DRY_RUN != 'true'
         uses: softprops/action-gh-release@v2
         with:
