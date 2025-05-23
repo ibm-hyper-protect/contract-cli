@@ -33,6 +33,7 @@ var (
 	sampleValidCommand = []string{common.DecryptAttestParamName, "--in", sampleEncryptedAttestationFilePath, "--priv", samplePrivateKeyFilePath, "--out", sampleDecryptedAttestationFilePath}
 )
 
+// Testcase to check if decrypt-attestation is able to decrypt attestation
 func TestDecryptAttestationCmdSucess(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)

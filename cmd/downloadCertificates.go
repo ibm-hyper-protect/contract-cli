@@ -29,8 +29,7 @@ const (
 )
 
 var (
-	versions []string
-
+	// downloadCertificatesCmd represents the download-certificate command
 	downloadCertificatesCmd = &cobra.Command{
 		Use:   common.DownloadCertParamName,
 		Short: common.DownloadCertParamShortDescription,
@@ -52,8 +51,11 @@ var (
 			}
 		},
 	}
+
+	versions []string
 )
 
+// init - cobra init function
 func init() {
 	rootCmd.AddCommand(downloadCertificatesCmd)
 
@@ -62,6 +64,7 @@ func init() {
 	downloadCertificatesCmd.PersistentFlags().String(common.FileOutFlagName, "", common.EncryptionCertsFlagDescription)
 }
 
+// validateInputDownloadCertificates - function to validate download-certificate inputs
 func validateInputDownloadCertificates(cmd *cobra.Command) (string, string, error) {
 	formatType, err := cmd.Flags().GetString(common.DataFormatFlagName)
 	if err != nil {
@@ -76,6 +79,7 @@ func validateInputDownloadCertificates(cmd *cobra.Command) (string, string, erro
 	return formatType, certificatePath, nil
 }
 
+// printDownloadCertificates - function to print encryption certificates or redirect output to a file
 func printDownloadCertificates(certificates, certificatePath string) error {
 	if certificatePath != "" {
 		err := common.WriteDataToFile(certificatePath, certificates)

@@ -41,6 +41,7 @@ var (
 	sampleContractExpiryCommand = []string{common.EncryptParamName, "--contract-expiry", "--in", sampleSignEncryptInputPath, "--priv", sampleContractExpiryPrivatePath, "--cacert", sampleContractExpiryCaCertPath, "--cakey", sampleContractExpiryCaKeyPath, "--csr", sampleContractExpiryCsrPath, "--expiry", sampleContractExpiryExpiry, "--out", sampleContractExpiryOutputPath}
 )
 
+// Testcase to check if encrypt is able to generate signed and encrypted contract
 func TestEncryptCmdText(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
@@ -53,6 +54,7 @@ func TestEncryptCmdText(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+// Testcase to check if encrypt is able to generate signed and encrypted contract with contract expiry
 func TestEncryptCmdTextContractExpiry(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)

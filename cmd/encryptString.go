@@ -28,7 +28,7 @@ const (
 	successMessageEncryptString = "Successfully stored encrypted text"
 )
 
-// encryptStringCmd represents the encryptString command
+// encryptStringCmd represents the encrypt-string command
 var encryptStringCmd = &cobra.Command{
 	Use:   common.EncryptStrParamName,
 	Short: common.EncryptStrParamShortDescription,
@@ -51,6 +51,7 @@ var encryptStringCmd = &cobra.Command{
 	},
 }
 
+// init - cobra init function
 func init() {
 	rootCmd.AddCommand(encryptStringCmd)
 
@@ -61,6 +62,7 @@ func init() {
 	encryptStringCmd.PersistentFlags().String(common.FileOutFlagName, "", common.EncryptStrOutputFlagDescription)
 }
 
+// validateInputEncryptString - function to validate encrypt-string inputs
 func validateInputEncryptString(cmd *cobra.Command) (string, string, string, string, string, error) {
 	inputData, err := cmd.Flags().GetString(common.FileInFlagName)
 	if err != nil {
@@ -90,6 +92,7 @@ func validateInputEncryptString(cmd *cobra.Command) (string, string, string, str
 	return inputData, inputFormat, hyperProtectVersion, encCertPath, outputPath, nil
 }
 
+// processEncryptString - function to generate encrypted string of plain or JSON text
 func processEncryptString(inputData, inputFormat, hyperProtectVersion, encCertPath string) (string, error) {
 	encCert, err := common.GetDataFromFile(encCertPath)
 	if err != nil {
@@ -114,6 +117,7 @@ func processEncryptString(inputData, inputFormat, hyperProtectVersion, encCertPa
 	return encryptedString, nil
 }
 
+// printEncrypt - function to print encrypted data or redirect output to a file
 func printEncrypt(outputPath, encryptedString string) error {
 	if outputPath != "" {
 		err := common.WriteDataToFile(outputPath, encryptedString)

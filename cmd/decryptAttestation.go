@@ -29,7 +29,7 @@ const (
 	successMessageDecryptAttestation = "Successfully decrypted attestation records"
 )
 
-// decryptAttestationCmd represents the decryptAttestation command
+// decryptAttestationCmd represents the decrypt-attestation command
 var decryptAttestationCmd = &cobra.Command{
 	Use:   common.DecryptAttestParamName,
 	Short: common.DecryptAttestParamShortDescription,
@@ -52,6 +52,7 @@ var decryptAttestationCmd = &cobra.Command{
 	},
 }
 
+// init - cobra init function
 func init() {
 	rootCmd.AddCommand(decryptAttestationCmd)
 
@@ -60,6 +61,7 @@ func init() {
 	decryptAttestationCmd.PersistentFlags().String(common.FileOutFlagName, "", common.DecryptAttestFlagDescription)
 }
 
+// validateInputDecryptedAttestation - function to validate decrypt-attestation inputs
 func validateInputDecryptedAttestation(cmd *cobra.Command) (string, string, string, error) {
 	encAttestPath, err := cmd.Flags().GetString(common.FileInFlagName)
 	if err != nil {
@@ -79,6 +81,7 @@ func validateInputDecryptedAttestation(cmd *cobra.Command) (string, string, stri
 	return encAttestPath, privateKeyPath, decryptedAttestPath, nil
 }
 
+// decryptAttestationRecords - function to decrypt attestation records
 func decryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath string) (string, error) {
 	if !common.CheckFileFolderExists(encryptedAttestationRecordsPath) || !common.CheckFileFolderExists(privateKeyPath) {
 		log.Fatal("The path to encrypted attestation records file or private key doesn't exists")
@@ -102,6 +105,7 @@ func decryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath s
 	return decryptedAttestationRecords, nil
 }
 
+// printDecryptAttestation - print decrypted attestation records or redirect to a file
 func printDecryptAttestation(decryptedAttestationRecords, decryptedAttestationPath string) error {
 	if decryptedAttestationPath != "" {
 		err := common.WriteDataToFile(decryptedAttestationPath, decryptedAttestationRecords)

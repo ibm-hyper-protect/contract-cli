@@ -104,6 +104,7 @@ func OpensslCheck() error {
 	return nil
 }
 
+// GetPrivateKey - function to get private key from path or generate a new private key
 func GetPrivateKey(privateKeyPath string) (string, error) {
 	var privateKey string
 	var err error
@@ -127,6 +128,7 @@ func GetPrivateKey(privateKeyPath string) (string, error) {
 	return privateKey, nil
 }
 
+// generatePrivateKey - function to generate private key
 func generatePrivateKey() (string, error) {
 	err := OpensslCheck()
 	if err != nil {
@@ -141,6 +143,7 @@ func generatePrivateKey() (string, error) {
 	return privateKey, nil
 }
 
+// GetDataFromFile - function to get data from file
 func GetDataFromFile(certPath string) (string, error) {
 	var encCert string
 	var err error

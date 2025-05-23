@@ -32,6 +32,7 @@ var (
 	sampleValidContractCommand = []string{common.ValidateContractParamName, "--in", sampleValidateContractInput, "--os", sampleValidateContractOsType}
 )
 
+// Testcase to check if validate-contract is able to validate plain contract
 func TestValidateContractCmdSucess(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)

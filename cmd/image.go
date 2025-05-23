@@ -71,6 +71,7 @@ var imageCmd = &cobra.Command{
 	},
 }
 
+// init - cobra init function
 func init() {
 	rootCmd.AddCommand(imageCmd)
 
@@ -80,6 +81,7 @@ func init() {
 	imageCmd.PersistentFlags().String(common.FileOutFlagName, "", common.HpcrImageFlagDescription)
 }
 
+// validateInputImage - function to validate image input
 func validateInputImage(cmd *cobra.Command) (string, string, string, string, error) {
 	imageListJsonPath, err := cmd.Flags().GetString(common.FileInFlagName)
 	if err != nil {
@@ -101,6 +103,7 @@ func validateInputImage(cmd *cobra.Command) (string, string, string, string, err
 	return imageListJsonPath, versionName, formatType, hpcrImagePath, nil
 }
 
+// getImageDetails - function to get HPCR image details from JSON input
 func getImageDetails(imageDetailsJsonPath, versionName string) (ImageDetails, error) {
 	if !common.CheckFileFolderExists(imageDetailsJsonPath) {
 		log.Fatal(invalidImagePathMessage)
@@ -119,6 +122,7 @@ func getImageDetails(imageDetailsJsonPath, versionName string) (ImageDetails, er
 	return ImageDetails{imageId, imageName, imageChecksum, ImageVersion}, nil
 }
 
+// printDataImage - function to print image details or redirect output to a file
 func printDataImage(imageDetail ImageDetails, format string) (string, error) {
 	if format == common.DataFormatJson {
 		imageJson, err := json.MarshalIndent(imageDetail, "", "  ")

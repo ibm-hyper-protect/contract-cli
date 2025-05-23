@@ -39,6 +39,7 @@ var (
 	sampleValidCommandJsonWithoutVersion = []string{common.ImageParamName, "--in", sampleTerraformImageJson, "--format", sampleFormatJson, "--out", sampleImageOutputJson}
 )
 
+// Testcase to check if image is able to get image details from Terraform output
 func TestImageCmdSuccess1(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
@@ -51,6 +52,7 @@ func TestImageCmdSuccess1(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+// Testcase to check if image is able to get image details from IBM Cloud CLI output
 func TestImageCmdSuccess2(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
@@ -63,6 +65,7 @@ func TestImageCmdSuccess2(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+// Testcase to check if image is able to get latest image details
 func TestImageCmdSuccessWithoutVersion(t *testing.T) {
 	// Capture output
 	buf := new(bytes.Buffer)
