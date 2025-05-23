@@ -108,13 +108,13 @@ jobs:
           cyclonedx-gomod mod -licenses -json -output build/contract-cli-${{steps.get_tag.outputs.tag}}.sbom.json
 
       - name: Build release binaries
-        if: env.DRY_RUN != 'false'
+        if: env.DRY_RUN != 'true'
         run: |
           make clean
           make release VERSION=${{steps.get_tag.outputs.tag}} BUILD_DATE="$(date -u)"
       
       - name: Compress executables and generate sha256sum
-        if: env.DRY_RUN != 'false'
+        if: env.DRY_RUN != 'true'
         run: |
             for binary in build/*
             do
