@@ -1,3 +1,9 @@
+## [1.4.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.4.1...v1.4.2) (2025-07-10)
+
+### Bug Fixes
+
+* schema error ([9054198](https://github.com/ibm-hyper-protect/contract-cli/commit/9054198447f186048063514fd3e3c6d3b5eb8b41))
+
 ## [1.4.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.4.0...v1.4.1) (2025-07-10)
 
 ### Bug Fixes
