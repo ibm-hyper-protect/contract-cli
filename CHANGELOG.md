@@ -1,3 +1,14 @@
+## [1.5.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.4.2...v1.5.0) (2025-07-10)
+
+### Features
+
+* add user doc ([7db9d48](https://github.com/ibm-hyper-protect/contract-cli/commit/7db9d485611369cc563808a6bc7ed0ea8e421ece))
+* update contract-go for schema fix ([a155c4f](https://github.com/ibm-hyper-protect/contract-cli/commit/a155c4f6b10f55512bc49e555000b172210fc3d3))
+
+### Miscellaneous Chores
+
+* update documentation ([b5efcce](https://github.com/ibm-hyper-protect/contract-cli/commit/b5efcce714c4251e11f9313eb055f86bd4e6c6c6))
+
 ## [1.4.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.4.1...v1.4.2) (2025-07-10)
 
 ### Bug Fixes
