@@ -7,7 +7,7 @@
 
 ## Introduction
 
-The CLI tool has been developed to automate the process of provisioning HPVS on both IBM Cloud and On Prem. This CLI tool leverages [ibm-hyper-protect/contract-go](https://github.com/ibm-hyper-protect/contract-go) for all the features.
+The CLI tool has been developed to automate the process of provisioning Hyper Protect Virtual Servers (HPVS) and Hyper Protect Container Runtime for RedHat Virtualization Solutions (HPCR RHVS). This CLI tool leverages [ibm-hyper-protect/contract-go](https://github.com/ibm-hyper-protect/contract-go) for all the features.
 
 To download the CLI tool for your respective OS, please refer the [release page](https://github.com/ibm-hyper-protect/contract-cli/releases). 
 
@@ -63,6 +63,9 @@ Refer [Docs](docs/README.md) for more details on how to leverage this CLI for yo
 - [contract-go](https://github.com/ibm-hyper-protect/contract-go) - Go Library for generating Hyper Protect contracts
 - [terraform-provider-hpcr](https://github.com/ibm-hyper-protect/terraform-provider-hpcr) - Terraform Provider for generating Hyper Protect contracts
 - [k8s-operator-hpcr](https://github.com/ibm-hyper-protect/k8s-operator-hpcr) - Kubernetes operator for generating Hyper Protect contracts
+- [linuxone-vsi-automation-samples - hpvs](https://github.com/ibm-hyper-protect/linuxone-vsi-automation-samples/tree/master/terraform-hpvs) - Terraform examples to provision HPVS
+- [linuxone-vsi-automation-samples - hpcr-rhvs](https://github.com/ibm-hyper-protect/linuxone-vsi-automation-samples/tree/master/terraform-hpcr-rhvs) - Terraform examples to provision HPCR RHVS
+- [hyper-protect-virtual-server-samples](https://github.com/ibm-hyper-protect/hyper-protect-virtual-server-samples) - HPVS scripts for different features
 
 ## Contributors
 
