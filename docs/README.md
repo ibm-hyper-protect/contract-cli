@@ -4,6 +4,31 @@
 
 The CLI has been developed to automate the process for generating contracts for provisioning Hyper Protect Virtual Servers for VPC and Hyper Protect Container Runtime.
 
+## Prerequisites
+
+### OPENSSL_BIN (optional)
+
+You can configure the path to the `openssl` binary using the `OPENSSL_BIN` environment variable.
+
+This is useful especially on systems where `openssl` is not available in the system `PATH` (e.g., on Windows).
+
+#### Usage:
+
+Set the `OPENSSL_BIN` environment variable to the full path of your `openssl` executable.
+
+##### On Linux/macOS:
+
+```bash
+export OPENSSL_BIN=/usr/bin/openssl
+```
+
+##### On Windows:
+
+On Windows (PowerShell):
+```powershell
+$env:OPENSSL_BIN="C:\Program Files\OpenSSL-Win64\bin\openssl.exe"
+```
+
 ## Usage
 
 ### Base64
