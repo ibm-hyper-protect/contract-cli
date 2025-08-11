@@ -33,7 +33,7 @@ jobs:
         go-version: ['1.22.x']
     steps:
       # full checkout for semantic-release
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -71,7 +71,7 @@ jobs:
     steps:
       # full checkout for semantic-release
       - name: Full checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
