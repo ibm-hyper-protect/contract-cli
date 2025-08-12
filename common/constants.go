@@ -129,4 +129,10 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	EncryptCsrFlagDescription            = "Path to CSR file"
 	EncryptExpiryDaysFlagName            = "expiry"
 	EncryptExpiryDaysFlagDescription     = "Expiry of the contract in number of days"
+
+	// Validate network-config
+	ValidateNetworkConfigParamName             = "validate-network"
+	ValidateNetworkConfigParamShortDescription = "Validate schema of network-config"
+	ValidateNetworkConfigParamLongDescription  = `Validate schema of network-config YAML file`
+	ValidateNetworkConfigInputFlagDescription  = "Path to network-config file"
 )
