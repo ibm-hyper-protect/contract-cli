@@ -1,3 +1,14 @@
+## [1.5.4](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.5.3...v1.5.4) (2025-08-14)
+
+### Bug Fixes
+
+* **deps:** update go dependencies ([#33](https://github.com/ibm-hyper-protect/contract-cli/issues/33)) ([1fb3f95](https://github.com/ibm-hyper-protect/contract-cli/commit/1fb3f954a56d59c84b08d8ab04fe4387e3b56bac))
+
+### Miscellaneous Chores
+
+* **deps:** update actions/checkout action to v5 ([#31](https://github.com/ibm-hyper-protect/contract-cli/issues/31)) ([c9cee62](https://github.com/ibm-hyper-protect/contract-cli/commit/c9cee624bde5474292df82f2f1bb8dcc5d181d1c))
+* **deps:** update docker.io/library/hello-world docker digest to c3c03e6 ([#32](https://github.com/ibm-hyper-protect/contract-cli/issues/32)) ([9da5f9b](https://github.com/ibm-hyper-protect/contract-cli/commit/9da5f9ba1c98efb090fa171d26879495025e63c6))
+
 ## [1.5.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.5.2...v1.5.3) (2025-07-25)
 
 ### Bug Fixes
