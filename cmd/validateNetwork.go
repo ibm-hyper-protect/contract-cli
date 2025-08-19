@@ -36,7 +36,7 @@ var validateNetworkConfigCmd = &cobra.Command{
 		}
 
 		if !common.CheckFileFolderExists(networkConfigPath) {
-			log.Fatal("The path to networkConfig doesn't exist")
+			log.Fatal("The path to network-config doesn't exist")
 		}
 
 		networkConfigData, err := common.ReadDataFromFile(networkConfigPath)
@@ -48,7 +48,7 @@ var validateNetworkConfigCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("Network Config Validated Successfully")
+		fmt.Println("network-config validated successfully")
 	},
 }
 
