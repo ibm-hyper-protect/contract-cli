@@ -35,6 +35,7 @@ Available Commands:
   help                 Help about any command
   image                Get latest HPCR Image ID from IBM Cloud Image list
   validate-contract    Validate unencrypted contract
+  validate-network     Validate schema of network-config
 
 Flags:
   -h, --help   help for contract-cli
@@ -52,7 +53,8 @@ Use "contract-cli [command] --help" for more information about a command.
 6. Encrypt plain text or JSON data as per Hyper Protect format.
 7. Generate signed and encrypted contract for HPVS (with and without contract expiry).
 8. Get the image details of any available (default to latest) HPVS image in IBM Cloud.
-9. Validate unencrypted contracts for provisioning in HPVS. 
+9. Validate unencrypted contracts for provisioning in HPVS.
+10. Validate schema of network-config (for on-prem environment) for HPVS and HPCR RHVS.
 
 ## Documentation
 

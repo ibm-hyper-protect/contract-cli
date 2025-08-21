@@ -3,12 +3,6 @@ github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lpr
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/ibm-hyper-protect/contract-go v1.13.0 h1:O+bIYEh4Wn+N5wibp+RWrtBf8hygGL+J1KmVkAeVfd0=
-github.com/ibm-hyper-protect/contract-go v1.13.0/go.mod h1:qlZzytwNlmXjPndkktIL1kWHGGVfWgWuPfpaiUuqoUQ=
-github.com/ibm-hyper-protect/contract-go v1.13.1 h1:MvILJLmEIkMCbQXS2O4Kd6xKG3nt2W2+eLoNu75ezjY=
-github.com/ibm-hyper-protect/contract-go v1.13.1/go.mod h1:UxSch2vJsa7jmHYcE+TXM2GUtoqTG6XXGu3D/r/zsaY=
-github.com/ibm-hyper-protect/contract-go v1.13.4 h1:Tega8ovUBTgE9AOMHGqcs8n2HFC5Vfzb5Kr7z6dDVak=
-github.com/ibm-hyper-protect/contract-go v1.13.4/go.mod h1:UxSch2vJsa7jmHYcE+TXM2GUtoqTG6XXGu3D/r/zsaY=
 github.com/ibm-hyper-protect/contract-go v1.13.5 h1:JRnRW90lwTCHsNTFJWJYCaHRvcTrSg79P3BTxg2ipQQ=
 github.com/ibm-hyper-protect/contract-go v1.13.5/go.mod h1:UxSch2vJsa7jmHYcE+TXM2GUtoqTG6XXGu3D/r/zsaY=
 github.com/ibm-hyper-protect/contract-go v1.13.6 h1:yk0VKPF50ddcGtEHwZzhKXtctlS3wTWxDvi0ipY4wh4=

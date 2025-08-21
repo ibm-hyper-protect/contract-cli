@@ -381,3 +381,29 @@ The following is an example to validate a contract.
 ```bash
 $ contract-cli validate-contract --in samples/contract.yaml
 ```
+
+### validate-network
+
+This feature will help to validate if the network-config schema is valid or not schematically.
+
+```bash
+$ contract-cli validate-network --help
+Validate schema of network-config
+
+Usage:
+  contract-cli validate-network [flags]
+
+Flags:
+  -h, --help        help for validate-network
+      --in string   Path to network-config file
+```
+
+To validate a network-config.
+```bash
+$ contract-cli validate-network --in <path-to-network-config>
+```
+
+The following is an example to validate a contract.
+```bash
+$ contract-cli validate-network --in samples/network-config.yaml
+```
