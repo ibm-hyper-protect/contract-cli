@@ -1,3 +1,14 @@
+## [1.6.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.5.4...v1.6.0) (2025-08-21)
+
+### Features
+
+* Message update ([4e096fc](https://github.com/ibm-hyper-protect/contract-cli/commit/4e096fcdb6d8cfe2b182091fec4fb650f3203e9b))
+
+### Miscellaneous Chores
+
+* 1.5.3 [skip ci] ([b11995f](https://github.com/ibm-hyper-protect/contract-cli/commit/b11995f2de0967de8eda44e7d30e15a0aaae1f12))
+* **deps:** update docker.io/library/hello-world docker digest to a0dfb02 ([#34](https://github.com/ibm-hyper-protect/contract-cli/issues/34)) ([e823963](https://github.com/ibm-hyper-protect/contract-cli/commit/e823963489a65ab5eecda28b718f6345c522adcc))
+
 ## [1.5.4](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.5.3...v1.5.4) (2025-08-14)
 
 ### Bug Fixes
