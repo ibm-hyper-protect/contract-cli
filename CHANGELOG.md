@@ -1,3 +1,9 @@
+## [1.6.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.6.0...v1.6.1) (2025-08-24)
+
+### Bug Fixes
+
+* **deps:** update module github.com/stretchr/testify to v1.11.0 ([#35](https://github.com/ibm-hyper-protect/contract-cli/issues/35)) ([d0a8baa](https://github.com/ibm-hyper-protect/contract-cli/commit/d0a8baa15d636cb61ba3c672d10f393bc20a860b))
+
 ## [1.6.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.5.4...v1.6.0) (2025-08-21)
 
 ### Features
