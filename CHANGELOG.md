@@ -1,3 +1,9 @@
+## [1.6.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.6.2...v1.6.3) (2025-08-28)
+
+### Bug Fixes
+
+* **deps:** update go dependencies ([#38](https://github.com/ibm-hyper-protect/contract-cli/issues/38)) ([5d9f32e](https://github.com/ibm-hyper-protect/contract-cli/commit/5d9f32eca278bb5abe29be0c4e68d348870c2e70))
+
 ## [1.6.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.6.1...v1.6.2) (2025-08-25)
 
 ### Bug Fixes
