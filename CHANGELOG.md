@@ -1,3 +1,9 @@
+## [1.6.4](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.6.3...v1.6.4) (2025-09-07)
+
+### Bug Fixes
+
+* **deps:** update module github.com/spf13/cobra to v1.10.1 ([#39](https://github.com/ibm-hyper-protect/contract-cli/issues/39)) ([d79f451](https://github.com/ibm-hyper-protect/contract-cli/commit/d79f451cb2a201821c4a35788779a91f6e2ca147))
+
 ## [1.6.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.6.2...v1.6.3) (2025-08-28)
 
 ### Bug Fixes
