@@ -68,6 +68,12 @@ Refer github.com/ibm-hyper-protect/contract-cli for details on features`
 	EncryptionCertVersionFlagDescription = "Versions of Encryption Certificates to download, Seperated by coma(,)"
 	EncryptionCertsFlagDescription       = "Path to save the encryption certificates"
 
+	// Validate Encryption certificates
+	ValidateCertParamName              = "validate-encryption-certificate"
+	ValidateCertParamShortDescription  = "validate encryption certificate"
+	ValidateCertParamLongDescription   = `validate encryption certificate for HPCR from IBM Hyper Protect Repository`
+	ValidateCertVersionFlagDescription = "Versions of Encryption Certificates to validate, Seperated by coma(,)"
+
 	// Get Encryption Certificate
 	GetCertParamName              = "get-certificate"
 	GetCertParamShortDescription  = "Get version specific encryption certificate from download-certificate JSON ouput"
