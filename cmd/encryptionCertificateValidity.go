@@ -40,7 +40,7 @@ var (
 				log.Fatal(err)
 			}
 
-			_, err = certificate.HpcrEncryptionCertificatesValidation(certificates)
+			_, _, err = certificate.HpcrEncryptionCertificatesValidation(certificates)
 			if err != nil {
 				log.Fatal(err)
 			}
