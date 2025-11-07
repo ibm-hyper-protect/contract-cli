@@ -1,3 +1,16 @@
+## [1.7.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.6.4...v1.7.0) (2025-11-07)
+
+### Features
+
+* fix version error ([875dc0c](https://github.com/ibm-hyper-protect/contract-cli/commit/875dc0c07b3a475abad445dcb966ea0419875c03))
+* update go version ([ecf4c86](https://github.com/ibm-hyper-protect/contract-cli/commit/ecf4c86b3161256928eee86dc8ae23ead817c400))
+
+### Miscellaneous Chores
+
+* **deps:** update actions/setup-node action to v6 ([#43](https://github.com/ibm-hyper-protect/contract-cli/issues/43)) ([6e25275](https://github.com/ibm-hyper-protect/contract-cli/commit/6e252755ad439f2e308c211d87a7a7d186d3e802))
+* **deps:** update docker.io/library/hello-world docker digest to 54e66cc ([#41](https://github.com/ibm-hyper-protect/contract-cli/issues/41)) ([77ee24b](https://github.com/ibm-hyper-protect/contract-cli/commit/77ee24b9b735fc7e65509b25b5ca3be9682950f2))
+* **deps:** update go dependencies ([#40](https://github.com/ibm-hyper-protect/contract-cli/issues/40)) ([1945304](https://github.com/ibm-hyper-protect/contract-cli/commit/194530412f598e67ca40a5e5fe30626e16dc1677))
+
 ## [1.6.4](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.6.3...v1.6.4) (2025-09-07)
 
 ### Bug Fixes
