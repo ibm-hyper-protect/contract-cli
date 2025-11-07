@@ -1,6 +1,6 @@
 module github.com/ibm-hyper-protect/contract-cli
 
-go 1.22.4
+go 1.24.7
 
 require (
 	github.com/ibm-hyper-protect/contract-go v1.13.8
