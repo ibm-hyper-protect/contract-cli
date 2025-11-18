@@ -40,7 +40,8 @@ var getCertificateCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		err = printCertificate(encryptionCertificate, encryptionCertOutputPath)
+		encryption_certificate := encryptionCertificate["encryption_certificate"]
+		err = printCertificate(encryption_certificate, encryptionCertOutputPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -77,19 +78,19 @@ func validateInputGetCertificate(cmd *cobra.Command) (string, string, string, er
 }
 
 // getEncryptionCertificate - function to get encryption certificate
-func getEncryptionCertificate(encryptionCertsPath, version string) (string, error) {
+func getEncryptionCertificate(encryptionCertsPath, version string) (map[string]string, error) {
 	if !common.CheckFileFolderExists(encryptionCertsPath) {
-		return "", fmt.Errorf("the path to encryption certificates doesn't exist")
+		return nil, fmt.Errorf("the path to encryption certificates doesn't exist")
 	}
 
 	encryptionCertsJson, err := common.ReadDataFromFile(encryptionCertsPath)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	_, outputCertificate, err := certificate.HpcrGetEncryptionCertificateFromJson(encryptionCertsJson, version)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	return outputCertificate, nil
