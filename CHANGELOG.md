@@ -1,3 +1,30 @@
+## [1.8.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.7.1...v1.8.0) (2025-12-02)
+
+### Features
+
+* add fmt to makefile ([e982d88](https://github.com/ibm-hyper-protect/contract-cli/commit/e982d88ea458f51d895a2ab07c2f5edc0b400c55))
+* some makefile changes ([c76ee3a](https://github.com/ibm-hyper-protect/contract-cli/commit/c76ee3af3316352f5db1395717f75bd539e1201e))
+* update README with details ([7727621](https://github.com/ibm-hyper-protect/contract-cli/commit/77276214773784cc006f57772615ed3621b68e57))
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go to v1.15.0 ([#49](https://github.com/ibm-hyper-protect/contract-cli/issues/49)) ([749196b](https://github.com/ibm-hyper-protect/contract-cli/commit/749196b015f345c8ec2500f959c26d5cbc29351c))
+
+### Documentation
+
+* update code of conduct, contributing, maintainers and security ([531a226](https://github.com/ibm-hyper-protect/contract-cli/commit/531a2266fb128987c2ed050474eb5f2f79204aa9))
+* update user documentation ([6ae3a7e](https://github.com/ibm-hyper-protect/contract-cli/commit/6ae3a7ef7d2161f90b6fe1a620ece712ba1e51ca))
+
+### Miscellaneous Chores
+
+* **deps:** update actions/checkout action to v6 ([#48](https://github.com/ibm-hyper-protect/contract-cli/issues/48)) ([1388de1](https://github.com/ibm-hyper-protect/contract-cli/commit/1388de1ce91e7c5bc56a629008b3ae4b332aabf2))
+* **deps:** update docker.io/library/hello-world docker digest to f793160 ([#47](https://github.com/ibm-hyper-protect/contract-cli/issues/47)) ([d2b4f2d](https://github.com/ibm-hyper-protect/contract-cli/commit/d2b4f2dfd04702d47ed2f91668ceaa45075c54b0))
+
+### CI/CD updates
+
+* fix github actions bug ([b4af19f](https://github.com/ibm-hyper-protect/contract-cli/commit/b4af19fde32a1706b79cd0cc3f15ac3c4ab85aec))
+* update PR template & add issue templates ([4989ccb](https://github.com/ibm-hyper-protect/contract-cli/commit/4989ccb0e3a19ff3c9cb7062d0738467ca6784e9))
+
 ## [1.7.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.7.0...v1.7.1) (2025-11-07)
 
 ### Bug Fixes
