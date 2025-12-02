@@ -1,0 +1,164 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for contract-cli
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+assignees:
+  - Sashwat-K
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide as much detail as possible to help us understand and evaluate your proposal.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please verify these before submitting your feature request
+      options:
+        - label: I have searched [existing issues](https://github.com/ibm-hyper-protect/contract-cli/issues) to avoid duplicates
+          required: true
+        - label: I have read the [documentation](https://github.com/ibm-hyper-protect/contract-cli/blob/main/docs/README.md)
+          required: true
+        - label: This feature is not already available in the latest version
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: |
+        I'm always frustrated when...
+        It would be helpful if...
+        Currently, there's no way to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see implemented
+      placeholder: |
+        I would like to have a command that...
+        The CLI should support...
+        Add the ability to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or features you've considered
+      placeholder: |
+        Alternative 1: ...
+        Alternative 2: ...
+        Why these don't work: ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What type of feature is this?
+      options:
+        - New command
+        - New flag/option
+        - Performance improvement
+        - Documentation enhancement
+        - User experience improvement
+        - Security enhancement
+        - Platform support
+        - Output format option
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Target Platform
+      description: Which Hyper Protect platform does this feature relate to?
+      options:
+        - HPVS (Hyper Protect Virtual Servers)
+        - HPCR-RHVS (Hyper Protect Container Runtime)
+        - HPCC-PeerPod (Confidential Container Peer Pods)
+        - All platforms
+        - Not platform-specific
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Describe your use case and how this feature would benefit you and others
+      placeholder: |
+        My use case:
+        - I need to...
+        - This would help me...
+        - Other users would benefit because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example CLI Usage
+      description: If applicable, show how you'd like to use this feature
+      render: bash
+      placeholder: |
+        # Example of how the new feature would be used
+        contract-cli new-command \
+          --flag value \
+          --option file.yaml
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Critical - Blocking my work
+        - High - Would significantly improve my workflow
+        - Medium - Nice to have
+        - Low - Minor improvement
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking
+    attributes:
+      label: Breaking Change
+      description: Would this feature introduce breaking changes?
+      options:
+        - "No - Fully backward compatible"
+        - "Yes - Would require CLI changes"
+        - "Maybe - Needs discussion"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or links about the feature request here
+      placeholder: |
+        Related documentation:
+        Similar features in other CLIs:
+        Additional notes:
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Are you willing to help implement this feature?
+      options:
+        - label: I would be willing to submit a PR to implement this feature
+        - label: I can help test this feature once implemented
+        - label: I can help write documentation for this feature

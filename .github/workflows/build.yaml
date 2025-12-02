@@ -14,28 +14,73 @@ on:
         default: 'true'
         required: false
 
-permissions:
-  contents: read
-  id-token: write
-
 env:
   # Currently no way to detect automatically
   DEFAULT_BRANCH: main
   GO_VERSION: 1.24.7 # renovate: datasource=golang-version depName=golang
   NODE_VERSION: 20
-  DRY_RUN: true
 
 jobs:
+  commit-lint:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Validate commit message
+        run: |
+          # Conventional commit regex pattern
+          # Matches: type(optional-scope): description
+          # Valid types from .releaserc: feat, fix, docs, perf, revert, chore, refactor, test, build, ci
+          pattern='^(feat|fix|docs|perf|revert|chore|refactor|test|build|ci)(\([a-z0-9-]+\))?!?: .{1,}'
+
+          # Get the latest commit message (HEAD)
+          commit_sha="${{ github.event.pull_request.head.sha }}"
+          commit_message=$(git log --format=%B -n 1 $commit_sha | head -n 1)
+          short_sha=$(echo $commit_sha | cut -c1-7)
+
+          echo "Checking commit: $short_sha"
+          echo "Message: $commit_message"
+          echo ""
+
+          if ! echo "$commit_message" | grep -qE "$pattern"; then
+            echo "Invalid commit message format!"
+            echo ""
+            echo "Commit: $short_sha"
+            echo "Message: $commit_message"
+            echo ""
+            echo "────────────────────────────────────────"
+            echo "Valid format: <type>(<optional-scope>): <description>"
+            echo ""
+            echo "Allowed types: feat, fix, docs, perf, revert, chore, refactor, test, build, ci"
+            echo ""
+            echo "Examples:"
+            echo "  feat: add new feature"
+            echo "  fix(cli): resolve null pointer exception"
+            echo "  docs: update README"
+            echo "  chore!: breaking change in build process"
+            exit 1
+          fi
+
+          echo "Commit message is valid!"
+
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: ['1.24.x']
+    permissions:
+      contents: read
+      id-token: write
     steps:
       # full checkout for semantic-release
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Cache Go modules
         uses: actions/cache@v4
@@ -47,12 +92,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ matrix.go-version }}
-
-      - name: Tests
+      - name: Run Tests
         run: |
           set -euo pipefail
           make tidy
@@ -69,8 +109,7 @@ jobs:
       pull-requests: write
 
     steps:
-      # full checkout for semantic-release
-      - name: Full checkout
+      - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -93,58 +132,72 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      # Install cyclonedx for SBOM
       - name: Install cyclonedx-gomod
         run: |
           go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
           echo "$HOME/go/bin" >> $GITHUB_PATH
 
-      # The dry-run evaluation is only made for non PR events. Manual trigger w/dryRun true, main branch and any tagged branches will set DRY run to false
-      - name: Check dry run
+      - name: Determine dry run mode
+        id: dry_run
         run: |
-          set -euo pipefail
-          echo "Default DRY_RUN is: $DRY_RUN"
-          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" && "${{ github.event.inputs.dryRun }}" != "true" ]]; then
-              echo "DRY_RUN=false" >> $GITHUB_ENV
-          elif [[ "$GITHUB_REF" == "refs/heads/$DEFAULT_BRANCH" ]]; then
-              echo "DRY_RUN=false" >> $GITHUB_ENV
-          elif [[ "$GITHUB_REF" =~ ^refs/heads/v[0-9]+(\.[0-9]+)?$ ]]; then
-              echo "DRY_RUN=false" >> $GITHUB_ENV
+          dry_run=true
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.dryRun }}" != "true" ]]; then
+            dry_run=false
+          elif [[ "${{ github.ref }}" == "refs/heads/${{ env.DEFAULT_BRANCH }}" ]]; then
+            dry_run=false
+          elif [[ "${{ github.ref }}" =~ ^refs/heads/v[0-9]+(\.[0-9]+)?$ ]]; then
+            dry_run=false
           fi
+          echo "dry_run=$dry_run" >> $GITHUB_OUTPUT
 
       - name: Semantic Release
         run: |
-          npx -p @semantic-release/changelog \
-              -p @semantic-release/git \
-              -p @semantic-release/github \
-              -p conventional-changelog-conventionalcommits \
-              -p semantic-release \
-              semantic-release --dry-run ${{ env.DRY_RUN }}
+          if [[ "${{ steps.dry_run.outputs.dry_run }}" == "true" ]]; then
+            npx -p @semantic-release/changelog \
+                -p @semantic-release/git \
+                -p @semantic-release/github \
+                -p conventional-changelog-conventionalcommits \
+                -p semantic-release \
+                semantic-release --dry-run
+          else
+            npx -p @semantic-release/changelog \
+                -p @semantic-release/git \
+                -p @semantic-release/github \
+                -p conventional-changelog-conventionalcommits \
+                -p semantic-release \
+                semantic-release
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get latest Git tag
         id: get_tag
+        if: steps.dry_run.outputs.dry_run == 'false'
         run: |
-          set -euo pipefail
-          tag=$(git describe --tags --abbrev=0)
+          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$tag" ]; then
+            echo "No tags found in repository"
+            exit 1
+          fi
           echo "tag=$tag" >> $GITHUB_OUTPUT
 
       - name: Generate SBOM
-        if: env.DRY_RUN != 'true'
+        id: generate_sbom
+        if: steps.dry_run.outputs.dry_run == 'false'
         run: |
-          set -euo pipefail
-          cyclonedx-gomod mod -licenses -json -output contract-cli-${{ steps.get_tag.outputs.tag }}.sbom.json
+          sbom_file="contract-cli-${{ steps.get_tag.outputs.tag }}.sbom.json"
+          cyclonedx-gomod mod -licenses -json -output "$sbom_file"
+          echo "sbom_file=$sbom_file" >> $GITHUB_OUTPUT
 
       - name: Build release binaries
-        if: env.DRY_RUN != 'true'
+        if: steps.dry_run.outputs.dry_run == 'false'
         run: |
           set -euo pipefail
           make clean
           make release VERSION=${{ steps.get_tag.outputs.tag }} BUILD_DATE="$(date -u)"
 
       - name: Compress executables and generate sha256sum
-        if: env.DRY_RUN != 'true'
+        if: steps.dry_run.outputs.dry_run == 'false'
         run: |
           set -euo pipefail
           for binary in build/*
@@ -152,7 +205,9 @@ jobs:
             [[ "$(basename "$binary")" == .* ]] && continue
 
             if [[ "$binary" != *darwin* && "$binary" != *windows_arm64* && "$binary" != *s390x* ]]; then
-              upx --best --lzma "$binary"
+              if ! upx --best --lzma "$binary"; then
+                echo "WARNING: UPX compression failed for $binary"
+              fi
             else
               echo "Skipping UPX for binary: $binary"
             fi
@@ -161,16 +216,16 @@ jobs:
           done
 
       - name: Upload SBOM to GitHub Release
-        if: env.DRY_RUN != 'true'
+        if: steps.dry_run.outputs.dry_run == 'false'
         uses: softprops/action-gh-release@v2
         with:
-          files: contract-cli-${{ steps.get_tag.outputs.tag }}.sbom.json
+          files: ${{ steps.generate_sbom.outputs.sbom_file }}
           tag_name: ${{ steps.get_tag.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload binaries and sha256 to GitHub Release
-        if: env.DRY_RUN != 'true'
+        if: steps.dry_run.outputs.dry_run == 'false'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get_tag.outputs.tag }}
