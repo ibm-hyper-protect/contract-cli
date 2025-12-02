@@ -1,0 +1,153 @@
+name: Bug Report
+description: Report a bug or unexpected behavior in contract-cli
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees:
+  - Sashwat-K
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the form below with as much detail as possible to help us investigate and fix the issue.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please verify these before submitting your bug report
+      options:
+        - label: I have searched [existing issues](https://github.com/ibm-hyper-protect/contract-cli/issues) to avoid duplicates
+          required: true
+        - label: I am using the latest version of contract-cli
+          required: true
+        - label: I have read the [documentation](https://github.com/ibm-hyper-protect/contract-cli/blob/main/docs/README.md)
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe the issue you're experiencing...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the behavior
+      placeholder: |
+        1. Run command 'contract-cli ...'
+        2. With flags '...'
+        3. Using input file '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: Describe what you expected to happen...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Describe what actually happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: CLI Command
+      description: Please provide the exact command you ran
+      render: bash
+      placeholder: |
+        contract-cli encrypt \
+          --contract contract.yaml \
+          --key private.pem \
+          --output output.yaml
+    validations:
+      required: true
+
+  - type: textarea
+    id: error
+    attributes:
+      label: Error Message / Output
+      description: If applicable, paste the complete error message or command output
+      render: shell
+      placeholder: Paste error message or output here...
+
+  - type: input
+    id: cli-version
+    attributes:
+      label: CLI Version
+      description: Output of `contract-cli --version`
+      placeholder: "contract-cli version 1.7.0"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      description: What OS are you running on?
+      placeholder: "macOS 14.0, Ubuntu 22.04, Windows 11"
+    validations:
+      required: true
+
+  - type: input
+    id: openssl-version
+    attributes:
+      label: OpenSSL Version
+      description: Output of `openssl version`
+      placeholder: "OpenSSL 3.0.2 15 Mar 2022"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Target Platform
+      description: Which Hyper Protect platform are you targeting?
+      options:
+        - HPVS (Hyper Protect Virtual Servers)
+        - HPCR-RHVS (Hyper Protect Container Runtime)
+        - HPCC-PeerPod (Confidential Container Peer Pods)
+        - Not applicable
+    validations:
+      required: true
+
+  - type: textarea
+    id: input-files
+    attributes:
+      label: Input Files (if applicable)
+      description: If relevant, provide sample input files (contracts, certificates, etc.). **Remove any sensitive data!**
+      render: yaml
+      placeholder: |
+        env: |
+          type: env
+          ...
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here (screenshots, logs, etc.)
+      placeholder: Any additional information that might help us debug this issue...
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Are you willing to help fix this bug?
+      options:
+        - label: I would be willing to submit a PR to fix this bug
