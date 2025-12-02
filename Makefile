@@ -24,6 +24,9 @@ tidy:
 clean:
 	find ./build ! -name '.gitkeep' -type f -delete
 
+fmt:
+	go fmt ./...
+
 build:
 	GOOS=linux GOARCH=amd64 go build -o ${OUTPUT}/${APP_NAME} -ldflags "-X 'main.version=${VERSION}' -X 'main.osName=Linux' -X 'main.osArch=x86_64' -X 'main.buildDate=${BUILD_DATE}'"
 
@@ -37,4 +40,4 @@ release:
 	GOOS=windows GOARCH=amd64   go build -ldflags "-s -w -X 'main.version=${VERSION}' -X 'main.osName=Windows' -X 'main.osArch=x86_64'  -X 'main.buildDate=${BUILD_DATE}'" -o ${OUTPUT}/${APP_NAME}_${VERSION}_windows_amd64.exe
 	GOOS=windows GOARCH=arm64   go build -ldflags "-s -w -X 'main.version=${VERSION}' -X 'main.osName=Windows' -X 'main.osArch=ARM64'   -X 'main.buildDate=${BUILD_DATE}'" -o ${OUTPUT}/${APP_NAME}_${VERSION}_windows_arm64.exe
 
-.PHONY: default install-deps test build release test-cover update-packages tidy clean
+.PHONY: default install-deps test build release test-cover update-packages tidy clean fmt
