@@ -1,409 +1,702 @@
-# Hyper Protect Contract CLI
+# Contract CLI Documentation
+
+Complete command reference and usage guide for the Hyper Protect Contract CLI.
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Command Reference](#command-reference)
+  - [base64](#base64)
+  - [base64-tgz](#base64-tgz)
+  - [decrypt-attestation](#decrypt-attestation)
+  - [download-certificate](#download-certificate)
+  - [encrypt](#encrypt)
+  - [encrypt-string](#encrypt-string)
+  - [get-certificate](#get-certificate)
+  - [image](#image)
+  - [validate-contract](#validate-contract)
+  - [validate-network](#validate-network)
+- [Common Workflows](#common-workflows)
+- [Troubleshooting](#troubleshooting)
+- [Examples](#examples)
 
 ## Introduction
 
-The CLI has been developed to automate the process for generating contracts for provisioning Hyper Protect Virtual Servers for VPC and Hyper Protect Container Runtime.
+The Contract CLI automates the process of generating and managing contracts for provisioning IBM Hyper Protect Virtual Servers (HPVS) for VPC and Hyper Protect Container Runtime (HPCR). It provides a comprehensive set of commands for:
+
+- Generating signed and encrypted contracts
+- Managing encryption certificates
+- Validating contracts and network configurations
+- Handling attestation records
+- Working with container configurations
+
+## Installation
+
+Download the latest release for your platform from the [releases page](https://github.com/ibm-hyper-protect/contract-cli/releases/latest).
+
+### Available Platforms
+
+- **Linux**: amd64, arm64, s390x, ppc64le
+- **macOS**: amd64 (Intel), arm64 (Apple Silicon)
+- **Windows**: amd64, arm64
+
+### Verify Installation
+
+```bash
+# Check version
+contract-cli --version
+
+# View available commands
+contract-cli --help
+```
 
 ## Prerequisites
 
-### OPENSSL_BIN (optional)
+### OpenSSL
 
-You can configure the path to the `openssl` binary using the `OPENSSL_BIN` environment variable.
+OpenSSL is required for all cryptographic operations. The CLI will use the `openssl` binary from your system PATH.
 
-This is useful especially on systems where `openssl` is not available in the system `PATH` (e.g., on Windows).
+**Installation:**
+- **Linux**: `apt-get install openssl` or `yum install openssl`
+- **macOS**: `brew install openssl`
+- **Windows**: [Download OpenSSL](https://slproweb.com/products/Win32OpenSSL.html)
 
-#### Usage:
+### Custom OpenSSL Path (Optional)
 
-Set the `OPENSSL_BIN` environment variable to the full path of your `openssl` executable.
+If OpenSSL is not in your system PATH, configure the `OPENSSL_BIN` environment variable:
 
-##### On Linux/macOS:
-
+**Linux/macOS:**
 ```bash
 export OPENSSL_BIN=/usr/bin/openssl
 ```
 
-##### On Windows:
-
-On Windows (PowerShell):
+**Windows (PowerShell):**
 ```powershell
 $env:OPENSSL_BIN="C:\Program Files\OpenSSL-Win64\bin\openssl.exe"
 ```
 
-## Usage
+## Quick Start
 
-### Base64
-
-This feature will help customer to generate base64 of your plain text or JSON input.
+### Generate a Complete Contract
 
 ```bash
-$ contract-cli base64 --help
-Generate base64 of input text
+# 1. Generate RSA key pair
+openssl genrsa -out private.pem 4096
 
-Usage:
-  contract-cli base64 [flags]
+# 2. Create your contract YAML
+cat > contract.yaml <<EOF
+env: |
+  type: env
+  logging:
+    logRouter:
+      hostname: example.logs.cloud.ibm.com
+      iamApiKey: your-api-key
+workload: |
+  type: workload
+  compose:
+    archive: your-archive
+EOF
 
-Flags:
-      --format string   Format of input data (options: text/json) (default "text")
-  -h, --help            help for base64
-      --in string       Input data that needs to be converted to string
-      --out string      Path to store Base64 output
+# 3. Validate the contract
+contract-cli validate-contract --in contract.yaml --os hpvs
+
+# 4. Generate signed and encrypted contract
+contract-cli encrypt --in contract.yaml --priv private.pem --out encrypted-contract.yaml
 ```
 
-To generate base64 of plain text.
+---
+
+## Command Reference
+
+### base64
+
+Generate Base64-encoded output from plain text or JSON input.
+
+#### Usage
+
 ```bash
-$ contract-cli base64 --in <input-text> --format plain
+contract-cli base64 [flags]
 ```
 
-To generate base64 of JSON data.
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Input data to be encoded |
+| `--format` | string | No | Format of input data: `text` or `json` (default: `text`) |
+| `--out` | string | No | Path to save Base64 output |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Basic text encoding:**
 ```bash
-$ contract-cli base64 --in <input-json-data> --format json
+contract-cli base64 --in "Hello World" --format text
 ```
 
-If you want to redirect the result to a file.
+**JSON encoding:**
 ```bash
-$ contract-cli base64 --in <input-text> --format plain --out <path-to-output-file>
+contract-cli base64 --in '{"type": "workload"}' --format json
 ```
 
-The following is an example to generate base64.
+**Save to file:**
 ```bash
-$ contract-cli base64 --in sampleText --format plain # For plain text
-$ contract-cli base64 --in {"type": "workload"} --format json # For JSON text
+contract-cli base64 --in "Hello World" --format text --out encoded.txt
 ```
 
+---
 
 ### base64-tgz
 
-This feature will help customer to generate base64 tar tgz (plain or encrypted) of `docker-compose.yaml` or `pods.yaml`. The input is the path to the folder where the mentioned files are present.
+Generate Base64-encoded tar.gz archive of `docker-compose.yaml` or `pods.yaml` files. Supports both plain and encrypted output.
+
+#### Usage
 
 ```bash
-$ contract-cli base64-tgz --help
-Generate base64 tar.tgz of folder containing docker-compose.yaml or pods.yaml
-
-Usage:
-  contract-cli base64-tgz [flags]
-
-Flags:
-      --cert string     Path to encryption certificate
-  -h, --help            help for base64-tgz
-      --in string       Path to folder containing docker-compose.yaml or pods.yaml
-      --os string       Hyper Protect OS version (hpvs/hpcr-rhvs)
-      --out string      Path to store the encrypted or encrypted base64 tar tgz
-      --output string   output format (unencrypted or encrypted) (default "plain")
+contract-cli base64-tgz [flags]
 ```
 
-To generate plain base64 tar tgz.
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to folder containing `docker-compose.yaml` or `pods.yaml` |
+| `--output` | string | No | Output type: `plain` or `encrypted` (default: `plain`) |
+| `--cert` | string | No | Path to encryption certificate (for encrypted output) |
+| `--os` | string | No | Hyper Protect OS version: `hpvs` or `hpcr-rhvs` (default: `hpvs`) |
+| `--out` | string | No | Path to save the output |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Plain Base64 archive:**
 ```bash
-$ contract-cli base64-tgz --in <path-to-folder-of-yaml> 
+contract-cli base64-tgz --in ./compose-folder
 ```
 
-To generate plain base64 tar tgz and redirect to a file.
+**Encrypted archive with latest certificate:**
 ```bash
-$ contract-cli base64-tgz --in <path-to-folder-of-yaml> --out <path-to-output-file>
+contract-cli base64-tgz --in ./compose-folder --output encrypted
 ```
 
-To generate encrypted tar tgz with the latest encryption certificate.
+**Encrypted archive with custom certificate:**
 ```bash
-$ contract-cli base64-tgz --in <path-to-folder-of-yaml> --output encrypt
+contract-cli base64-tgz \
+  --in ./compose-folder \
+  --output encrypted \
+  --cert encryption.crt
 ```
 
-To generate encrypted tar tgz with custom encryption certificate.
+**For HPCR-RHVS:**
 ```bash
-$ contract-cli base64-tgz --in <path-to-folder-of-yaml> --output encrypt --cert <path-to-encryption-certificate>
+contract-cli base64-tgz \
+  --in ./pods-folder \
+  --output encrypted \
+  --os hpcr-rhvs
 ```
 
-To generate encrypted tar tgz for hpcr-rhvs.
+**Save to file:**
 ```bash
-$ contract-cli base64-tgz --in <path-to-folder-of-yaml> --output encrypt --os hpcr-rhvs
+contract-cli base64-tgz --in ./compose-folder --out archive.txt
 ```
 
-The following is an example to generate base64 tar tgz.
-```bash
-$ contract-cli base64-tgz --in pods # Generate base64 tar tgz
-```
-
+---
 
 ### decrypt-attestation
 
-This features helps customer to decrypt encrypted attestation records.
+Decrypt encrypted attestation records generated by HPVS/HPCR instances (typically found at `/var/hyperprotect/se-checksums.txt.enc`).
+
+#### Usage
 
 ```bash
-$ contract-cli decrypt-attestation --help
-Decrypt encrypted attestation record generated by HPVS/HPCR-RHVS under /var/hyperprotect/se-checksums.txt.enc
-
-Usage:
-  contract-cli decrypt-attestation [flags]
-
-Flags:
-  -h, --help          help for decrypt-attestation
-      --in string     Path to file that stores encrypted attestation records (default "build/se-checksums.txt.enc")
-      --out string    Path to save the decrypted attestation records
-      --priv string   Path to private key
+contract-cli decrypt-attestation [flags]
 ```
 
-To decrypt an encrypted attestation records.
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to encrypted attestation file |
+| `--priv` | string | Yes | Path to private key used for decryption |
+| `--out` | string | No | Path to save decrypted attestation records |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Decrypt to console:**
 ```bash
-$ contract-cli decrypt-attestation --in <path_to_se-checksums.txt.enc> --priv <path_to_private_key>
+contract-cli decrypt-attestation \
+  --in se-checksums.txt.enc \
+  --priv private.pem
 ```
 
-To decrypt encrypted attestation and redirect the output to a file.
+**Decrypt and save to file:**
 ```bash
-$ contract-cli decrypt-attestation --in <path_to_se-checksums.txt.enc> --priv <path_to_private_key> --out <path-to-output-file>
+contract-cli decrypt-attestation \
+  --in se-checksums.txt.enc \
+  --priv private.pem \
+  --out decrypted-attestation.txt
 ```
 
-The following is an example to decrypt attestation records.
-```bash
-$ contract-cli decrypt-attestation --in se-checksums.txt.enc --priv private.pem
-```
-
+---
 
 ### download-certificate
 
-This feature is used to download encryption certificate from IBM HPVS portal.
+Download encryption certificates from the IBM Hyper Protect Repository.
+
+#### Usage
 
 ```bash
-$ contract-cli download-certificate --help
-Download encryption certificate for HPCR from IBM Hyper Protect Repository
-
-Usage:
-  contract-cli download-certificate [flags]
-
-Flags:
-      --format string     Format in which the data needs to STDOUT or saved in file (default "json")
-  -h, --help              help for download-certificate
-      --out string        Path to save the encryption certificates
-      --version strings   Versions of Encryption Certificates to download, Seperated by coma(,)
+contract-cli download-certificate [flags]
 ```
 
-To download a specific encryption certificate.
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--version` | strings | No | Specific certificate versions to download (comma-separated) |
+| `--format` | string | No | Output format: `json` or `yaml` (default: `json`) |
+| `--out` | string | No | Path to save the certificates |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Download latest certificate:**
 ```bash
-$ contract-cli download-certificate --version <hpcr-version-name>
+contract-cli download-certificate
 ```
 
-To download an encryption certificate and save it to a file
+**Download specific version:**
 ```bash
-$ contract-cli download-certificate --version <hpcr-version-name> --out <path-to-output-file>
+contract-cli download-certificate --version 1.0.23
 ```
 
-The following is an example to download multiple encryption certificate.
+**Download multiple versions:**
 ```bash
-$ contract-cli download-certificate --version 1.0.21,1.0.22,1.0.23
+contract-cli download-certificate --version 1.0.21,1.0.22,1.0.23
 ```
 
+**Save to file in YAML format:**
+```bash
+contract-cli download-certificate \
+  --version 1.0.23 \
+  --format yaml \
+  --out certificates.yaml
+```
+
+---
 
 ### encrypt
 
-This feature is used to generate signed and encrypted contract.
+Generate a signed and encrypted contract for HPVS or HPCR provisioning. Supports optional contract expiry.
+
+#### Usage
 
 ```bash
-$ contract-cli encrypt --help
-Generate signed and encrypted contract
-
-Usage:
-  contract-cli encrypt [flags]
-
-Flags:
-      --cacert string     Path to CA Certificate
-      --cakey string      Path to CA Key
-      --cert string       Path to encryption certificate
-      --contract-expiry   Boolean flag to enable contract expiry
-      --csr string        Path to CSR file
-      --csrParam string   Path to CSR details JSON file
-      --expiry int        Expiry of the contract in number of days
-  -h, --help              help for encrypt
-      --in string         Path to contract
-      --os string         Hyper Protect OS version (hpvs/hpcr-rhvs)
-      --out string        Path to store signed and encrypted contract
-      --priv string       Path to private key
+contract-cli encrypt [flags]
 ```
 
-To generate a signed and encrypted contract with latest encryption certificate.
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to unencrypted contract YAML |
+| `--priv` | string | No* | Path to private key for signing |
+| `--cert` | string | No | Path to encryption certificate (uses latest if not specified) |
+| `--os` | string | No | Hyper Protect OS version: `hpvs` or `hpcr-rhvs` (default: `hpvs`) |
+| `--out` | string | No | Path to save encrypted contract |
+| `--contract-expiry` | bool | No | Enable contract expiry feature |
+| `--cacert` | string | No** | Path to CA certificate (required with expiry) |
+| `--cakey` | string | No** | Path to CA key (required with expiry) |
+| `--csr` | string | No** | Path to CSR file (required with expiry) |
+| `--csrParam` | string | No** | Path to CSR parameters JSON |
+| `--expiry` | int | No** | Contract validity in days (required with expiry) |
+| `-h, --help` | - | No | Display help information |
+
+\* Generated automatically if not provided
+\** Required when `--contract-expiry` is enabled
+
+#### Examples
+
+**Basic encryption:**
 ```bash
-$ contract-cli encrypt --in <path-to-contract> 
+contract-cli encrypt --in contract.yaml --priv private.pem
 ```
 
-To generate a signed and encrypted with custom encryption certificate.
+**With custom certificate:**
 ```bash
-$ contract-cli encrypt --in <path-to-contract> --cert <path-to-encryption-certificate>
+contract-cli encrypt \
+  --in contract.yaml \
+  --priv private.pem \
+  --cert encryption.crt
 ```
 
-To generate a signed and encrypted contract with custom private key.
+**Save to file:**
 ```bash
-$ contract-cli encrypt --in <path-to-contract> --priv <path-to-private-key>
+contract-cli encrypt \
+  --in contract.yaml \
+  --priv private.pem \
+  --out encrypted-contract.yaml
 ```
 
-To generate a signed and encrypted contract with contract expiry.
+**With contract expiry:**
 ```bash
-$ contract-cli encrypt --contract-expiry --in <path-to-contract> --priv <path-to-private-key> --cacert <path-to-ca-cert> --cakey <path-to-ca-key> --csr <path-to-csr-path> --expiry <expiry-number>
+contract-cli encrypt \
+  --contract-expiry \
+  --in contract.yaml \
+  --priv private.pem \
+  --cacert ca.crt \
+  --cakey ca.key \
+  --csr csr.pem \
+  --expiry 90
 ```
 
-The following is an example of generating signed and encrypted contract.
+**For HPCR-RHVS:**
 ```bash
-$ contract-cli encrypt --in samples/contract.yaml --priv samples/contract-expiry/private.pem # Generate signed and encrypted contract
-$ contract-cli encrypt --contract-expiry --in samples/contract.yaml --priv samples/contract-expiry/private.pem --cacert samples/contract-expiry/personal_ca.crt --cakey samples/contract-expiry/personal_ca.pem --csr samples/contract-expiry/csr.pem --expiry 100 # Generate signed and encrypted contract with contract expiry
+contract-cli encrypt \
+  --in contract.yaml \
+  --priv private.pem \
+  --os hpcr-rhvs
 ```
 
+---
 
 ### encrypt-string
 
-This feature will help to generate encrypted string.
+Encrypt strings in Hyper Protect format: `hyper-protect-basic.<encrypted-password>.<encrypted-string>`
+
+#### Usage
 
 ```bash
-$ contract-cli encrypt-string --help
-Encrypt string in format hyper-protect-basic.<encrypted-password>.<encrypted-string>
-
-Usage:
-  contract-cli encrypt-string [flags]
-
-Flags:
-      --cert string     Path to encryption certificate
-      --format string   The input string format (supported: text/json) (default "text")
-  -h, --help            help for encrypt-string
-      --in string       Data to encrypt
-      --os string       Hyper Protect OS version (hpvs/hpcr-rhvs)
-      --out string      Path to store the encrypted data
+contract-cli encrypt-string [flags]
 ```
 
-To generate an encrypted plain text with latest encryption certificate.
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | String data to encrypt |
+| `--format` | string | No | Input format: `text` or `json` (default: `text`) |
+| `--cert` | string | No | Path to encryption certificate (uses latest if not specified) |
+| `--os` | string | No | Hyper Protect OS version: `hpvs` or `hpcr-rhvs` (default: `hpvs`) |
+| `--out` | string | No | Path to save encrypted output |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Encrypt plain text:**
 ```bash
-$ contract-cli encrypt-string --in <sample-string>
+contract-cli encrypt-string --in "my-secret-password"
 ```
 
-To generate and encrypted plain text and redirect the output to file.
+**Encrypt JSON:**
 ```bash
-$ contract-cli encrypt-string --in <sample-string> --out <path-to-output-file>
+contract-cli encrypt-string \
+  --in '{"apiKey": "secret123"}' \
+  --format json
 ```
 
-To generate an encrypted plain text with custom encryption certificate.
+**With custom certificate:**
 ```bash
-$ contract-cli encrypt-string --in <sample-string> --cert <path-to-encryption-certificate>
+contract-cli encrypt-string \
+  --in "my-secret" \
+  --cert encryption.crt
 ```
 
-The following is an example to generate encrypted string.
+**Save to file:**
 ```bash
-$ contract-cli encrypt-string --in sample-workload # Generate encrypted string from plain text
-$ contract-cli encrypt-string --in '{"type":"workload"}' --format json # Generate encrypt string from json input
+contract-cli encrypt-string \
+  --in "my-secret" \
+  --out encrypted-secret.txt
 ```
 
+---
 
 ### get-certificate
 
-This feature will help users to select specific encryption certificate from JSON output of `contract-cli download-certificate`.
+Extract a specific version of encryption certificate from the JSON output of `download-certificate`.
+
+#### Usage
 
 ```bash
-$ contract-cli get-certificate --help
-Get version specific encryption certificate from JSON output of download-certificate
-
-Usage:
-  contract-cli get-certificate [flags]
-
-Flags:
-  -h, --help             help for get-certificate
-      --in string        Path to the saved encryption certificates JSON
-      --out string       Path to store the selected encryption certificate
-      --version string   Encryption certificate version to select
+contract-cli get-certificate [flags]
 ```
 
-To get a specific version.
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to JSON file from `download-certificate` |
+| `--version` | string | Yes | Certificate version to extract |
+| `--out` | string | No | Path to save the extracted certificate |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Extract specific version:**
 ```bash
-$ contract-cli get-certificate --in <path-to-json-output-of-download-certificate> --version <version-number>
+contract-cli get-certificate \
+  --in certificates.json \
+  --version 1.0.23
 ```
 
-The following is an example to select encryption certificate.
+**Save to file:**
 ```bash
-$ contract-cli get-certificate --in samples/certificate/certs.json --version 1.0.21
+contract-cli get-certificate \
+  --in certificates.json \
+  --version 1.0.23 \
+  --out cert-1.0.23.crt
 ```
 
+---
 
 ### image
 
-This feature helps to get Image details of specific version of latest version of HPVS on IBM Cloud from Terraform, CLI or API JSON output.
+Retrieve HPCR image details from IBM Cloud. Parses output from IBM Cloud API, CLI, or Terraform.
+
+#### Usage
 
 ```bash
-$ contract-cli image --help
-Get latest HPCR image ID in IBM Cloud from IBM images JSON output from IBM Cloud API or CLI
-
-Usage:
-  contract-cli image [flags]
-
-Flags:
-      --format string    Format in which the data needs to STDOUT or saved in file (default "json")
-  -h, --help             help for image
-      --in string        Path to Terraform output or CLI or API result of image list
-      --out string       Path to store HPCR image details
-      --version string   Get IBM Cloud Image details of specified HPCR version
+contract-cli image [flags]
 ```
 
-To get image details of latest HPVS image.
+#### Flags
 
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to IBM Cloud images JSON output |
+| `--version` | string | No | Get specific HPCR version (returns latest if not specified) |
+| `--format` | string | No | Output format: `json` or `yaml` (default: `json`) |
+| `--out` | string | No | Path to save image details |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Get latest image:**
 ```bash
-$ contract-cli image --in <path-to-json-file>
+contract-cli image --in ibm-cloud-images.json
 ```
 
-To get image details and store it in a file.
+**Get specific version:**
 ```bash
-$ contract-cli image --in <path-to-json-file> --out <path-to-output-file>
+contract-cli image \
+  --in ibm-cloud-images.json \
+  --version "1.0.23"
 ```
 
-To get image details in YAML format.
+**Output in YAML:**
 ```bash
-$ contract-cli image --in <path-to-json-file> --format yaml
+contract-cli image \
+  --in ibm-cloud-images.json \
+  --format yaml
 ```
 
-The following is an example to get latest image details.
+**Save to file:**
 ```bash
-$ contract-cli image --in samples/images/terraform_image.json
+contract-cli image \
+  --in ibm-cloud-images.json \
+  --out hpcr-image.json
 ```
 
+---
 
 ### validate-contract
 
-This feature will help to validate if the hyper protect contract is valid or not schematically.
+Validate an unencrypted contract against the schema before encryption.
+
+#### Usage
 
 ```bash
-$ contract-cli validate-contract --help                                    
-Validate unencrypted contract with schema
-
-Usage:
-  contract-cli validate-contract [flags]
-
-Flags:
-  -h, --help        help for validate-contract
-      --in string   Path to Hyper Protect encrypted contract contract
-      --os string   Hyper Protect OS version (hpvs/hpcr-rhvs)
+contract-cli validate-contract [flags]
 ```
 
-To validate a contract.
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to unencrypted contract YAML |
+| `--os` | string | No | Hyper Protect OS version: `hpvs` or `hpcr-rhvs` (default: `hpvs`) |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Validate HPVS contract:**
 ```bash
-$ contract-cli validate-contract --in <path-to-contract>
+contract-cli validate-contract --in contract.yaml --os hpvs
 ```
 
-The following is an example to validate a contract.
+**Validate HPCR-RHVS contract:**
 ```bash
-$ contract-cli validate-contract --in samples/contract.yaml
+contract-cli validate-contract --in contract.yaml --os hpcr-rhvs
 ```
+
+---
 
 ### validate-network
 
-This feature will help to validate if the network-config schema is valid or not schematically.
+Validate network configuration schema for on-premise deployments.
+
+#### Usage
 
 ```bash
-$ contract-cli validate-network --help
-Validate schema of network-config
-
-Usage:
-  contract-cli validate-network [flags]
-
-Flags:
-  -h, --help        help for validate-network
-      --in string   Path to network-config file
+contract-cli validate-network [flags]
 ```
 
-To validate a network-config.
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to network-config YAML file |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Validate network configuration:**
 ```bash
-$ contract-cli validate-network --in <path-to-network-config>
+contract-cli validate-network --in network-config.yaml
 ```
 
-The following is an example to validate a contract.
+---
+
+## Common Workflows
+
+### Complete Contract Generation Workflow
+
 ```bash
-$ contract-cli validate-network --in samples/network-config.yaml
+# Step 1: Generate key pair
+openssl genrsa -out private.pem 4096
+
+# Step 2: Download encryption certificate
+contract-cli download-certificate --version 1.0.23 --out certs.json
+contract-cli get-certificate --in certs.json --version 1.0.23 --out cert.crt
+
+# Step 3: Create docker-compose archive
+contract-cli base64-tgz --in ./compose-folder --output encrypted --cert cert.crt --out archive.txt
+
+# Step 4: Create contract YAML (with archive from step 3)
+cat > contract.yaml <<EOF
+env: |
+  type: env
+  logging:
+    logRouter:
+      hostname: logs.example.com
+workload: |
+  type: workload
+  compose:
+    archive: $(cat archive.txt)
+EOF
+
+# Step 5: Validate contract
+contract-cli validate-contract --in contract.yaml --os hpvs
+
+# Step 6: Generate signed and encrypted contract
+contract-cli encrypt --in contract.yaml --priv private.pem --cert cert.crt --out final-contract.yaml
 ```
+
+### Working with Attestation Records
+
+```bash
+# Decrypt attestation from running instance
+contract-cli decrypt-attestation \
+  --in se-checksums.txt.enc \
+  --priv private.pem \
+  --out attestation.txt
+
+# View decrypted attestation
+cat attestation.txt
+```
+
+### Certificate Management
+
+```bash
+# Download all available certificates
+contract-cli download-certificate --out all-certs.json
+
+# Extract specific version
+contract-cli get-certificate \
+  --in all-certs.json \
+  --version 1.0.23 \
+  --out cert-1.0.23.crt
+```
+
+---
+
+## Troubleshooting
+
+### OpenSSL Not Found
+
+**Error:**
+```
+Error: openssl binary not found in PATH
+```
+
+**Solution:**
+- Install OpenSSL for your platform
+- Or set `OPENSSL_BIN` environment variable to the full path of OpenSSL
+
+### Invalid Contract Schema
+
+**Error:**
+```
+Error: contract validation failed
+```
+
+**Solution:**
+- Run `validate-contract` to see specific schema errors
+- Check contract structure matches HPVS/HPCR requirements
+- Ensure all required fields are present
+
+### Certificate Version Not Found
+
+**Error:**
+```
+Error: certificate version not found
+```
+
+**Solution:**
+- Run `download-certificate` without `--version` to see available versions
+- Verify the version number format (e.g., `1.0.23`)
+
+### Permission Denied
+
+**Error:**
+```
+Error: permission denied reading file
+```
+
+**Solution:**
+- Check file permissions: `chmod 600 private.pem`
+- Ensure you have read access to input files
+- Verify output directory is writable
+
+---
+
+## Examples
+
+The [`samples/`](../samples/) directory contains working examples:
+
+- **[Simple Contract](../samples/simple_contract.yaml)** - Basic contract structure
+- **[Contract with Expiry](../samples/contract_expiry.yaml)** - Contract with expiration
+- **[Attestation Records](../samples/attestation/)** - Example attestation files
+- **[Network Configuration](../samples/network/)** - Network config examples
+- **[Docker Compose](../samples/tgz/)** - Compose file examples
+
+---
+
+## Additional Resources
+
+- **[Main README](../README.md)** - Project overview and quick start
+- **[Contributing Guide](../CONTRIBUTING.md)** - How to contribute
+- **[Security Policy](../SECURITY.md)** - Security best practices
+- **[IBM Hyper Protect Documentation](https://www.ibm.com/docs/en/hpvs/2.2.x)** - Official IBM docs
+
+---
+
+**Need Help?**
+
+- [Open an issue](https://github.com/ibm-hyper-protect/contract-cli/issues/new/choose)
+- [Ask a question](https://github.com/ibm-hyper-protect/contract-cli/discussions)
+- Check the [troubleshooting](#troubleshooting) section above
