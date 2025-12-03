@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/base64Tgz"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,8 +30,8 @@ const (
 )
 
 var (
-	sampleValidBase64TgzPlainCommand     = []string{common.Base64TgzParamName, "--in", sampleComposeFolderPath, "--output", common.Base64TgzOutputFormatUnencrypted, "--out", sampleTgzOutputPathPlain}
-	sampleValidBase64TgzEncryptedCommand = []string{common.Base64TgzParamName, "--in", sampleComposeFolderPath, "--output", common.Base64TgzOutputFormatencrypted, "--out", sampleTgzOutputPathEncrypted}
+	sampleValidBase64TgzPlainCommand     = []string{base64Tgz.ParameterName, "--in", sampleComposeFolderPath, "--output", base64Tgz.OutputFormatUnencrypted, "--out", sampleTgzOutputPathPlain}
+	sampleValidBase64TgzEncryptedCommand = []string{base64Tgz.ParameterName, "--in", sampleComposeFolderPath, "--output", base64Tgz.OutputFormatEncrypted, "--out", sampleTgzOutputPathEncrypted}
 )
 
 // Testcase to check if base64-tgz is able to generate base64 TGZ of docker-compose.yaml or pods.yaml
