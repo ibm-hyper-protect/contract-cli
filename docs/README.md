@@ -582,6 +582,33 @@ contract-cli validate-network --in network-config.yaml
 
 ---
 
+
+### validate-encryption-certificate
+
+Validates encryption certificate for on-premise, VPC deployment. It will check encryption certificate validity, ensuring all required fields are present and properly formatted.
+
+#### Usage
+
+```bash
+contract-cli validate-encryption-certificate [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to encryption certificate file |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Validate encryption certifacte configuration:**
+```bash
+contract-cli validate-encryption-certificate --in encryption-cert.crt
+```
+
+---
+
 ## Common Workflows
 
 ### Complete Contract Generation Workflow

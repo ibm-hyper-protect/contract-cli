@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ibm-hyper-protect/contract-go/attestation"
+	"github.com/ibm-hyper-protect/contract-go/v2/attestation"
 	"github.com/spf13/cobra"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"

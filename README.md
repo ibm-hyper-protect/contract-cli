@@ -151,6 +151,14 @@ contract-cli get-certificate \
   --output cert-1.0.0.crt
 ```
 
+### Validate encryption certitifacate
+
+```bash
+# validate downloaded encryption certificate
+contract-cli validate-encryption-certificate \
+  --in encryption-cert.crt
+```
+
 ### Validate a Contract Before Encryption
 
 ```bash
@@ -189,6 +197,7 @@ Available Commands:
   image                Get HPCR image details from IBM Cloud
   validate-contract    Validate contract schema
   validate-network     Validate network configuration schema
+  validate-encryption-certificate validate encryption certificate
 
 Flags:
   -h, --help      help for contract-cli
