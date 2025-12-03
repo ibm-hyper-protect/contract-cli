@@ -1,3 +1,22 @@
+## [1.9.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.8.0...v1.9.0) (2025-12-03)
+
+### Features
+
+* update to latest contract cli version & upgrade makefile ([6c875ce](https://github.com/ibm-hyper-protect/contract-cli/commit/6c875ce7b302c89facdb84333b2f476d66d7e1ab))
+
+### Documentation
+
+* update messages ([5a8de5a](https://github.com/ibm-hyper-protect/contract-cli/commit/5a8de5a51a5c3b9411401c281bbaa21c88f120e6))
+
+### Miscellaneous Chores
+
+* downgrade contract-go version ([2dcaa38](https://github.com/ibm-hyper-protect/contract-cli/commit/2dcaa389dfafee3c71602d897648a6a95aeb1d35))
+
+### CI/CD updates
+
+* fix artifact upload error in GitHub actions ([529e1a5](https://github.com/ibm-hyper-protect/contract-cli/commit/529e1a5b00b19a06bc2df8c71231567f657e0b35))
+* fix Github docs ([e587d0d](https://github.com/ibm-hyper-protect/contract-cli/commit/e587d0d986ec1916ba32b683123b831f96081bfe))
+
 ## [1.8.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.7.1...v1.8.0) (2025-12-02)
 
 ### Features
