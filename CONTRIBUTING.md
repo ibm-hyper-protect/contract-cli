@@ -129,29 +129,36 @@ We actively welcome your pull requests! However, please follow this process:
 
 2. **Make your changes** following our [coding standards](#coding-standards)
 
-3. **Run tests** frequently during development:
+3. **View available make targets**:
    ```bash
-   make test
+   make help
    ```
 
-4. **Build the CLI** to test locally:
+4. **Run tests** frequently during development:
+   ```bash
+   make test
+   # Or simply run the default target
+   make
+   ```
+
+5. **Build the CLI** to test locally:
    ```bash
    make build
    ```
 
-5. **Tidy dependencies**:
+6. **Tidy dependencies**:
    ```bash
    make tidy
    ```
 
-6. **Commit your changes** with [proper commit messages](#commit-messages)
+7. **Commit your changes** with [proper commit messages](#commit-messages)
 
-7. **Push to your fork**:
+8. **Push to your fork**:
    ```bash
    git push origin feature/your-feature-name
    ```
 
-8. **Open a Pull Request** from your fork to the main repository
+9. **Open a Pull Request** from your fork to the main repository
 
 ## Coding Standards
 
@@ -295,10 +302,15 @@ Describe the tests you ran and how to reproduce them
 ### Running Tests
 
 ```bash
-# Run all tests
+# Run all tests (default target)
 make test
+# Or simply
+make
 
 # Run tests with coverage
+make test-cover
+
+# Run tests with custom coverage
 go test -v -race -coverprofile=coverage.out ./...
 
 # Run specific package tests
