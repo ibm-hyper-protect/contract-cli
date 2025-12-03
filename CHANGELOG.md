@@ -1,3 +1,9 @@
+## [1.10.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.9.0...v1.10.0) (2025-12-03)
+
+### Features
+
+* Add functionality to validate encrption certificate ([7f5e493](https://github.com/ibm-hyper-protect/contract-cli/commit/7f5e493ec41066aedeaf97db787d53becc537804))
+
 ## [1.9.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.8.0...v1.9.0) (2025-12-03)
 
 ### Features
