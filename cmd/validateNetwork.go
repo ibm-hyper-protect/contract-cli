@@ -20,7 +20,7 @@ import (
 	"log"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
-	"github.com/ibm-hyper-protect/contract-go/network"
+	"github.com/ibm-hyper-protect/contract-go/v2/network"
 	"github.com/spf13/cobra"
 )
 

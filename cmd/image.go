@@ -21,7 +21,7 @@ import (
 	"log"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
-	"github.com/ibm-hyper-protect/contract-go/image"
+	"github.com/ibm-hyper-protect/contract-go/v2/image"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )

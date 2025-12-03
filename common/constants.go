@@ -170,4 +170,13 @@ enhanced security.`
 Validates network configuration for on-premise deployments, ensuring all required
 fields are present and properly formatted.`
 	ValidateNetworkConfigInputFlagDescription = "Path to network-config YAML file"
+
+	// Validate Encryption certificates
+	ValidateEncryptionCertParamName             = "validate-encryption-certificate"
+	ValidateEncryptionCertParamShortDescription = "validate encryption certificate"
+	ValidateEncryptionCertParamLongDescription  = `validate encryption certificate for HPCR from IBM Hyper Protect Repository
+
+Validates encryption certificate for on-premise, VPC deployment.
+It will check encryption certificate validity`
+	ValidateEncryptionCertVersionFlagDescription = "Versions of Encryption Certificates to validate, Seperated by coma(,)"
 )
