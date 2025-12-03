@@ -164,28 +164,35 @@ contract-cli validate-contract \
 
 ```bash
 $ contract-cli --help
-This tool helps to provision HPVS/RHVS on IBM Cloud and On Prem
+Contract CLI automates contract generation and management for IBM Hyper Protect services.
 
-Refer github.com/ibm-hyper-protect/contract-cli for details on features
+Supports:
+  - Hyper Protect Virtual Servers (HPVS) for VPC
+  - Hyper Protect Container Runtime (HPCR) for RHVS
+  - Hyper Protect Confidential Container (HPCC) Peer Pods
+
+Documentation: https://github.com/ibm-hyper-protect/contract-cli/blob/main/docs/README.md
 
 Usage:
+  contract-cli [flags]
   contract-cli [command]
 
 Available Commands:
-  base64               Generate base64 of input
-  base64-tgz           Generate base64 tar.tgz of docker-compose.yaml or pods.yaml
+  base64               Encode input as Base64
+  base64-tgz           Create Base64 tar archive of container configurations
   decrypt-attestation  Decrypt encrypted attestation records
-  download-certificate Download encryption certificate
+  download-certificate Download encryption certificates
   encrypt              Generate signed and encrypted contract
-  encrypt-string       Encrypt string as per Hyper Protect format
-  get-certificate      Get version specific encryption certificate from download-certificate JSON ouput
+  encrypt-string       Encrypt string in Hyper Protect format
+  get-certificate      Extract specific certificate version from download output
   help                 Help about any command
-  image                Get latest HPCR Image ID from IBM Cloud Image list
-  validate-contract    Validate unencrypted contract
-  validate-network     Validate schema of network-config
+  image                Get HPCR image details from IBM Cloud
+  validate-contract    Validate contract schema
+  validate-network     Validate network configuration schema
 
 Flags:
-  -h, --help   help for contract-cli
+  -h, --help      help for contract-cli
+  -v, --version   version for contract-cli
 
 Use "contract-cli [command] --help" for more information about a command.
 ```
