@@ -202,7 +202,11 @@ jobs:
           set -euo pipefail
           for binary in build/*
           do
+            # Skip hidden files (like .gitkeep)
             [[ "$(basename "$binary")" == .* ]] && continue
+
+            # Skip if not a regular file
+            [[ ! -f "$binary" ]] && continue
 
             if [[ "$binary" != *darwin* && "$binary" != *windows_arm64* && "$binary" != *s390x* ]]; then
               if ! upx --best --lzma "$binary"; then
@@ -214,6 +218,12 @@ jobs:
 
             sha256sum "$binary" > "$binary.sha256"
           done
+
+      - name: Clean up build directory
+        if: steps.dry_run.outputs.dry_run == 'false'
+        run: |
+          # Remove .gitkeep and any other hidden files
+          find build -name ".*" -type f -delete
 
       - name: Upload SBOM to GitHub Release
         if: steps.dry_run.outputs.dry_run == 'false'
