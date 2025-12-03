@@ -93,16 +93,6 @@ for the specified version.`
 	GetCertVersionFlagDescription = "Certificate version to extract (e.g., 1.0.23)"
 	GetCertFileOutFlagDescription = "Path to save extracted encryption certificate"
 
-	// Base64
-	Base64ParamName             = "base64"
-	Base64ParamShortDescription = "Encode input as Base64"
-	Base64ParamLongDescription  = `Encode text or JSON data to Base64 format.
-
-Useful for encoding data that needs to be included in contracts or configurations.`
-	Base64InputFlagDescription       = "Input data to encode (text or JSON)"
-	Base64InputFormatFlagDescription = "Input data format (text or json)"
-	Base64OutputPathFlagDescription  = "Path to save Base64 encoded output"
-
 	// Encrypt String
 	EncryptStrParamName             = "encrypt-string"
 	EncryptStrParamShortDescription = "Encrypt string in Hyper Protect format"
