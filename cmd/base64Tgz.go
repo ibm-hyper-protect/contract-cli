@@ -16,31 +16,29 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
-	"github.com/ibm-hyper-protect/contract-go/v2/contract"
+	"github.com/ibm-hyper-protect/contract-cli/lib/base64Tgz"
 	"github.com/spf13/cobra"
 )
 
 // base64TgzCmd represents the base64-tgz command
 var base64TgzCmd = &cobra.Command{
-	Use:   common.Base64TgzParamName,
-	Short: common.Base64TgzParamShortDescription,
-	Long:  common.Base64TgzParamLongDescription,
+	Use:   base64Tgz.ParameterName,
+	Short: base64Tgz.ParameterShortDescription,
+	Long:  base64Tgz.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputData, outputFormat, hyperProtectVersion, encCert, outputPath, err := validateInputBase64Tgz(cmd)
+		inputData, outputFormat, hyperProtectVersion, encCert, outputPath, err := base64Tgz.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		base64TgzData, err := processBase64Tgz(inputData, outputFormat, hyperProtectVersion, encCert)
+		base64TgzData, err := base64Tgz.Process(inputData, outputFormat, hyperProtectVersion, encCert)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		err = printBase64Tgz(base64TgzData, outputPath)
+		err = base64Tgz.Output(base64TgzData, outputPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -51,84 +49,9 @@ var base64TgzCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(base64TgzCmd)
 
-	base64TgzCmd.PersistentFlags().String(common.FileInFlagName, "", common.Base64TgzInputFlagDescription)
-	base64TgzCmd.PersistentFlags().String(common.Base64TgzOutputFormatFlagName, common.Base64TgzOutputFormatDefault, common.Base64TgzOutputFormatFlagDescription)
-	base64TgzCmd.PersistentFlags().String(common.OsVersionFlagName, "", common.OsVersionFlagDescription)
-	base64TgzCmd.PersistentFlags().String(common.CertFlagName, "", common.CertFlagDescription)
-	base64TgzCmd.PersistentFlags().String(common.FileOutFlagName, "", common.Base64TgzOutputPathDescription)
-}
-
-// validateInputBase64Tgz - function to validate base64-tgz inputs
-func validateInputBase64Tgz(cmd *cobra.Command) (string, string, string, string, string, error) {
-	inputData, err := cmd.Flags().GetString(common.FileInFlagName)
-	if err != nil {
-		return "", "", "", "", "", err
-	}
-
-	outputFormat, err := cmd.Flags().GetString(common.Base64TgzOutputFormatFlagName)
-	if err != nil {
-		return "", "", "", "", "", err
-	}
-
-	hyperProtectVersion, err := cmd.Flags().GetString(common.OsVersionFlagName)
-	if err != nil {
-		return "", "", "", "", "", err
-	}
-
-	encCertPath, err := cmd.Flags().GetString(common.CertFlagName)
-	if err != nil {
-		return "", "", "", "", "", err
-	}
-
-	outputPath, err := cmd.Flags().GetString(common.FileOutFlagName)
-	if err != nil {
-		return "", "", "", "", "", err
-	}
-
-	return inputData, outputFormat, hyperProtectVersion, encCertPath, outputPath, nil
-}
-
-// processBase64Tgz - function to process base64-tgz inputs
-func processBase64Tgz(inputData, outputFormat, hyperProtectVersion, encCertPath string) (string, error) {
-	if outputFormat == common.Base64TgzOutputFormatUnencrypted {
-		if !common.CheckFileFolderExists(inputData) {
-			return "", fmt.Errorf("the path to docker-compose.yaml or pods.yaml is not accessible")
-		}
-
-		base64Data, _, _, err := contract.HpcrTgz(inputData)
-		if err != nil {
-			return "", fmt.Errorf("failed to generate base64 tar - %v", err)
-		}
-
-		return base64Data, nil
-	} else if outputFormat == common.Base64TgzOutputFormatencrypted {
-		encCert, err := common.GetDataFromFile(encCertPath)
-		if err != nil {
-			return "", err
-		}
-
-		encryptedBase64Data, _, _, err := contract.HpcrTgzEncrypted(inputData, hyperProtectVersion, encCert)
-		if err != nil {
-			return "", fmt.Errorf("failed to generate encrypted base64 tar - %v", err)
-		}
-
-		return encryptedBase64Data, nil
-	} else {
-		return "", fmt.Errorf("invalid output format (supported: plain / encrypt)")
-	}
-}
-
-// printBase64Tgz - function to print base64 tgz or redirect it to a file
-func printBase64Tgz(tarTgzData, outputPath string) error {
-	if outputPath != "" {
-		err := common.WriteDataToFile(outputPath, tarTgzData)
-		if err != nil {
-			return err
-		}
-		fmt.Println("Successfully stored tar tgz data")
-	} else {
-		fmt.Println(tarTgzData)
-	}
-
-	return nil
+	base64TgzCmd.PersistentFlags().String(base64Tgz.InputFlagName, "", base64Tgz.InputFlagDescription)
+	base64TgzCmd.PersistentFlags().String(base64Tgz.OutputFormatFlag, base64Tgz.DefaultOutput, base64Tgz.OutputFlagDescription)
+	base64TgzCmd.PersistentFlags().String(base64Tgz.OsVersionFlagName, "", base64Tgz.OsVersionFlagDescription)
+	base64TgzCmd.PersistentFlags().String(base64Tgz.CertFlagName, "", base64Tgz.CertPathDescription)
+	base64TgzCmd.PersistentFlags().String(base64Tgz.OutputFlagName, "", base64Tgz.OutputPathDescription)
 }

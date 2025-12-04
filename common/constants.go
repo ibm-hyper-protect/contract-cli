@@ -93,16 +93,6 @@ for the specified version.`
 	GetCertVersionFlagDescription = "Certificate version to extract (e.g., 1.0.23)"
 	GetCertFileOutFlagDescription = "Path to save extracted encryption certificate"
 
-	// Base64
-	Base64ParamName             = "base64"
-	Base64ParamShortDescription = "Encode input as Base64"
-	Base64ParamLongDescription  = `Encode text or JSON data to Base64 format.
-
-Useful for encoding data that needs to be included in contracts or configurations.`
-	Base64InputFlagDescription       = "Input data to encode (text or JSON)"
-	Base64InputFormatFlagDescription = "Input data format (text or json)"
-	Base64OutputPathFlagDescription  = "Path to save Base64 encoded output"
-
 	// Encrypt String
 	EncryptStrParamName             = "encrypt-string"
 	EncryptStrParamShortDescription = "Encrypt string in Hyper Protect format"
@@ -113,21 +103,6 @@ Use this to encrypt sensitive data like passwords or API keys for contracts.`
 	EncryptStrInputFlagDescription  = "String data to encrypt (text or JSON)"
 	EncryptStrFormatFlagDescription = "Input data format (text or json)"
 	EncryptStrOutputFlagDescription = "Path to save encrypted output"
-
-	// Base64 tar
-	Base64TgzParamName             = "base64-tgz"
-	Base64TgzParamShortDescription = "Create Base64 tar archive of container configurations"
-	Base64TgzParamLongDescription  = `Generate Base64-encoded tar.gz archive of docker-compose.yaml or pods.yaml.
-
-Creates a compressed archive of your container configuration files, encoded as Base64
-for inclusion in Hyper Protect contracts. Supports both plain and encrypted output.`
-	Base64TgzInputFlagDescription        = "Path to folder containing docker-compose.yaml or pods.yaml"
-	Base64TgzOutputFormatFlagName        = "output"
-	Base64TgzOutputFormatFlagDescription = "Output format (plain or encrypted)"
-	Base64TgzOutputFormatUnencrypted     = "plain"
-	Base64TgzOutputFormatencrypted       = "encrypt"
-	Base64TgzOutputFormatDefault         = Base64TgzOutputFormatUnencrypted
-	Base64TgzOutputPathDescription       = "Path to save Base64 tar.gz output"
 
 	// Validate contract
 	ValidateContractParamName             = "validate-contract"
