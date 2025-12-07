@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/image"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,9 +34,9 @@ const (
 )
 
 var (
-	sampleValidCommandJson               = []string{common.ImageParamName, "--in", sampleTerraformImageJson, "--version", sampleVersion, "--format", sampleFormatJson, "--out", sampleImageOutputJson}
-	sampleValidCommandYaml               = []string{common.ImageParamName, "--in", sampleCliImageJson, "--version", sampleVersion, "--format", sampleFormatYaml, "--out", sampleImageOutputYaml}
-	sampleValidCommandJsonWithoutVersion = []string{common.ImageParamName, "--in", sampleTerraformImageJson, "--format", sampleFormatJson, "--out", sampleImageOutputJson}
+	sampleValidCommandJson               = []string{image.ParameterName, "--in", sampleTerraformImageJson, "--version", sampleVersion, "--format", sampleFormatJson, "--out", sampleImageOutputJson}
+	sampleValidCommandYaml               = []string{image.ParameterName, "--in", sampleCliImageJson, "--version", sampleVersion, "--format", sampleFormatYaml, "--out", sampleImageOutputYaml}
+	sampleValidCommandJsonWithoutVersion = []string{image.ParameterName, "--in", sampleTerraformImageJson, "--format", sampleFormatJson, "--out", sampleImageOutputJson}
 )
 
 // Testcase to check if image is able to get image details from Terraform output
