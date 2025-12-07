@@ -16,35 +16,29 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
-	"github.com/ibm-hyper-protect/contract-go/v2/contract"
+	"github.com/ibm-hyper-protect/contract-cli/lib/encryptString"
 	"github.com/spf13/cobra"
-)
-
-const (
-	successMessageEncryptString = "Successfully stored encrypted text"
 )
 
 // encryptStringCmd represents the encrypt-string command
 var encryptStringCmd = &cobra.Command{
-	Use:   common.EncryptStrParamName,
-	Short: common.EncryptStrParamShortDescription,
-	Long:  common.EncryptStrParamLongDescription,
+	Use:   encryptString.ParameterName,
+	Short: encryptString.ParameterShortDescription,
+	Long:  encryptString.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputData, inputFormat, hyperProtectVersion, encCertPath, outputPath, err := validateInputEncryptString(cmd)
+		inputData, inputFormat, hyperProtectVersion, encCertPath, outputPath, err := encryptString.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		encryptedString, err := processEncryptString(inputData, inputFormat, hyperProtectVersion, encCertPath)
+		encryptedString, err := encryptString.Process(inputData, inputFormat, hyperProtectVersion, encCertPath)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		err = printEncrypt(outputPath, encryptedString)
+		err = encryptString.Output(outputPath, encryptedString)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -55,79 +49,9 @@ var encryptStringCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(encryptStringCmd)
 
-	encryptStringCmd.PersistentFlags().String(common.FileInFlagName, "", common.EncryptStrInputFlagDescription)
-	encryptStringCmd.PersistentFlags().String(common.DataFormatFlagName, common.DataFormatText, common.EncryptStrFormatFlagDescription)
-	encryptStringCmd.PersistentFlags().String(common.OsVersionFlagName, "", common.OsVersionFlagDescription)
-	encryptStringCmd.PersistentFlags().String(common.CertFlagName, "", common.CertFlagDescription)
-	encryptStringCmd.PersistentFlags().String(common.FileOutFlagName, "", common.EncryptStrOutputFlagDescription)
-}
-
-// validateInputEncryptString - function to validate encrypt-string inputs
-func validateInputEncryptString(cmd *cobra.Command) (string, string, string, string, string, error) {
-	inputData, err := cmd.Flags().GetString(common.FileInFlagName)
-	if err != nil {
-		return "", "", "", "", "", err
-	}
-
-	inputFormat, err := cmd.Flags().GetString(common.DataFormatFlagName)
-	if err != nil {
-		return "", "", "", "", "", err
-	}
-
-	hyperProtectVersion, err := cmd.Flags().GetString(common.OsVersionFlagName)
-	if err != nil {
-		return "", "", "", "", "", err
-	}
-
-	encCertPath, err := cmd.Flags().GetString(common.CertFlagName)
-	if err != nil {
-		return "", "", "", "", "", err
-	}
-
-	outputPath, err := cmd.Flags().GetString(common.FileOutFlagName)
-	if err != nil {
-		return "", "", "", "", "", err
-	}
-
-	return inputData, inputFormat, hyperProtectVersion, encCertPath, outputPath, nil
-}
-
-// processEncryptString - function to generate encrypted string of plain or JSON text
-func processEncryptString(inputData, inputFormat, hyperProtectVersion, encCertPath string) (string, error) {
-	encCert, err := common.GetDataFromFile(encCertPath)
-	if err != nil {
-		return "", err
-	}
-
-	var encryptedString string
-	if inputFormat == common.DataFormatText {
-		encryptedString, _, _, err = contract.HpcrTextEncrypted(inputData, hyperProtectVersion, encCert)
-		if err != nil {
-			return "", err
-		}
-	} else if inputFormat == common.DataFormatJson {
-		encryptedString, _, _, err = contract.HpcrJsonEncrypted(inputData, hyperProtectVersion, encCert)
-		if err != nil {
-			return "", err
-		}
-	} else {
-		return "", fmt.Errorf("invalid input format")
-	}
-
-	return encryptedString, nil
-}
-
-// printEncrypt - function to print encrypted data or redirect output to a file
-func printEncrypt(outputPath, encryptedString string) error {
-	if outputPath != "" {
-		err := common.WriteDataToFile(outputPath, encryptedString)
-		if err != nil {
-			return err
-		}
-		fmt.Println(successMessageEncryptString)
-	} else {
-		fmt.Println(encryptedString)
-	}
-
-	return nil
+	encryptStringCmd.PersistentFlags().String(encryptString.InputFlagName, "", encryptString.InputFlagDescription)
+	encryptStringCmd.PersistentFlags().String(encryptString.FormatFlag, encryptString.TextFormat, encryptString.FormatFlagDescription)
+	encryptStringCmd.PersistentFlags().String(encryptString.OsVersionFlagName, "", encryptString.OsVersionFlagDescription)
+	encryptStringCmd.PersistentFlags().String(encryptString.CertFlagName, "", encryptString.CertFlagDescription)
+	encryptStringCmd.PersistentFlags().String(encryptString.OutputFlagName, "", encryptString.OutputFlagDescription)
 }

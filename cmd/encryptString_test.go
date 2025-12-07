@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/encryptString"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,8 +32,8 @@ const (
 )
 
 var (
-	sampleEncryptStringValidCommandText = []string{common.EncryptStrParamName, "--in", sampleEncryptStringInput, "--format", common.DataFormatText, "--out", sampleEncryptStringOutputPlain}
-	sampleEncryptStringValidCommandJson = []string{common.EncryptStrParamName, "--in", sampleEncryptStringJson, "--format", common.DataFormatJson, "--out", sampleEncryptStringOutputJson}
+	sampleEncryptStringValidCommandText = []string{encryptString.ParameterName, "--in", sampleEncryptStringInput, "--format", encryptString.TextFormat, "--out", sampleEncryptStringOutputPlain}
+	sampleEncryptStringValidCommandJson = []string{encryptString.ParameterName, "--in", sampleEncryptStringJson, "--format", encryptString.JsonFormat, "--out", sampleEncryptStringOutputJson}
 )
 
 // Testcase to check if encrypt-string is able to generate encrypted string of plain text
