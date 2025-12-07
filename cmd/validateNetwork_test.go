@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/validateNetwork"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,7 +28,7 @@ const (
 )
 
 var (
-	sampleValidNetworkConfigCommand = []string{common.ValidateNetworkConfigParamName, "--in", sampleValidateNetworkConfigInput}
+	sampleValidNetworkConfigCommand = []string{validateNetwork.ParameterName, "--in", sampleValidateNetworkConfigInput}
 )
 
 // Testcase to check if validate-networkconfig is able to validate network-config file

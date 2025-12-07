@@ -186,17 +186,17 @@ Usage:
   contract-cli [command]
 
 Available Commands:
-  base64               Encode input as Base64
-  base64-tgz           Create Base64 tar archive of container configurations
-  decrypt-attestation  Decrypt encrypted attestation records
-  download-certificate Download encryption certificates
-  encrypt              Generate signed and encrypted contract
-  encrypt-string       Encrypt string in Hyper Protect format
-  get-certificate      Extract specific certificate version from download output
-  help                 Help about any command
-  image                Get HPCR image details from IBM Cloud
-  validate-contract    Validate contract schema
-  validate-network     Validate network configuration schema
+  base64                          Encode input as Base64
+  base64-tgz                      Create Base64 tar archive of container configurations
+  decrypt-attestation             Decrypt encrypted attestation records
+  download-certificate            Download encryption certificates
+  encrypt                         Generate signed and encrypted contract
+  encrypt-string                  Encrypt string in Hyper Protect format
+  get-certificate                 Extract specific certificate version from download output
+  help                            Help about any command
+  image                           Get HPCR image details from IBM Cloud
+  validate-contract               Validate contract schema
+  validate-network                Validate network configuration schema
   validate-encryption-certificate validate encryption certificate
 
 Flags:

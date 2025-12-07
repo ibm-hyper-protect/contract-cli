@@ -83,12 +83,12 @@ func Process(inputData, inputFormat, hyperProtectVersion, encCertPath string) (s
 	}
 
 	var encryptedString string
-	if inputFormat == common.DataFormatText {
+	if inputFormat == TextFormat {
 		encryptedString, _, _, err = contract.HpcrTextEncrypted(inputData, hyperProtectVersion, encCert)
 		if err != nil {
 			return "", err
 		}
-	} else if inputFormat == common.DataFormatJson {
+	} else if inputFormat == JsonFormat {
 		encryptedString, _, _, err = contract.HpcrJsonEncrypted(inputData, hyperProtectVersion, encCert)
 		if err != nil {
 			return "", err

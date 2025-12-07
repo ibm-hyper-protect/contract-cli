@@ -16,7 +16,6 @@
 package validateContract
 
 import (
-	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/spf13/cobra"
 )
 
@@ -35,12 +34,12 @@ Helps catch errors early in the development process.`
 
 // ValidateInput - function to validate plain contract
 func ValidateInput(cmd *cobra.Command) (string, string, error) {
-	contract, err := cmd.Flags().GetString(common.FileInFlagName)
+	contract, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
 		return "", "", err
 	}
 
-	version, err := cmd.Flags().GetString(common.OsVersionFlagName)
+	version, err := cmd.Flags().GetString(OsVersionFlagName)
 	if err != nil {
 		return "", "", err
 	}

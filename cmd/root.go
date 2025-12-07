@@ -19,19 +19,19 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/root"
 	"github.com/spf13/cobra"
 )
 
 var (
 	// rootCmd represents the base command when called without any subcommands
 	rootCmd = &cobra.Command{
-		Use:     common.ContractCliName,
-		Short:   common.ContractCliShortDescription,
-		Long:    common.ContractCliLongDescription,
+		Use:     root.ContractCliName,
+		Short:   root.ContractCliShortDescription,
+		Long:    root.ContractCliLongDescription,
 		Version: cliVersion,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("%s version %s %s %s\nRelease: %s\n", common.ContractCliName, cliVersion, cliOsName, cliOsArch, cliBuildDate)
+			fmt.Printf("%s version %s %s %s\nRelease: %s\n", root.ContractCliName, cliVersion, cliOsName, cliOsArch, cliBuildDate)
 		},
 	}
 
