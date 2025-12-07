@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/downloadCertificate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,7 +29,7 @@ const (
 )
 
 var (
-	sampleValidDownloadCertCommand = []string{common.DownloadCertParamName, "--version", "1.0.21,1.0.22", "--format", sampleDownloadCertificateFormat, "--out", sampleEncryptionCertPath}
+	sampleValidDownloadCertCommand = []string{downloadCertificate.ParameterName, "--version", "1.0.21,1.0.22", "--format", sampleDownloadCertificateFormat, "--out", sampleEncryptionCertPath}
 )
 
 // Testcase to check if download-certificate is able to download encryption certificate

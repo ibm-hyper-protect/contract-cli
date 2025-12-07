@@ -43,8 +43,8 @@ Useful for encoding data that needs to be included in contracts or configuration
 	invalidInputMessageBase64 = "invalid input format"
 	successMessageBase64      = "successfully generated Base64"
 
-	DataFormatText = common.DataFormatText
-	DataFormatJSON = common.DataFormatJson
+	TextFormat = "text"
+	JsonFormat = "json"
 )
 
 // ValidateInput - function to validate base64 command input
@@ -76,12 +76,12 @@ func Process(inputData, formatType string) (string, error) {
 		return "", fmt.Errorf(inputMissingMessageBase64)
 	}
 
-	if formatType == DataFormatText {
+	if formatType == TextFormat {
 		base64String, _, _, err = contract.HpcrText(inputData)
 		if err != nil {
 			return "", err
 		}
-	} else if formatType == DataFormatJSON {
+	} else if formatType == JsonFormat {
 		base64String, _, _, err = contract.HpcrJson(inputData)
 		if err != nil {
 			return "", err

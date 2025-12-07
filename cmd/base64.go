@@ -50,6 +50,6 @@ func init() {
 	rootCmd.AddCommand(base64Cmd)
 
 	base64Cmd.PersistentFlags().String(base64.InputFlagName, "", base64.InputFlagDescription)
-	base64Cmd.PersistentFlags().String(base64.FormatFlagName, base64.DataFormatText, base64.FormatFlagDescription)
+	base64Cmd.PersistentFlags().String(base64.FormatFlagName, base64.TextFormat, base64.FormatFlagDescription)
 	base64Cmd.PersistentFlags().String(base64.OutputFlagName, "", base64.OutputFlagDescription)
 }
