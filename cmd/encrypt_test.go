@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/encrypt"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -37,8 +37,8 @@ const (
 )
 
 var (
-	sampleSignEncryptCommand    = []string{common.EncryptParamName, "--in", sampleSignEncryptInputPath, "--priv", sampleSignEncryptPrivatePath, "--out", sampleSignEncryptOutputPath}
-	sampleContractExpiryCommand = []string{common.EncryptParamName, "--contract-expiry", "--in", sampleSignEncryptInputPath, "--priv", sampleContractExpiryPrivatePath, "--cacert", sampleContractExpiryCaCertPath, "--cakey", sampleContractExpiryCaKeyPath, "--csr", sampleContractExpiryCsrPath, "--expiry", sampleContractExpiryExpiry, "--out", sampleContractExpiryOutputPath}
+	sampleSignEncryptCommand    = []string{encrypt.ParameterName, "--in", sampleSignEncryptInputPath, "--priv", sampleSignEncryptPrivatePath, "--out", sampleSignEncryptOutputPath}
+	sampleContractExpiryCommand = []string{encrypt.ParameterName, "--contract-expiry", "--in", sampleSignEncryptInputPath, "--priv", sampleContractExpiryPrivatePath, "--cacert", sampleContractExpiryCaCertPath, "--cakey", sampleContractExpiryCaKeyPath, "--csr", sampleContractExpiryCsrPath, "--expiry", sampleContractExpiryExpiry, "--out", sampleContractExpiryOutputPath}
 )
 
 // Testcase to check if encrypt is able to generate signed and encrypted contract
