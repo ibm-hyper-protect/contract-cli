@@ -22,21 +22,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	// rootCmd represents the base command when called without any subcommands
-	rootCmd = &cobra.Command{
-		Use:   "contract-cli",
-		Short: "A CLI tool for managing IBM Hyper Protect contracts and configurations",
-		Long: `Contract CLI automates contract generation and management for IBM Hyper Protect services.
+const (
+	ToolName             = "contract-cli"
+	ToolShortDescription = "A CLI tool for managing IBM Hyper Protect contracts and configurations"
+	ToolLongDescription  = `Contract CLI automates contract generation and management for IBM Hyper Protect services.
+
 Supports:
   - Hyper Protect Virtual Servers (HPVS) for VPC
   - Hyper Protect Container Runtime (HPCR) for RHVS
   - Hyper Protect Confidential Container (HPCC) Peer Pods
 
-Documentation: https://github.com/ibm-hyper-protect/contract-cli/blob/main/docs/README.md`,
+Documentation: https://github.com/ibm-hyper-protect/contract-cli/blob/main/docs/README.md`
+)
+
+var (
+	// rootCmd represents the base command when called without any subcommands
+	rootCmd = &cobra.Command{
+		Use:     ToolName,
+		Short:   ToolShortDescription,
+		Long:    ToolLongDescription,
 		Version: cliVersion,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("%s version %s %s %s\nRelease: %s\n", "contract-cli", cliVersion, cliOsName, cliOsArch, cliBuildDate)
+			fmt.Printf("%s version %s %s %s\nRelease: %s\n", ToolName, cliVersion, cliOsName, cliOsArch, cliBuildDate)
 		},
 	}
 
