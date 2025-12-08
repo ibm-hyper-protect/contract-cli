@@ -20,17 +20,18 @@ import (
 	"log"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/validateNetwork"
 	"github.com/ibm-hyper-protect/contract-go/v2/network"
 	"github.com/spf13/cobra"
 )
 
 // validateNetworkConfigCmd represents the validate-networkConfig command
 var validateNetworkConfigCmd = &cobra.Command{
-	Use:   common.ValidateNetworkConfigParamName,
-	Short: common.ValidateNetworkConfigParamShortDescription,
-	Long:  common.ValidateNetworkConfigParamLongDescription,
+	Use:   validateNetwork.ParameterName,
+	Short: validateNetwork.ParameterShortDescription,
+	Long:  validateNetwork.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		networkConfigPath, err := validateInputNetworkConfig(cmd)
+		networkConfigPath, err := validateNetwork.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -55,15 +56,5 @@ var validateNetworkConfigCmd = &cobra.Command{
 // init - cobra init function
 func init() {
 	rootCmd.AddCommand(validateNetworkConfigCmd)
-	validateNetworkConfigCmd.PersistentFlags().String(common.FileInFlagName, "", common.ValidateNetworkConfigInputFlagDescription)
-}
-
-// validateInputnetworkConfig - function to get network-config file
-func validateInputNetworkConfig(cmd *cobra.Command) (string, error) {
-	networkConfig, err := cmd.Flags().GetString(common.FileInFlagName)
-	if err != nil {
-		return "", err
-	}
-
-	return networkConfig, nil
+	validateNetworkConfigCmd.PersistentFlags().String(validateNetwork.InputFlagName, "", validateNetwork.InputFlagDescription)
 }

@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/decryptAttestation"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,7 +30,7 @@ const (
 )
 
 var (
-	sampleValidCommand = []string{common.DecryptAttestParamName, "--in", sampleEncryptedAttestationFilePath, "--priv", samplePrivateKeyFilePath, "--out", sampleDecryptedAttestationFilePath}
+	sampleValidCommand = []string{decryptAttestation.ParameterName, "--in", sampleEncryptedAttestationFilePath, "--priv", samplePrivateKeyFilePath, "--out", sampleDecryptedAttestationFilePath}
 )
 
 // Testcase to check if decrypt-attestation is able to decrypt attestation

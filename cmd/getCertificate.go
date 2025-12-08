@@ -16,31 +16,29 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
-	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
+	"github.com/ibm-hyper-protect/contract-cli/lib/getCertificate"
 	"github.com/spf13/cobra"
 )
 
 // getCertificateCmd represents the get-certificate command
 var getCertificateCmd = &cobra.Command{
-	Use:   common.GetCertParamName,
-	Short: common.GetCertParamShortDescription,
-	Long:  common.GetCertParamLongDescription,
+	Use:   getCertificate.ParameterName,
+	Short: getCertificate.ParameterShortDescription,
+	Long:  getCertificate.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		encryptionCertsPath, version, encryptionCertOutputPath, err := validateInputGetCertificate(cmd)
+		encryptionCertsPath, version, encryptionCertOutputPath, err := getCertificate.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		encryptionCertificate, err := getEncryptionCertificate(encryptionCertsPath, version)
+		encryptionCertificate, err := getCertificate.Process(encryptionCertsPath, version)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		err = printCertificate(encryptionCertificate, encryptionCertOutputPath)
+		err = getCertificate.Output(encryptionCertificate, encryptionCertOutputPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -51,61 +49,7 @@ var getCertificateCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(getCertificateCmd)
 
-	getCertificateCmd.PersistentFlags().String(common.FileInFlagName, "", common.GetCertFileInFlagDescription)
-	getCertificateCmd.PersistentFlags().String(common.VersionFlagName, "", common.GetCertVersionFlagDescription)
-	getCertificateCmd.PersistentFlags().String(common.FileOutFlagName, "", common.GetCertFileOutFlagDescription)
-}
-
-// validateInputGetCertificate - function to validate get-certificate input
-func validateInputGetCertificate(cmd *cobra.Command) (string, string, string, error) {
-	encryptionCertsPath, err := cmd.Flags().GetString(common.FileInFlagName)
-	if err != nil {
-		return "", "", "", err
-	}
-
-	version, err := cmd.Flags().GetString(common.VersionFlagName)
-	if err != nil {
-		return "", "", "", err
-	}
-
-	encryptionCertificatePath, err := cmd.Flags().GetString(common.FileOutFlagName)
-	if err != nil {
-		return "", "", "", err
-	}
-
-	return encryptionCertsPath, version, encryptionCertificatePath, nil
-}
-
-// getEncryptionCertificate - function to get encryption certificate
-func getEncryptionCertificate(encryptionCertsPath, version string) (string, error) {
-	if !common.CheckFileFolderExists(encryptionCertsPath) {
-		return "", fmt.Errorf("the path to encryption certificates doesn't exist")
-	}
-
-	encryptionCertsJson, err := common.ReadDataFromFile(encryptionCertsPath)
-	if err != nil {
-		return "", err
-	}
-
-	_, outputCertificate, err := certificate.HpcrGetEncryptionCertificateFromJson(encryptionCertsJson, version)
-	if err != nil {
-		return "", err
-	}
-
-	return outputCertificate, nil
-}
-
-// printCertificate - function to print encryption certificate or redirect it to a file
-func printCertificate(cert, certPath string) error {
-	if certPath != "" {
-		err := common.WriteDataToFile(certPath, cert)
-		if err != nil {
-			return err
-		}
-		fmt.Println("Successfully added encryption certificate ")
-	} else {
-		fmt.Println(cert)
-	}
-
-	return nil
+	getCertificateCmd.PersistentFlags().String(getCertificate.InputFlagName, "", getCertificate.FileInFlagDescription)
+	getCertificateCmd.PersistentFlags().String(getCertificate.VersionFlagName, "", getCertificate.VersionFlagDescription)
+	getCertificateCmd.PersistentFlags().String(getCertificate.OutputFlagName, "", getCertificate.FileOutFlagDescription)
 }

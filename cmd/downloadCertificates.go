@@ -16,26 +16,21 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/downloadCertificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/spf13/cobra"
-)
-
-const (
-	successMessageDownloadCertificate = "Successfully stored certificates"
 )
 
 var (
 	// downloadCertificatesCmd represents the download-certificate command
 	downloadCertificatesCmd = &cobra.Command{
-		Use:   common.DownloadCertParamName,
-		Short: common.DownloadCertParamShortDescription,
-		Long:  common.DownloadCertParamLongDescription,
+		Use:   downloadCertificate.ParameterName,
+		Short: downloadCertificate.ParameterShortDescription,
+		Long:  downloadCertificate.ParameterLongDescription,
 		Run: func(cmd *cobra.Command, args []string) {
-			formatType, certificatePath, err := validateInputDownloadCertificates(cmd)
+			formatType, certificatePath, err := downloadCertificate.ValidateInput(cmd)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -45,7 +40,7 @@ var (
 				log.Fatal(err)
 			}
 
-			err = printDownloadCertificates(certificates, certificatePath)
+			err = downloadCertificate.Output(certificates, certificatePath)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -59,37 +54,7 @@ var (
 func init() {
 	rootCmd.AddCommand(downloadCertificatesCmd)
 
-	downloadCertificatesCmd.PersistentFlags().StringSliceVarP(&versions, common.VersionFlagName, "", []string{}, common.EncryptionCertVersionFlagDescription)
-	downloadCertificatesCmd.PersistentFlags().String(common.DataFormatFlagName, common.DataFormatDefault, common.DataFormatFlagDescription)
-	downloadCertificatesCmd.PersistentFlags().String(common.FileOutFlagName, "", common.EncryptionCertsFlagDescription)
-}
-
-// validateInputDownloadCertificates - function to validate download-certificate inputs
-func validateInputDownloadCertificates(cmd *cobra.Command) (string, string, error) {
-	formatType, err := cmd.Flags().GetString(common.DataFormatFlagName)
-	if err != nil {
-		return "", "", err
-	}
-
-	certificatePath, err := cmd.Flags().GetString(common.FileOutFlagName)
-	if err != nil {
-		return "", "", err
-	}
-
-	return formatType, certificatePath, nil
-}
-
-// printDownloadCertificates - function to print encryption certificates or redirect output to a file
-func printDownloadCertificates(certificates, certificatePath string) error {
-	if certificatePath != "" {
-		err := common.WriteDataToFile(certificatePath, certificates)
-		if err != nil {
-			return err
-		}
-		fmt.Println(successMessageDownloadCertificate)
-	} else {
-		fmt.Println(certificates)
-	}
-
-	return nil
+	downloadCertificatesCmd.PersistentFlags().StringSliceVarP(&versions, downloadCertificate.VersionFlag, "", []string{}, downloadCertificate.EncryptionCertVersionDescription)
+	downloadCertificatesCmd.PersistentFlags().String(downloadCertificate.FormatFlag, downloadCertificate.JsonFormat, downloadCertificate.DataFormatFlag)
+	downloadCertificatesCmd.PersistentFlags().String(downloadCertificate.OutputFlagName, "", downloadCertificate.OutputPathDescription)
 }

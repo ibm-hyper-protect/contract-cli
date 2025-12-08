@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/getCertificate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,7 +30,7 @@ const (
 )
 
 var (
-	sampleGetCertificateCommand = []string{common.GetCertParamName, "--in", sampleCertificatePath, "--version", sampleCertificateVersion, "--out", sampleCertificateOuputPath}
+	sampleGetCertificateCommand = []string{getCertificate.ParameterName, "--in", sampleCertificatePath, "--version", sampleCertificateVersion, "--out", sampleCertificateOuputPath}
 )
 
 // Testcase to check if get-certificate is able to fetch encryption certificate from certificate JSON

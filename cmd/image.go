@@ -16,45 +16,31 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
-	"github.com/ibm-hyper-protect/contract-go/v2/image"
+	"github.com/ibm-hyper-protect/contract-cli/lib/image"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
-)
-
-type ImageDetails struct {
-	Id       string `json:"id"       yaml:"id"`
-	Name     string `json:"name"     yaml:"name"`
-	Checksum string `json:"checksum" yaml:"checksum"`
-	Version  string `json:"version"  yaml:"version"`
-}
-
-const (
-	invalidImagePathMessage = "The Image details path doesn't exists"
-	invalidFormatMessage    = "invalid output format"
 )
 
 // imageCmd represents the image command
 var imageCmd = &cobra.Command{
-	Use:   common.ImageParamName,
-	Short: common.ImageParamShortDescription,
-	Long:  common.ImageParamLongDescription,
+	Use:   image.ParameterName,
+	Short: image.ParameterShortDescription,
+	Long:  image.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		imageListJsonPath, versionName, formatType, hpcrImagePath, err := validateInputImage(cmd)
+		imageListJsonPath, versionName, formatType, hpcrImagePath, err := image.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		imageDetail, err := getImageDetails(imageListJsonPath, versionName)
+		imageDetail, err := image.Process(imageListJsonPath, versionName)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		result, err := printDataImage(imageDetail, formatType)
+		result, err := image.Output(imageDetail, formatType)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -75,68 +61,8 @@ var imageCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(imageCmd)
 
-	imageCmd.PersistentFlags().String(common.FileInFlagName, "", common.IbmCloudJsonInputDescription)
-	imageCmd.PersistentFlags().String(common.VersionFlagName, "", common.HpcrVersionFlagDescription)
-	imageCmd.PersistentFlags().String(common.DataFormatFlagName, common.DataFormatDefault, common.DataFormatFlagDescription)
-	imageCmd.PersistentFlags().String(common.FileOutFlagName, "", common.HpcrImageFlagDescription)
-}
-
-// validateInputImage - function to validate image input
-func validateInputImage(cmd *cobra.Command) (string, string, string, string, error) {
-	imageListJsonPath, err := cmd.Flags().GetString(common.FileInFlagName)
-	if err != nil {
-		return "", "", "", "", err
-	}
-	versionName, err := cmd.Flags().GetString(common.VersionFlagName)
-	if err != nil {
-		return "", "", "", "", err
-	}
-	formatType, err := cmd.Flags().GetString(common.DataFormatFlagName)
-	if err != nil {
-		return "", "", "", "", err
-	}
-	hpcrImagePath, err := cmd.Flags().GetString(common.FileOutFlagName)
-	if err != nil {
-		return "", "", "", "", err
-	}
-
-	return imageListJsonPath, versionName, formatType, hpcrImagePath, nil
-}
-
-// getImageDetails - function to get HPCR image details from JSON input
-func getImageDetails(imageDetailsJsonPath, versionName string) (ImageDetails, error) {
-	if !common.CheckFileFolderExists(imageDetailsJsonPath) {
-		log.Fatal(invalidImagePathMessage)
-	}
-
-	imageDataJson, err := common.ReadDataFromFile(imageDetailsJsonPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	imageId, imageName, imageChecksum, ImageVersion, err := image.HpcrSelectImage(imageDataJson, versionName)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return ImageDetails{imageId, imageName, imageChecksum, ImageVersion}, nil
-}
-
-// printDataImage - function to print image details or redirect output to a file
-func printDataImage(imageDetail ImageDetails, format string) (string, error) {
-	if format == common.DataFormatJson {
-		imageJson, err := json.MarshalIndent(imageDetail, "", "  ")
-		if err != nil {
-			return "", err
-		}
-		return string(imageJson), nil
-	} else if format == common.DataFormatYaml {
-		imageYaml, err := yaml.Marshal(imageDetail)
-		if err != nil {
-			return "", err
-		}
-		return string(imageYaml), nil
-	} else {
-		return "", fmt.Errorf(invalidFormatMessage)
-	}
+	imageCmd.PersistentFlags().String(image.InputFlagName, "", image.IbmCloudJsonInputDescription)
+	imageCmd.PersistentFlags().String(image.VersionFlagName, "", image.HpcrVersionFlagDescription)
+	imageCmd.PersistentFlags().String(image.FormatFlag, image.JsonFormat, image.DataFormatFlagDescription)
+	imageCmd.PersistentFlags().String(image.OutputFlagName, "", image.OutputFlagDescription)
 }

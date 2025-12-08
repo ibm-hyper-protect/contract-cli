@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/validateEncryptionCertificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/spf13/cobra"
 )
@@ -27,16 +27,16 @@ import (
 var (
 	// validateEncryptionCertificateCmd represents the encryption certificate validity command
 	validateEncryptionCertificateCmd = &cobra.Command{
-		Use:   common.ValidateEncryptionCertParamName,
-		Short: common.ValidateEncryptionCertParamShortDescription,
-		Long:  common.ValidateEncryptionCertParamLongDescription,
+		Use:   validateEncryptionCertificate.ParameterName,
+		Short: validateEncryptionCertificate.ParameterShortDescription,
+		Long:  validateEncryptionCertificate.ParameterLongDescription,
 		Run: func(cmd *cobra.Command, args []string) {
-			encryptionCertsPath, err := validateInputEncryptionCertificates(cmd)
+			encryptionCertsPath, err := validateEncryptionCertificate.ValidateInput(cmd)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			encryptionCert, _ := validateEncryptionCertfile(encryptionCertsPath)
+			encryptionCert, _ := validateEncryptionCertificate.GetEncryptionCertfile(encryptionCertsPath)
 
 			msg, err := certificate.HpcrValidateEncryptionCertificate(encryptionCert)
 			if err != nil {
@@ -51,28 +51,5 @@ var (
 func init() {
 	rootCmd.AddCommand(validateEncryptionCertificateCmd)
 
-	validateEncryptionCertificateCmd.PersistentFlags().String(common.FileInFlagName, "", common.ValidateEncryptionCertVersionFlagDescription)
-}
-
-// validateInputEncryptionCertificates - function to validate validate encryption certificate input
-func validateInputEncryptionCertificates(cmd *cobra.Command) (string, error) {
-	encryptionCertsPath, err := cmd.Flags().GetString(common.FileInFlagName)
-	if err != nil {
-		return "", err
-	}
-
-	return encryptionCertsPath, nil
-}
-
-func validateEncryptionCertfile(encryptionCertsPath string) (string, error) {
-	if !common.CheckFileFolderExists(encryptionCertsPath) {
-		return "", fmt.Errorf("The specified path does not contain the encryption certificates.")
-	}
-
-	encryptionCert, err := common.ReadDataFromFile(encryptionCertsPath)
-	if err != nil {
-		return "", err
-	}
-
-	return encryptionCert, nil
+	validateEncryptionCertificateCmd.PersistentFlags().String(validateEncryptionCertificate.InputFlagName, "", validateEncryptionCertificate.CertVersionFlagDescription)
 }

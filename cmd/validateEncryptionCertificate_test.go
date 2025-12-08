@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/validateEncryptionCertificate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,7 +29,7 @@ const (
 )
 
 var (
-	sampleValidEncryptionCertificateCommand = []string{common.ValidateEncryptionCertParamName, "--in", sampleEncryptionCertificate}
+	sampleValidEncryptionCertificateCommand = []string{validateEncryptionCertificate.ParameterName, "--in", sampleEncryptionCertificate}
 )
 
 // Testcase to check if validate-encryption-certificate is able to validate encryption certificate

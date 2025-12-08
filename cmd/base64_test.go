@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/base64"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,8 +30,8 @@ const (
 )
 
 var (
-	sampleValidBase64Command     = []string{common.Base64ParamName, "--in", sampleBase64InputText, "--out", sampleBase64OutputPath}
-	sampleValidBase64JsonCommand = []string{common.Base64ParamName, "--in", sampleBase64InputJson, "--format", common.DataFormatJson, "--out", sampleBase64OutputPath}
+	sampleValidBase64Command     = []string{base64.ParameterName, "--in", sampleBase64InputText, "--out", sampleBase64OutputPath}
+	sampleValidBase64JsonCommand = []string{base64.ParameterName, "--in", sampleBase64InputJson, "--format", base64.JsonFormat, "--out", sampleBase64OutputPath}
 )
 
 // Testcase to check if base64 command is working with plain text

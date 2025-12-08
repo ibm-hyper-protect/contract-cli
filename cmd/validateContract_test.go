@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/validateContract"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,7 +29,7 @@ const (
 )
 
 var (
-	sampleValidContractCommand = []string{common.ValidateContractParamName, "--in", sampleValidateContractInput, "--os", sampleValidateContractOsType}
+	sampleValidContractCommand = []string{validateContract.ParameterName, "--in", sampleValidateContractInput, "--os", sampleValidateContractOsType}
 )
 
 // Testcase to check if validate-contract is able to validate plain contract
