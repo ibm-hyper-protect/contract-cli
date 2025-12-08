@@ -196,8 +196,8 @@ Available Commands:
   help                            Help about any command
   image                           Get HPCR image details from IBM Cloud
   validate-contract               Validate contract schema
-  validate-network                Validate network configuration schema
   validate-encryption-certificate validate encryption certificate
+  validate-network                Validate network configuration schema
 
 Flags:
   -h, --help      help for contract-cli
