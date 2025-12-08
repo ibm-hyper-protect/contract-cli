@@ -1,3 +1,26 @@
+## [1.11.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.10.2...v1.11.0) (2025-12-08)
+
+### Features
+
+* moved base64 logic to lib folder ([223e2bc](https://github.com/ibm-hyper-protect/contract-cli/commit/223e2bcf97ae1b80c963b184fee6b49cf2ce0ca7))
+* update structure of base64Tgz ([101dcda](https://github.com/ibm-hyper-protect/contract-cli/commit/101dcda8f463c04d6119653870e14f543f54b4e3))
+
+### Code Refactoring
+
+* addressing review comments ([bb6b1b8](https://github.com/ibm-hyper-protect/contract-cli/commit/bb6b1b87e87a23e129160ee0d33a334b1d188e2d))
+* change to add code refactor in PR description ([e308580](https://github.com/ibm-hyper-protect/contract-cli/commit/e308580be329de0f17cedb5ba1beca526e002954))
+* decrypt attestation section ([dc1c38a](https://github.com/ibm-hyper-protect/contract-cli/commit/dc1c38ac433d45c12ba09b2a8e1cb1f62c78c90a))
+* download certificate section ([b2d3171](https://github.com/ibm-hyper-protect/contract-cli/commit/b2d317118cdfe3ca53b9ab87587a450444ffc7bd))
+* encrypt section ([cad5c95](https://github.com/ibm-hyper-protect/contract-cli/commit/cad5c95cd93244115aa12363ee9e69efff08531d))
+* encrypt string section ([33a30ce](https://github.com/ibm-hyper-protect/contract-cli/commit/33a30ceab6b1ec10834245923da4160c57d27e23))
+* get certificate section ([858fd93](https://github.com/ibm-hyper-protect/contract-cli/commit/858fd93aab2e2259d50ede82d25e0fe39fa94b62))
+* image section ([6f91476](https://github.com/ibm-hyper-protect/contract-cli/commit/6f91476d7e380f683e10f1ec7969f045262fd83b))
+* update variable to camelcase ([7701cd0](https://github.com/ibm-hyper-protect/contract-cli/commit/7701cd01bd7231d4ad1ac4fcf6ebef719196d4f3))
+* updated variable name in root section ([c861bda](https://github.com/ibm-hyper-protect/contract-cli/commit/c861bda338375017e6cd066207e30e63a33b424b))
+* validate contract section ([29a3c79](https://github.com/ibm-hyper-protect/contract-cli/commit/29a3c79db7d3588079cecfa459207921874c7654))
+* validate encryption certificate ([dbfe5e5](https://github.com/ibm-hyper-protect/contract-cli/commit/dbfe5e5f5b409b33700ffc6e75f4ef21593eb8e3))
+* validate network section and removing constant.go file ([44a3aab](https://github.com/ibm-hyper-protect/contract-cli/commit/44a3aab8395f14e4d4aac46f3fc759f165753e2c))
+
 ## [1.10.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.10.1...v1.10.2) (2025-12-05)
 
 ### Bug Fixes
