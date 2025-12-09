@@ -21,6 +21,10 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 // CheckFileFolderExists - function to check if file or folder exists
@@ -158,4 +162,30 @@ func GetDataFromFile(certPath string) (string, error) {
 	}
 
 	return encCert, nil
+}
+
+func SetCustomHelpTemplate(cmd *cobra.Command, requiredFlags map[string]bool) {
+	cmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
+		fmt.Println("Usage:")
+		fmt.Printf("  %s [flags]\n\n", cmd.CommandPath())
+		maxLen := 0
+		cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
+			if len(f.Name) > maxLen {
+				maxLen = len(f.Name)
+			}
+		})
+		printFlags := func(mandatory bool) {
+			cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
+				if requiredFlags[f.Name] != mandatory {
+					return
+				}
+				padding := maxLen - len(f.Name) + 2
+				fmt.Printf("  --%s%s%s\n", f.Name, strings.Repeat(" ", padding), f.Usage)
+			})
+		}
+		fmt.Println("Mandatory Flags:")
+		printFlags(true)
+		fmt.Println("\nOptional Flags:")
+		printFlags(false)
+	})
 }

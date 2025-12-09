@@ -18,6 +18,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-cli/lib/base64"
 	"github.com/spf13/cobra"
 )
@@ -49,7 +50,12 @@ var base64Cmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(base64Cmd)
 
+	requiredFlags := map[string]bool{
+		"in": true,
+	}
+
 	base64Cmd.PersistentFlags().String(base64.InputFlagName, "", base64.InputFlagDescription)
 	base64Cmd.PersistentFlags().String(base64.FormatFlagName, base64.TextFormat, base64.FormatFlagDescription)
 	base64Cmd.PersistentFlags().String(base64.OutputFlagName, "", base64.OutputFlagDescription)
+	common.SetCustomHelpTemplate(base64Cmd, requiredFlags)
 }
