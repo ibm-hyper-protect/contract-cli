@@ -1,3 +1,9 @@
+## [1.11.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.11.0...v1.11.1) (2025-12-09)
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.3.0 ([#60](https://github.com/ibm-hyper-protect/contract-cli/issues/60)) ([5613a4a](https://github.com/ibm-hyper-protect/contract-cli/commit/5613a4a22b6cd5d3d0d9977582ff8a42fe41b15b))
+
 ## [1.11.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.10.2...v1.11.0) (2025-12-08)
 
 ### Features
