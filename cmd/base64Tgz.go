@@ -18,6 +18,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-cli/lib/base64Tgz"
 	"github.com/spf13/cobra"
 )
@@ -49,9 +50,13 @@ var base64TgzCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(base64TgzCmd)
 
+	requiredFlags := map[string]bool{
+		"in": true,
+	}
 	base64TgzCmd.PersistentFlags().String(base64Tgz.InputFlagName, "", base64Tgz.InputFlagDescription)
 	base64TgzCmd.PersistentFlags().String(base64Tgz.OutputFormatFlag, base64Tgz.DefaultOutput, base64Tgz.OutputFlagDescription)
 	base64TgzCmd.PersistentFlags().String(base64Tgz.OsVersionFlagName, "", base64Tgz.OsVersionFlagDescription)
 	base64TgzCmd.PersistentFlags().String(base64Tgz.CertFlagName, "", base64Tgz.CertPathDescription)
 	base64TgzCmd.PersistentFlags().String(base64Tgz.OutputFlagName, "", base64Tgz.OutputPathDescription)
+	common.SetCustomHelpTemplate(base64TgzCmd, requiredFlags)
 }
