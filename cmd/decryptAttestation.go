@@ -18,6 +18,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-cli/lib/decryptAttestation"
 	"github.com/spf13/cobra"
 )
@@ -49,7 +50,12 @@ var decryptAttestationCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(decryptAttestationCmd)
 
+	requiredFlags := map[string]bool{
+		"in":   true,
+		"priv": true,
+	}
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.InputFlagName, decryptAttestation.DecryptAttestFileInDefaultPath, decryptAttestation.DecryptAttestFileInDescription)
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.PrivateKeyFlagName, "", decryptAttestation.PrivateKeyFlagDescription)
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.OutputFlagName, "", decryptAttestation.DecryptAttestFlagDescription)
+	common.SetCustomHelpTemplate(decryptAttestationCmd, requiredFlags)
 }

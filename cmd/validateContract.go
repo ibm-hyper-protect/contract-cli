@@ -57,6 +57,10 @@ var validateContractCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(validateContractCmd)
 
+	requiredFlags := map[string]bool{
+		"in": true,
+	}
 	validateContractCmd.PersistentFlags().String(validateContract.InputFlagName, "", validateContract.InputFlagDescription)
 	validateContractCmd.PersistentFlags().String(validateContract.OsVersionFlagName, "", validateContract.OsVersionFlagDescription)
+	common.SetCustomHelpTemplate(validateContractCmd, requiredFlags)
 }

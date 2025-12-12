@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-cli/lib/validateEncryptionCertificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/spf13/cobra"
@@ -51,5 +52,9 @@ var (
 func init() {
 	rootCmd.AddCommand(validateEncryptionCertificateCmd)
 
+	requiredFlags := map[string]bool{
+		"in": true,
+	}
 	validateEncryptionCertificateCmd.PersistentFlags().String(validateEncryptionCertificate.InputFlagName, "", validateEncryptionCertificate.CertVersionFlagDescription)
+	common.SetCustomHelpTemplate(validateEncryptionCertificateCmd, requiredFlags)
 }

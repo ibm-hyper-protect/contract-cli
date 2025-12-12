@@ -16,8 +16,11 @@
 package common
 
 import (
+	"bytes"
+	"strings"
 	"testing"
 
+	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -123,4 +126,67 @@ func TestGetDataFromFileWithoutData(t *testing.T) {
 	}
 
 	assert.Empty(t, result)
+}
+
+// Testcase to verify that SetCustomHelpTemplate() prints the help message for 'contract-cli --help' in the correct format.
+func TestSetCustomHelpTemplate(t *testing.T) {
+	testCmd := &cobra.Command{
+		Use: "testcmd",
+	}
+
+	testCmd.Flags().String("required1", "", "Required flag 1")
+	testCmd.Flags().String("optional1", "", "Optional flag 1")
+
+	requiredFlags := map[string]bool{
+		"required1": true,
+	}
+
+	var buf bytes.Buffer
+	testCmd.SetOut(&buf)
+	testCmd.SetErr(&buf)
+
+	testCmd.SetIn(strings.NewReader(""))
+	SetCustomHelpTemplate(testCmd, requiredFlags)
+
+	testCmd.SetArgs([]string{"--help"})
+	_ = testCmd.Execute()
+
+	output := buf.String()
+	if output == "" {
+		t.Fatalf("contract cli --help is empty")
+	}
+
+	if !strings.Contains(output, "Usage:") {
+		t.Fatalf("Expected 'Usage:' in help output, got:\n%s", output)
+	}
+
+	if !strings.Contains(output, "Mandatory Flags:") {
+		t.Errorf("expected Mandatory Flags section, got: %s", output)
+	}
+
+	if !strings.Contains(output, "Optional Flags:") {
+		t.Errorf("expected Optional Flags section, got: %s", output)
+	}
+
+	mandatoryIdx := strings.Index(output, "Mandatory Flags:")
+	requiredIdx := strings.Index(output, "--required1")
+
+	if !(mandatoryIdx < requiredIdx && requiredIdx != -1) {
+		t.Errorf("required flag not found under Mandatory Flags")
+	}
+
+	optionalIdx := strings.Index(output, "--optional1")
+	optionalSectionIdx := strings.Index(output, "Optional Flags:")
+
+	if !(optionalSectionIdx < optionalIdx && optionalIdx != -1) {
+		t.Errorf("optional flag not found under Optional Flags")
+	}
+
+	if !strings.Contains(output, "Required flag 1") {
+		t.Errorf("missing usage text for required1 flag")
+	}
+
+	if !strings.Contains(output, "Optional flag 1") {
+		t.Errorf("missing usage text for optional1 flag")
+	}
 }

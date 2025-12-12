@@ -18,6 +18,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-cli/lib/getCertificate"
 	"github.com/spf13/cobra"
 )
@@ -49,7 +50,12 @@ var getCertificateCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(getCertificateCmd)
 
+	requiredFlags := map[string]bool{
+		"in":      true,
+		"version": true,
+	}
 	getCertificateCmd.PersistentFlags().String(getCertificate.InputFlagName, "", getCertificate.FileInFlagDescription)
 	getCertificateCmd.PersistentFlags().String(getCertificate.VersionFlagName, "", getCertificate.VersionFlagDescription)
 	getCertificateCmd.PersistentFlags().String(getCertificate.OutputFlagName, "", getCertificate.FileOutFlagDescription)
+	common.SetCustomHelpTemplate(getCertificateCmd, requiredFlags)
 }

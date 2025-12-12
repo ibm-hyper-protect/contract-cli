@@ -61,8 +61,12 @@ var imageCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(imageCmd)
 
+	requiredFlags := map[string]bool{
+		"in": true,
+	}
 	imageCmd.PersistentFlags().String(image.InputFlagName, "", image.IbmCloudJsonInputDescription)
 	imageCmd.PersistentFlags().String(image.VersionFlagName, "", image.HpcrVersionFlagDescription)
 	imageCmd.PersistentFlags().String(image.FormatFlag, image.JsonFormat, image.DataFormatFlagDescription)
 	imageCmd.PersistentFlags().String(image.OutputFlagName, "", image.OutputFlagDescription)
+	common.SetCustomHelpTemplate(imageCmd, requiredFlags)
 }
