@@ -1,3 +1,14 @@
+## [1.12.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.11.3...v1.12.0) (2025-12-19)
+
+### Features
+
+* Add required flag section in downloadCertificates ([c1258a4](https://github.com/ibm-hyper-protect/contract-cli/commit/c1258a4dbd2d623d6c2a0dd209e22ec68f091a11))
+* Add support to display mandatory and optional flags separately in CLI help ([1b5f3ce](https://github.com/ibm-hyper-protect/contract-cli/commit/1b5f3cef6fb4dfeb752df66a3537234ce21d7702))
+* Add support to display mandatory/optional flag for all commands ([24ff5c3](https://github.com/ibm-hyper-protect/contract-cli/commit/24ff5c3360bf2a0100bf7c2bc3108ea46905b4c8))
+* Add testcase to check format of contract-cli --help command ([e0405a7](https://github.com/ibm-hyper-protect/contract-cli/commit/e0405a7a249074b46ba26d3f3c3ef0c787d054a3))
+* update contract-go version to latest ([79d548b](https://github.com/ibm-hyper-protect/contract-cli/commit/79d548bf8345939ab5dd5c39d5757d4893915819))
+* updating version flag value to Yes ([d775a2d](https://github.com/ibm-hyper-protect/contract-cli/commit/d775a2df7010609c3b5557b58e7882ceed0be8de))
+
 ## [1.11.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.11.2...v1.11.3) (2025-12-13)
 
 ### Bug Fixes
