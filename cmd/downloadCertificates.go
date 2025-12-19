@@ -18,6 +18,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-cli/lib/downloadCertificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/spf13/cobra"
@@ -54,7 +55,11 @@ var (
 func init() {
 	rootCmd.AddCommand(downloadCertificatesCmd)
 
+	requiredFlags := map[string]bool{
+		"version": true,
+	}
 	downloadCertificatesCmd.PersistentFlags().StringSliceVarP(&versions, downloadCertificate.VersionFlag, "", []string{}, downloadCertificate.EncryptionCertVersionDescription)
 	downloadCertificatesCmd.PersistentFlags().String(downloadCertificate.FormatFlag, downloadCertificate.JsonFormat, downloadCertificate.DataFormatFlag)
 	downloadCertificatesCmd.PersistentFlags().String(downloadCertificate.OutputFlagName, "", downloadCertificate.OutputPathDescription)
+	common.SetCustomHelpTemplate(downloadCertificatesCmd, requiredFlags)
 }

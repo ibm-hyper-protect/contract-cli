@@ -18,6 +18,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-cli/lib/encryptString"
 	"github.com/spf13/cobra"
 )
@@ -49,9 +50,13 @@ var encryptStringCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(encryptStringCmd)
 
+	requiredFlags := map[string]bool{
+		"in": true,
+	}
 	encryptStringCmd.PersistentFlags().String(encryptString.InputFlagName, "", encryptString.InputFlagDescription)
 	encryptStringCmd.PersistentFlags().String(encryptString.FormatFlag, encryptString.TextFormat, encryptString.FormatFlagDescription)
 	encryptStringCmd.PersistentFlags().String(encryptString.OsVersionFlagName, "", encryptString.OsVersionFlagDescription)
 	encryptStringCmd.PersistentFlags().String(encryptString.CertFlagName, "", encryptString.CertFlagDescription)
 	encryptStringCmd.PersistentFlags().String(encryptString.OutputFlagName, "", encryptString.OutputFlagDescription)
+	common.SetCustomHelpTemplate(encryptStringCmd, requiredFlags)
 }

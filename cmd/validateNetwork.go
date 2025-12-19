@@ -56,5 +56,10 @@ var validateNetworkConfigCmd = &cobra.Command{
 // init - cobra init function
 func init() {
 	rootCmd.AddCommand(validateNetworkConfigCmd)
+
+	requiredFlags := map[string]bool{
+		"in": true,
+	}
 	validateNetworkConfigCmd.PersistentFlags().String(validateNetwork.InputFlagName, "", validateNetwork.InputFlagDescription)
+	common.SetCustomHelpTemplate(validateNetworkConfigCmd, requiredFlags)
 }
