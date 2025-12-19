@@ -265,7 +265,7 @@ contract-cli download-certificate [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--version` | strings | No | Specific certificate versions to download (comma-separated, e.g., 1.0.21,1.0.22) |
+| `--version` | strings | Yes | Specific certificate versions to download (comma-separated, e.g., 1.0.21,1.0.22) |
 | `--format` | string | No | Output format for data (json, yaml, or text) |
 | `--out` | string | No | Path to save downloaded encryption certificates |
 | `-h, --help` | - | No | Display help information |
