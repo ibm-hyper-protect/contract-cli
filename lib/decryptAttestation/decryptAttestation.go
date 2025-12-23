@@ -18,6 +18,7 @@ package decryptAttestation
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-go/v2/attestation"
@@ -32,7 +33,6 @@ const (
 Attestation records are typically found at /var/hyperprotect/se-checksums.txt.enc
 and contain cryptographic hashes for verifying workload integrity.`
 
-	DecryptAttestFileInDefaultPath   = "build/se-checksums.txt.enc"
 	DecryptAttestFileInDescription   = "Path to encrypted attestation file (se-checksums.txt.enc)"
 	DecryptAttestFlagDescription     = "Path to save decrypted attestation records"
 	successMessageDecryptAttestation = "Successfully decrypted attestation records"
@@ -59,13 +59,35 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 		return "", "", "", err
 	}
 
+	requiredFlags := map[string]string{
+		"--in":   encAttestPath,
+		"--priv": privateKeyPath,
+	}
+
+	var missing []string
+	for flag, val := range requiredFlags {
+		if val == "" {
+			missing = append(missing, flag)
+		}
+	}
+
+	if len(missing) > 0 {
+		return "", "", "", fmt.Errorf(
+			"Error: required flag(s) missing: %s. Use --help for more information.",
+			strings.Join(missing, ", "),
+		)
+	}
+
 	return encAttestPath, privateKeyPath, decryptedAttestPath, nil
 }
 
 // DecryptAttestationRecords - function to decrypt attestation records
 func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath string) (string, error) {
-	if !common.CheckFileFolderExists(encryptedAttestationRecordsPath) || !common.CheckFileFolderExists(privateKeyPath) {
-		log.Fatal("The path to encrypted attestation records file or private key doesn't exists")
+	if !common.CheckFileFolderExists(encryptedAttestationRecordsPath) {
+		log.Fatal("The path to encrypted attestation records file doesn't exists")
+	}
+	if !common.CheckFileFolderExists(privateKeyPath) {
+		log.Fatal("The path to private key doesn't exists")
 	}
 
 	encryptedChecksum, err := common.ReadDataFromFile(encryptedAttestationRecordsPath)
