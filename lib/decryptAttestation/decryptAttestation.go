@@ -72,8 +72,9 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 	}
 
 	if len(missing) > 0 {
+		_ = cmd.Help()
 		return "", "", "", fmt.Errorf(
-			"Error: required flag(s) missing: %s. Use --help for more information.",
+			"Error: required flag(s) %s missing.",
 			strings.Join(missing, ", "),
 		)
 	}
