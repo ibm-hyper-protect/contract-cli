@@ -73,10 +73,17 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 
 	if len(missing) > 0 {
 		_ = cmd.Help()
-		return "", "", "", fmt.Errorf(
-			"Error: required flag(s) %s missing.",
-			strings.Join(missing, ", "),
-		)
+		if len(missing) == 1 {
+			return "", "", "", fmt.Errorf(
+				"Error: required flag %s is missing.",
+				strings.Join(missing, ", "),
+			)
+		} else {
+			return "", "", "", fmt.Errorf(
+				"Error: required flag %s are missing.",
+				strings.Join(missing, ", "),
+			)
+		}
 	}
 
 	return encAttestPath, privateKeyPath, decryptedAttestPath, nil
