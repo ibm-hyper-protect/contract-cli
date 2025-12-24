@@ -31,7 +31,7 @@ var (
 		Short: downloadCertificate.ParameterShortDescription,
 		Long:  downloadCertificate.ParameterLongDescription,
 		Run: func(cmd *cobra.Command, args []string) {
-			formatType, certificatePath, err := downloadCertificate.ValidateInput(cmd)
+			formatType, certificatePath, err := downloadCertificate.ValidateInput(cmd, versions)
 			if err != nil {
 				log.Fatal(err)
 			}

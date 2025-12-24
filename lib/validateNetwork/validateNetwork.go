@@ -16,6 +16,8 @@
 package validateNetwork
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
@@ -35,6 +37,10 @@ func ValidateInput(cmd *cobra.Command) (string, error) {
 	networkConfig, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
 		return "", err
+	}
+	if networkConfig == "" {
+		_ = cmd.Help()
+		return "", fmt.Errorf("Error: required flag '--in' is missing.")
 	}
 
 	return networkConfig, nil

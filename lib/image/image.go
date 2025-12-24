@@ -60,6 +60,11 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, error) {
 	if err != nil {
 		return "", "", "", "", err
 	}
+	if imageListJsonPath == "" {
+		_ = cmd.Help()
+		return "", "", "", "", fmt.Errorf("Error: required flag '--in' is missing.")
+	}
+
 	versionName, err := cmd.Flags().GetString(VersionFlagName)
 	if err != nil {
 		return "", "", "", "", err
