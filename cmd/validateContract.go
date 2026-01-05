@@ -63,4 +63,5 @@ func init() {
 	validateContractCmd.PersistentFlags().String(validateContract.InputFlagName, "", validateContract.InputFlagDescription)
 	validateContractCmd.PersistentFlags().String(validateContract.OsVersionFlagName, "", validateContract.OsVersionFlagDescription)
 	common.SetCustomHelpTemplate(validateContractCmd, requiredFlags)
+	common.SetCustomErrorTemplate(validateContractCmd)
 }

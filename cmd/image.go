@@ -69,4 +69,5 @@ func init() {
 	imageCmd.PersistentFlags().String(image.FormatFlag, image.JsonFormat, image.DataFormatFlagDescription)
 	imageCmd.PersistentFlags().String(image.OutputFlagName, "", image.OutputFlagDescription)
 	common.SetCustomHelpTemplate(imageCmd, requiredFlags)
+	common.SetCustomErrorTemplate(imageCmd)
 }

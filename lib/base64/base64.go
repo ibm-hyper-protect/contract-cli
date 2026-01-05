@@ -54,6 +54,11 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 		return "", "", "", err
 	}
 
+	if inputData == "" {
+		err := fmt.Errorf("Error: required flag '--in' is missing")
+		common.SetMandatoryFlagError(cmd, err)
+	}
+
 	formatType, err := cmd.Flags().GetString(FormatFlagName)
 	if err != nil {
 		return "", "", "", err
@@ -71,10 +76,6 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 func Process(inputData, formatType string) (string, error) {
 	var base64String string
 	var err error
-
-	if inputData == "" {
-		return "", fmt.Errorf(inputMissingMessageBase64)
-	}
 
 	if formatType == TextFormat {
 		base64String, _, _, err = contract.HpcrText(inputData)

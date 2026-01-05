@@ -17,6 +17,7 @@ package getCertificate
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
@@ -53,6 +54,30 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 	encryptionCertificatePath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
 		return "", "", "", err
+	}
+
+	requiredFlags := map[string]string{
+		"--in":      encryptionCertsPath,
+		"--version": version,
+	}
+
+	var missing []string
+	for flag, val := range requiredFlags {
+		if val == "" {
+			missing = append(missing, flag)
+		}
+	}
+
+	if len(missing) > 0 {
+		if len(missing) == 1 {
+			err := fmt.Errorf("Error: required flag %s is missing.",
+				strings.Join(missing, ", "))
+			common.SetMandatoryFlagError(cmd, err)
+		} else {
+			err := fmt.Errorf("Error: required flag %s are missing.",
+				strings.Join(missing, ", "))
+			common.SetMandatoryFlagError(cmd, err)
+		}
 	}
 
 	return encryptionCertsPath, version, encryptionCertificatePath, nil

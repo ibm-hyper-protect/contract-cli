@@ -62,4 +62,5 @@ func init() {
 	}
 	validateNetworkConfigCmd.PersistentFlags().String(validateNetwork.InputFlagName, "", validateNetwork.InputFlagDescription)
 	common.SetCustomHelpTemplate(validateNetworkConfigCmd, requiredFlags)
+	common.SetCustomErrorTemplate(validateNetworkConfigCmd)
 }

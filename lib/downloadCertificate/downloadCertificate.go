@@ -40,7 +40,7 @@ for contract encryption and workload deployment.`
 )
 
 // ValidateInput - function to validate download-certificate inputs
-func ValidateInput(cmd *cobra.Command) (string, string, error) {
+func ValidateInput(cmd *cobra.Command, versions []string) (string, string, error) {
 	formatType, err := cmd.Flags().GetString(FormatFlag)
 	if err != nil {
 		return "", "", err
@@ -49,6 +49,10 @@ func ValidateInput(cmd *cobra.Command) (string, string, error) {
 	certificatePath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
 		return "", "", err
+	}
+	if len(versions) == 0 {
+		err := fmt.Errorf("Error: required flag '--version' is missing")
+		common.SetMandatoryFlagError(cmd, err)
 	}
 
 	return formatType, certificatePath, nil

@@ -40,6 +40,10 @@ func ValidateInput(cmd *cobra.Command) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if encryptionCertsPath == "" {
+		err := fmt.Errorf("Error: required flag '--in' is missing")
+		common.SetMandatoryFlagError(cmd, err)
+	}
 
 	return encryptionCertsPath, nil
 }

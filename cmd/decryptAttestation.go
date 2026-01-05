@@ -54,8 +54,9 @@ func init() {
 		"in":   true,
 		"priv": true,
 	}
-	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.InputFlagName, decryptAttestation.DecryptAttestFileInDefaultPath, decryptAttestation.DecryptAttestFileInDescription)
+	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.InputFlagName, "", decryptAttestation.DecryptAttestFileInDescription)
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.PrivateKeyFlagName, "", decryptAttestation.PrivateKeyFlagDescription)
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.OutputFlagName, "", decryptAttestation.DecryptAttestFlagDescription)
 	common.SetCustomHelpTemplate(decryptAttestationCmd, requiredFlags)
+	common.SetCustomErrorTemplate(decryptAttestationCmd)
 }

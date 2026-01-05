@@ -57,4 +57,5 @@ func init() {
 	}
 	validateEncryptionCertificateCmd.PersistentFlags().String(validateEncryptionCertificate.InputFlagName, "", validateEncryptionCertificate.CertVersionFlagDescription)
 	common.SetCustomHelpTemplate(validateEncryptionCertificateCmd, requiredFlags)
+	common.SetCustomErrorTemplate(validateEncryptionCertificateCmd)
 }
