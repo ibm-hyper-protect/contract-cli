@@ -48,7 +48,6 @@ var base64Cmd = &cobra.Command{
 // init - cobra init function
 func init() {
 	rootCmd.AddCommand(base64Cmd)
-
 	requiredFlags := map[string]bool{
 		"in": true,
 	}

@@ -201,10 +201,7 @@ func SetCustomHelpTemplate(cmd *cobra.Command, requiredFlags map[string]bool) {
 // print a spaced error message followed by command usage.
 func SetCustomErrorTemplate(cmd *cobra.Command) {
 	cmd.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
-		out := cmd.ErrOrStderr()
-		fmt.Fprintln(out, "Error:", err)
-		fmt.Fprintln(out)
-		cmd.Usage()
+		SetMandatoryFlagError(cmd, err)
 		return nil
 	})
 
@@ -216,6 +213,6 @@ func SetMandatoryFlagError(cmd *cobra.Command, err error) {
 	out := cmd.ErrOrStderr()
 	fmt.Fprintln(out, err)
 	fmt.Fprintln(out)
-	_ = cmd.Help()
+	cmd.Usage()
 	os.Exit(1)
 }
