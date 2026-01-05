@@ -33,7 +33,6 @@ var base64Cmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-
 		base64String, err := base64.Process(inputData, formatType)
 		if err != nil {
 			log.Fatal(err)
@@ -58,4 +57,5 @@ func init() {
 	base64Cmd.PersistentFlags().String(base64.FormatFlagName, base64.TextFormat, base64.FormatFlagDescription)
 	base64Cmd.PersistentFlags().String(base64.OutputFlagName, "", base64.OutputFlagDescription)
 	common.SetCustomHelpTemplate(base64Cmd, requiredFlags)
+	common.SetCustomErrorTemplate(base64Cmd)
 }

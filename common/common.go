@@ -196,3 +196,26 @@ func SetCustomHelpTemplate(cmd *cobra.Command, requiredFlags map[string]bool) {
 		printFlags(false)
 	})
 }
+
+// SetCustomErrorTemplate function customizes Cobra's default flag error handling to
+// print a spaced error message followed by command usage.
+func SetCustomErrorTemplate(cmd *cobra.Command) {
+	cmd.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
+		out := cmd.ErrOrStderr()
+		fmt.Fprintln(out, "Error:", err)
+		fmt.Fprintln(out)
+		cmd.Usage()
+		return nil
+	})
+
+	cmd.SilenceUsage = true
+}
+
+// SetMandatoryFlagError function print error if required flag is missing
+func SetMandatoryFlagError(cmd *cobra.Command, err error) {
+	out := cmd.ErrOrStderr()
+	fmt.Fprintln(out, err)
+	fmt.Fprintln(out)
+	_ = cmd.Help()
+	os.Exit(1)
+}
