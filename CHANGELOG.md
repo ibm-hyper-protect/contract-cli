@@ -1,3 +1,16 @@
+## [1.13.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.12.1...v1.13.0) (2026-01-05)
+
+### Features
+
+* Add support to give error flag name in error if required flag is missing ([d3c4705](https://github.com/ibm-hyper-protect/contract-cli/commit/d3c4705a13937fced3c1e2c66c6946a342ff16f5))
+* Add template to print usage after error message ([11a2d45](https://github.com/ibm-hyper-protect/contract-cli/commit/11a2d454c30b4d9f53270fc4760105701f737145))
+* Added cmd help if required flag is missing for more information ([ecfd71f](https://github.com/ibm-hyper-protect/contract-cli/commit/ecfd71f1eb80fef620dd5ea01660b1a399cd2ef1))
+* Added flag info in download-cert command and updated go mod file with updated version of contract-go ([1af80c9](https://github.com/ibm-hyper-protect/contract-cli/commit/1af80c9e0ae7f97b90d3334af5440cb57f7ec49e))
+* Added flag missing error message in call commands ([a488700](https://github.com/ibm-hyper-protect/contract-cli/commit/a488700a493769b9ddfd48e4c7411fcbec395f05))
+* Added support for all commands ([928b97a](https://github.com/ibm-hyper-protect/contract-cli/commit/928b97a31972dd8433dc2d59e7b8884ef79cea94))
+* dummy commit to check unit testcase failure ([3affb45](https://github.com/ibm-hyper-protect/contract-cli/commit/3affb4548fbbdac44652ae11a5ae596e3f99163f))
+* removing duplicate lines in template function ([7056c65](https://github.com/ibm-hyper-protect/contract-cli/commit/7056c65ad8208a011b449928f917df971511617d))
+
 ## [1.12.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.12.0...v1.12.1) (2025-12-22)
 
 ### Bug Fixes
