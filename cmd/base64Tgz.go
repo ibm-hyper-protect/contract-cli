@@ -59,4 +59,5 @@ func init() {
 	base64TgzCmd.PersistentFlags().String(base64Tgz.CertFlagName, "", base64Tgz.CertPathDescription)
 	base64TgzCmd.PersistentFlags().String(base64Tgz.OutputFlagName, "", base64Tgz.OutputPathDescription)
 	common.SetCustomHelpTemplate(base64TgzCmd, requiredFlags)
+	common.SetCustomErrorTemplate(base64TgzCmd)
 }

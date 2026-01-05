@@ -59,4 +59,5 @@ func init() {
 	encryptStringCmd.PersistentFlags().String(encryptString.CertFlagName, "", encryptString.CertFlagDescription)
 	encryptStringCmd.PersistentFlags().String(encryptString.OutputFlagName, "", encryptString.OutputFlagDescription)
 	common.SetCustomHelpTemplate(encryptStringCmd, requiredFlags)
+	common.SetCustomErrorTemplate(encryptStringCmd)
 }

@@ -18,6 +18,7 @@ package validateContract
 import (
 	"fmt"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/spf13/cobra"
 )
 
@@ -41,8 +42,8 @@ func ValidateInput(cmd *cobra.Command) (string, string, error) {
 		return "", "", err
 	}
 	if contract == "" {
-		_ = cmd.Help()
-		return "", "", fmt.Errorf("Error: required flag '--in' is missing.")
+		err := fmt.Errorf("Error: required flag '--in' is missing")
+		common.SetMandatoryFlagError(cmd, err)
 	}
 
 	version, err := cmd.Flags().GetString(OsVersionFlagName)

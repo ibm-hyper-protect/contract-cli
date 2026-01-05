@@ -78,4 +78,5 @@ func init() {
 	encryptCmd.PersistentFlags().String(encrypt.CsrFlag, "", encrypt.CsrFlagDescription)
 	encryptCmd.PersistentFlags().Int(encrypt.ExpiryDaysFlag, 0, encrypt.ExpiryDaysFlagDescription)
 	common.SetCustomHelpTemplate(encryptCmd, requiredFlags)
+	common.SetCustomErrorTemplate(encryptCmd)
 }

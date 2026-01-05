@@ -55,7 +55,7 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 	}
 
 	if inputData == "" {
-		err := fmt.Errorf("required flag '--in' is missing")
+		err := fmt.Errorf("Error: required flag '--in' is missing")
 		common.SetMandatoryFlagError(cmd, err)
 	}
 

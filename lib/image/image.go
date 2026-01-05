@@ -61,8 +61,8 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, error) {
 		return "", "", "", "", err
 	}
 	if imageListJsonPath == "" {
-		_ = cmd.Help()
-		return "", "", "", "", fmt.Errorf("Error: required flag '--in' is missing.")
+		err := fmt.Errorf("Error: required flag '--in' is missing")
+		common.SetMandatoryFlagError(cmd, err)
 	}
 
 	versionName, err := cmd.Flags().GetString(VersionFlagName)

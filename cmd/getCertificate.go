@@ -58,4 +58,5 @@ func init() {
 	getCertificateCmd.PersistentFlags().String(getCertificate.VersionFlagName, "", getCertificate.VersionFlagDescription)
 	getCertificateCmd.PersistentFlags().String(getCertificate.OutputFlagName, "", getCertificate.FileOutFlagDescription)
 	common.SetCustomHelpTemplate(getCertificateCmd, requiredFlags)
+	common.SetCustomErrorTemplate(getCertificateCmd)
 }

@@ -62,4 +62,5 @@ func init() {
 	downloadCertificatesCmd.PersistentFlags().String(downloadCertificate.FormatFlag, downloadCertificate.JsonFormat, downloadCertificate.DataFormatFlag)
 	downloadCertificatesCmd.PersistentFlags().String(downloadCertificate.OutputFlagName, "", downloadCertificate.OutputPathDescription)
 	common.SetCustomHelpTemplate(downloadCertificatesCmd, requiredFlags)
+	common.SetCustomErrorTemplate(downloadCertificatesCmd)
 }

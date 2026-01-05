@@ -51,8 +51,8 @@ func ValidateInput(cmd *cobra.Command, versions []string) (string, string, error
 		return "", "", err
 	}
 	if len(versions) == 0 {
-		_ = cmd.Help()
-		return "", "", fmt.Errorf("required flag --version is missing")
+		err := fmt.Errorf("Error: required flag '--version' is missing")
+		common.SetMandatoryFlagError(cmd, err)
 	}
 
 	return formatType, certificatePath, nil

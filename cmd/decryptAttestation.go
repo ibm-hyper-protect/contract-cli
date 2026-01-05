@@ -58,4 +58,5 @@ func init() {
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.PrivateKeyFlagName, "", decryptAttestation.PrivateKeyFlagDescription)
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.OutputFlagName, "", decryptAttestation.DecryptAttestFlagDescription)
 	common.SetCustomHelpTemplate(decryptAttestationCmd, requiredFlags)
+	common.SetCustomErrorTemplate(decryptAttestationCmd)
 }

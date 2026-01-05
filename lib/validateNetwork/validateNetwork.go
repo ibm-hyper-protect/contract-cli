@@ -18,6 +18,7 @@ package validateNetwork
 import (
 	"fmt"
 
+	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/spf13/cobra"
 )
 
@@ -39,8 +40,8 @@ func ValidateInput(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 	if networkConfig == "" {
-		_ = cmd.Help()
-		return "", fmt.Errorf("Error: required flag '--in' is missing.")
+		err := fmt.Errorf("Error: required flag '--in' is missing")
+		common.SetMandatoryFlagError(cmd, err)
 	}
 
 	return networkConfig, nil
