@@ -94,7 +94,7 @@ func Process(encryptionCertsPath, version string) (string, error) {
 		return "", err
 	}
 
-	_, outputCertificate, err := certificate.HpcrGetEncryptionCertificateFromJson(encryptionCertsJson, version)
+	_, outputCertificate, _, _, _, err := certificate.HpcrGetEncryptionCertificateFromJson(encryptionCertsJson, version)
 	if err != nil {
 		return "", err
 	}
