@@ -1,3 +1,13 @@
+## [1.14.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.13.1...v1.14.0) (2026-01-20)
+
+### Features
+
+* update HpcrGetEncryptionCertificateFromJson function return value with new logic added ([26c9ed9](https://github.com/ibm-hyper-protect/contract-cli/commit/26c9ed94e72fef3897a88b351073eaedf034250b))
+
+### Miscellaneous Chores
+
+* **deps:** update docker.io/library/hello-world docker digest to 05813ae ([#72](https://github.com/ibm-hyper-protect/contract-cli/issues/72)) ([67edef6](https://github.com/ibm-hyper-protect/contract-cli/commit/67edef66ec08d47128311ef69cb3129a5aff3a64))
+
 ## [1.13.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.13.0...v1.13.1) (2026-01-12)
 
 ### Bug Fixes
