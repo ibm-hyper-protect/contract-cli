@@ -75,6 +75,10 @@ Learn more:
   - Validate network-config schemas for on-premise deployments
   - Support HPVS, HPCR RHVS, and HPCC Peer Pod configurations
 
+- **HpccInitdata Feature**
+  - Create Gzipped & Encoded initdata for HPCC Peerpod
+  - Support HPCC Peer Pod
+
 ## Installation
 
 Download the CLI tool for your operating system from the [releases page](https://github.com/ibm-hyper-protect/contract-cli/releases/latest).
@@ -168,6 +172,14 @@ contract-cli validate-contract \
   --type hpvs
 ```
 
+### Create Hpcc initdata annotation from signed & encrypted contract
+
+```bash
+# Create Hpcc initdata annotation
+contract-cli hpccinitdata \
+  --in signed_encrypted_contract.yaml
+```
+
 ## Usage
 
 ```bash
@@ -194,6 +206,7 @@ Available Commands:
   encrypt-string                  Encrypt string in Hyper Protect format
   get-certificate                 Extract specific certificate version from download output
   help                            Help about any command
+  hpccinitdata                    Gzip and Encoded hpcc initdata annotation
   image                           Get HPCR image details from IBM Cloud
   validate-contract               Validate contract schema
   validate-encryption-certificate validate encryption certificate
@@ -230,6 +243,7 @@ The [`samples/`](samples/) directory contains example configurations:
 - [Attestation Records](samples/attestation/)
 - [Network Configuration](samples/network/)
 - [Docker Compose Examples](samples/tgz/)
+- [Sample Singed & Encrypted Contract](samples/hpcc/signed-encrypt-hpcc.yaml)
 
 ## Related Projects
 
