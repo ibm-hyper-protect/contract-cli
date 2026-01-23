@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// initdataCmd epresents the hpccinidata command
+// initdataCmd represents the hpccinidata command
 var initdataCmd = &cobra.Command{
 	Use:   hpccinitdata.ParameterName,
 	Short: hpccinitdata.ParameterShortDescription,
