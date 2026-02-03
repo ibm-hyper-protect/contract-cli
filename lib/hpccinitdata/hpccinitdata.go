@@ -26,7 +26,7 @@ import (
 const (
 	ParameterName             = "hpcc-init"
 	ParameterShortDescription = "Gzip and Encoded hpcc initdata annotation"
-	ParameterLongDescription  = `Gzip and Encoded initdata annotation for HyperProtect Confidential Containers`
+	ParameterLongDescription  = `Gzip and Encoded initdata annotation for Hyper Protect Confidential Containers`
 
 	InputFlagName        = "in"
 	InputFlagDescription = "Path of Signed and Encrypted contract"
@@ -77,9 +77,9 @@ func PrintHpccInitdata(gzippedData, outputPath string) error {
 		if err != nil {
 			return err
 		}
+		fmt.Println("Successfully generated gzipped initdata for HPCC")
 	} else {
 		fmt.Println(gzippedData)
 	}
-	fmt.Println("Successfully generated gzipped initdata for HPCC")
 	return nil
 }

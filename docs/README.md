@@ -624,7 +624,7 @@ contract-cli hpcc-init [flags]
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to signed & encrypted contract YAML file |
-| `--out` | string | NO | Path to store gzipped & encoded initdata value |
+| `--out` | string | No | Path to store gzipped & encoded initdata value |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
