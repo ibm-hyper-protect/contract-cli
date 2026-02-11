@@ -188,7 +188,7 @@ func TestProcess_CorruptedCert(t *testing.T) {
 // TestProcess_SpecialCharacters tests Process function with special characters
 func TestProcess_SpecialCharacters(t *testing.T) {
 	specialInput := "!@#$%^&*()_+-=[]{}|;':\",./<>?"
-	result, err := Process(specialInput, TextFormat, testOsVersion, testCertPath)
+	result, err := Process(specialInput, TextFormat, "hpcr-rhvs", testCertPath)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 }
