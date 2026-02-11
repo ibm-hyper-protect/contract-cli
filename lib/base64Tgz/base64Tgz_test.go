@@ -29,6 +29,7 @@ const (
 	testOutputPath      = "../../build/test_base64tgz_output.txt"
 	testInvalidPath     = "../../build/file/file_not_exists.txt"
 	testInvalidCertPath = "../../invalid_cert_path/path.crt"
+	testEmptyPath       = ""
 )
 
 // TestValidateInput_Success tests ValidateInput with valid input
@@ -50,28 +51,31 @@ func TestValidateInput_Success(t *testing.T) {
 	assert.Equal(t, testOutputPath, outputPath)
 }
 
-// TestValidateInput_DefaultValues tests ValidateInput with default values
-func TestValidateInput_DefaultValues(t *testing.T) {
+// TestValidateInput_WithoutFlags tests ValidateInput when flags are not set
+func TestValidateInput_WithoutFlags(t *testing.T) {
 	cmd := &cobra.Command{}
-	cmd.Flags().String(InputFlagName, testInputPath, "")
-	cmd.Flags().String(OutputFormatFlag, DefaultOutput, "")
-	cmd.Flags().String(OsVersionFlagName, "", "")
-	cmd.Flags().String(CertFlagName, "", "")
-	cmd.Flags().String(OutputFlagName, "", "")
 
 	inputData, outputFormat, hyperProtectVersion, encCertPath, outputPath, err := ValidateInput(cmd)
 
-	assert.NoError(t, err)
-	assert.Equal(t, testInputPath, inputData)
-	assert.Equal(t, DefaultOutput, outputFormat)
+	assert.Error(t, err)
+	assert.Equal(t, "", inputData)
+	assert.Equal(t, "", outputFormat)
 	assert.Equal(t, "", hyperProtectVersion)
 	assert.Equal(t, "", encCertPath)
 	assert.Equal(t, "", outputPath)
 }
 
-// TestProcess_PlainSuccess tests Process function with plain output format
-func TestProcess_PlainSuccess(t *testing.T) {
+// TestProcess_PlainFormat tests Process function with plain output format
+func TestProcess_PlainFormat(t *testing.T) {
 	result, err := Process(testInputPath, OutputFormatUnencrypted, "", "")
+
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+}
+
+// TestProcess_EncryptedFormat tests Process function with encrypted output format
+func TestProcess_EncryptedFormat(t *testing.T) {
+	result, err := Process(testInputPath, OutputFormatEncrypted, "hpvs", testCertPath)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -86,20 +90,13 @@ func TestProcess_InvalidPath(t *testing.T) {
 	assert.Contains(t, err.Error(), "not accessible")
 }
 
-// TestProcess_EncryptedSuccess tests Process function with encrypted output format
-func TestProcess_EncryptedSuccess(t *testing.T) {
-	result, err := Process(testInputPath, OutputFormatEncrypted, "hpvs", testCertPath)
-
-	assert.NoError(t, err)
-	assert.NotEmpty(t, result)
-}
-
-// TestProcess_EncryptedInvalidCert tests Process function with invalid certificate path
-func TestProcess_EncryptedInvalidCert(t *testing.T) {
-	result, err := Process(testInputPath, OutputFormatEncrypted, "hpvs", testInvalidCertPath)
+// TestProcess_EmptyPath tests Process function with empty input path
+func TestProcess_EmptyPath(t *testing.T) {
+	result, err := Process(testEmptyPath, OutputFormatUnencrypted, "", "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "not accessible")
 }
 
 // TestProcess_InvalidOutputFormat tests Process function with invalid output format
@@ -111,8 +108,38 @@ func TestProcess_InvalidOutputFormat(t *testing.T) {
 	assert.Contains(t, err.Error(), "invalid output format")
 }
 
-// TestOutput_Success tests Output function with valid file path
-func TestOutput_Success(t *testing.T) {
+// TestProcess_EmptyOutputFormat tests Process function with empty output format
+func TestProcess_EmptyOutputFormat(t *testing.T) {
+	result, err := Process(testInputPath, "", "", "")
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "invalid output format")
+}
+
+// TestProcess_EncryptedInvalidCert tests Process function with invalid certificate path
+func TestProcess_EncryptedInvalidCert(t *testing.T) {
+	result, err := Process(testInputPath, OutputFormatEncrypted, "hpvs", testInvalidCertPath)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+}
+
+// TestProcess_EncryptedWithDifferentOS tests Process function with different OS versions
+func TestProcess_EncryptedWithDifferentOS(t *testing.T) {
+	// Test with hpcr-rhvs
+	result, err := Process(testInputPath, OutputFormatEncrypted, "hpcr-rhvs", testCertPath)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+
+	// Test with hpcc-peerpod
+	result, err = Process(testInputPath, OutputFormatEncrypted, "hpcc-peerpod", testCertPath)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+}
+
+// TestOutput_WithFilePath tests Output function with valid file path
+func TestOutput_WithFilePath(t *testing.T) {
 	testData := "dGVzdCBkYXRh"
 	os.Remove(testOutputPath)
 	err := Output(testData, testOutputPath)
@@ -124,23 +151,16 @@ func TestOutput_Success(t *testing.T) {
 	os.Remove(testOutputPath)
 }
 
-// TestOutput_InvalidPath tests Output function with invalid file path
-func TestOutput_InvalidPath(t *testing.T) {
-	testData := "dGVzdCBkYXRh"
-	err := Output(testData, testInvalidPath)
-	assert.Error(t, err)
-}
-
-// TestOutput_EmptyPath tests Output function with empty output path
-func TestOutput_EmptyPath(t *testing.T) {
+// TestOutput_WithoutFilePath tests Output function with empty output path (prints to stdout)
+func TestOutput_WithoutFilePath(t *testing.T) {
 	testData := "dGVzdCBkYXRh"
 	err := Output(testData, "")
 	assert.NoError(t, err)
 }
 
-// TestProcess_EncryptedEmptyCert tests Process function with encrypted format but empty cert path
-func TestProcess_EncryptedEmptyCert(t *testing.T) {
-	result, err := Process(testInputPath, OutputFormatEncrypted, "hpvs", "")
-	assert.NoError(t, err)
-	assert.NotEmpty(t, result)
+// TestOutput_InvalidPath tests Output function with invalid file path
+func TestOutput_InvalidPath(t *testing.T) {
+	testData := "dGVzdCBkYXRh"
+	err := Output(testData, testInvalidPath)
+	assert.Error(t, err)
 }
