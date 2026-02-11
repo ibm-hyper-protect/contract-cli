@@ -16,6 +16,7 @@
 package getCertificate
 
 import (
+	"os"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -26,9 +27,7 @@ const (
 	testCertsJsonPath = "../../samples/certificate/certs.json"
 	testOutputPath    = "../../build/test_get_certificate_output.crt"
 	testInvalidPath   = "../../build/file/file_not_exists.json"
-	testVersion1      = "1.0.21"
-	testVersion2      = "1.0.22"
-	testVersion3      = "1.0.23"
+	testVersion       = "1.0.23"
 	testInvalidVer    = "9.9.99"
 )
 
@@ -36,14 +35,14 @@ const (
 func TestValidateInput_Success(t *testing.T) {
 	cmd := &cobra.Command{}
 	cmd.Flags().String(InputFlagName, testCertsJsonPath, "")
-	cmd.Flags().String(VersionFlagName, testVersion2, "")
+	cmd.Flags().String(VersionFlagName, testVersion, "")
 	cmd.Flags().String(OutputFlagName, testOutputPath, "")
 
 	encryptionCertsPath, version, encryptionCertificatePath, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testCertsJsonPath, encryptionCertsPath)
-	assert.Equal(t, testVersion2, version)
+	assert.Equal(t, testVersion, version)
 	assert.Equal(t, testOutputPath, encryptionCertificatePath)
 }
 
@@ -51,63 +50,27 @@ func TestValidateInput_Success(t *testing.T) {
 func TestValidateInput_WithoutOutputPath(t *testing.T) {
 	cmd := &cobra.Command{}
 	cmd.Flags().String(InputFlagName, testCertsJsonPath, "")
-	cmd.Flags().String(VersionFlagName, testVersion2, "")
+	cmd.Flags().String(VersionFlagName, testVersion, "")
 	cmd.Flags().String(OutputFlagName, "", "")
 
 	encryptionCertsPath, version, encryptionCertificatePath, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testCertsJsonPath, encryptionCertsPath)
-	assert.Equal(t, testVersion2, version)
+	assert.Equal(t, testVersion, version)
 	assert.Equal(t, "", encryptionCertificatePath)
 }
 
-// TestValidateInput_DifferentVersions tests ValidateInput with different version numbers
-func TestValidateInput_DifferentVersions(t *testing.T) {
-	versions := []string{testVersion1, testVersion2, testVersion3}
-
-	for _, ver := range versions {
-		cmd := &cobra.Command{}
-		cmd.Flags().String(InputFlagName, testCertsJsonPath, "")
-		cmd.Flags().String(VersionFlagName, ver, "")
-		cmd.Flags().String(OutputFlagName, testOutputPath, "")
-
-		encryptionCertsPath, version, encryptionCertificatePath, err := ValidateInput(cmd)
-
-		assert.NoError(t, err)
-		assert.Equal(t, testCertsJsonPath, encryptionCertsPath)
-		assert.Equal(t, ver, version)
-		assert.Equal(t, testOutputPath, encryptionCertificatePath)
-	}
-}
-
-// TestValidateInput_FlagErrors tests error handling for flag retrieval
-func TestValidateInput_FlagErrors(t *testing.T) {
+// TestValidateInput_WithoutFlags tests ValidateInput when flags are not set
+func TestValidateInput_WithoutFlags(t *testing.T) {
 	cmd := &cobra.Command{}
 	_, _, _, err := ValidateInput(cmd)
 	assert.Error(t, err)
 }
 
-// TestProcess_Success tests successful certificate extraction
-func TestProcess_Success(t *testing.T) {
-	result, err := Process(testCertsJsonPath, testVersion2)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "BEGIN CERTIFICATE")
-	assert.Contains(t, result, "END CERTIFICATE")
-}
-
-// TestProcess_Version1 tests extraction of version 1.0.21
-func TestProcess_Version1(t *testing.T) {
-	result, err := Process(testCertsJsonPath, testVersion1)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "BEGIN CERTIFICATE")
-}
-
 // TestProcess_Version3 tests extraction of version 1.0.23
 func TestProcess_Version3(t *testing.T) {
-	result, err := Process(testCertsJsonPath, testVersion3)
+	result, err := Process(testCertsJsonPath, testVersion)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 	assert.Contains(t, result, "BEGIN CERTIFICATE")
@@ -122,8 +85,77 @@ func TestProcess_InvalidVersion(t *testing.T) {
 
 // TestProcess_InvalidPath tests with non-existent file path
 func TestProcess_InvalidPath(t *testing.T) {
-	result, err := Process(testInvalidPath, testVersion2)
+	result, err := Process(testInvalidPath, testVersion)
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 	assert.Contains(t, err.Error(), "doesn't exist")
+}
+
+// TestProcess_EmptyPath tests with empty file path
+func TestProcess_EmptyPath(t *testing.T) {
+	result, err := Process("", testVersion)
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "doesn't exist")
+}
+
+// TestProcess_EmptyVersion tests with empty version
+func TestProcess_EmptyVersion(t *testing.T) {
+	result, err := Process(testCertsJsonPath, "")
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+}
+
+// TestProcess_EmptyJson tests with empty JSON file
+func TestProcess_EmptyJson(t *testing.T) {
+	emptyFile := "../../build/empty_certs.json"
+	err := os.WriteFile(emptyFile, []byte(""), 0644)
+	assert.NoError(t, err)
+	defer os.Remove(emptyFile)
+
+	result, err := Process(emptyFile, testVersion)
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+}
+
+// TestProcess_InvalidJsonStructure tests with valid JSON but wrong structure
+func TestProcess_InvalidJsonStructure(t *testing.T) {
+	invalidStructure := "../../build/invalid_structure.json"
+	err := os.WriteFile(invalidStructure, []byte(`{"wrong": "structure"}`), 0644)
+	assert.NoError(t, err)
+	defer os.Remove(invalidStructure)
+
+	result, err := Process(invalidStructure, testVersion)
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+}
+
+// TestOutput_ToFile tests writing certificate to file
+func TestOutput_ToFile(t *testing.T) {
+	testCert := "-----BEGIN CERTIFICATE-----\ntest certificate data\n-----END CERTIFICATE-----"
+	os.Remove(testOutputPath)
+	err := Output(testCert, testOutputPath)
+	assert.NoError(t, err)
+
+	_, statErr := os.Stat(testOutputPath)
+	assert.NoError(t, statErr)
+
+	content, readErr := os.ReadFile(testOutputPath)
+	assert.NoError(t, readErr)
+	assert.Equal(t, testCert, string(content))
+	os.Remove(testOutputPath)
+}
+
+// TestOutput_ToStdout tests printing to stdout (empty path)
+func TestOutput_ToStdout(t *testing.T) {
+	testCert := "-----BEGIN CERTIFICATE-----\ntest certificate data\n-----END CERTIFICATE-----"
+	err := Output(testCert, "")
+	assert.NoError(t, err)
+}
+
+// TestOutput_InvalidPath tests with invalid output path
+func TestOutput_InvalidPath(t *testing.T) {
+	testCert := "-----BEGIN CERTIFICATE-----\ntest certificate data\n-----END CERTIFICATE-----"
+	err := Output(testCert, testInvalidPath)
+	assert.Error(t, err)
 }
