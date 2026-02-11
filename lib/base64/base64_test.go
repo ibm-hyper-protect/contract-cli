@@ -26,8 +26,10 @@ import (
 const (
 	testInputText   = "hello world"
 	testInputJson   = `{"key":"value"}`
+	testInvalidJson = `{"key":"value"`
 	testOutputPath  = "../../build/test_base64_output.txt"
 	testInvalidPath = "../../build/file/file_not_exists.txt"
+	testEmptyString = ""
 )
 
 // TestValidateInput_Success tests ValidateInput with valid input
@@ -45,9 +47,29 @@ func TestValidateInput_Success(t *testing.T) {
 	assert.Equal(t, testOutputPath, outputPath)
 }
 
-// TestProcess_Success tests Process function with valid text input
-func TestProcess_Success(t *testing.T) {
+// TestValidateInput_WithoutFlags tests ValidateInput when flags are not set
+func TestValidateInput_WithoutFlags(t *testing.T) {
+	cmd := &cobra.Command{}
+
+	inputData, formatType, outputPath, err := ValidateInput(cmd)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", inputData)
+	assert.Equal(t, "", formatType)
+	assert.Equal(t, "", outputPath)
+}
+
+// TestProcess_TextFormat tests Process function with valid text input
+func TestProcess_TextFormat(t *testing.T) {
 	result, err := Process(testInputText, TextFormat)
+
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+}
+
+// TestProcess_JsonFormat tests Process function with valid JSON input
+func TestProcess_JsonFormat(t *testing.T) {
+	result, err := Process(testInputJson, JsonFormat)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -62,8 +84,42 @@ func TestProcess_InvalidFormat(t *testing.T) {
 	assert.Contains(t, err.Error(), invalidInputMessageBase64)
 }
 
-// TestOutput_Success tests Output function with valid file path
-func TestOutput_Success(t *testing.T) {
+// TestProcess_EmptyFormat tests Process function with empty format
+func TestProcess_EmptyFormat(t *testing.T) {
+	result, err := Process(testInputText, "")
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), invalidInputMessageBase64)
+}
+
+// TestProcess_InvalidJson tests Process function with invalid JSON
+func TestProcess_InvalidJson(t *testing.T) {
+	result, err := Process(testInvalidJson, JsonFormat)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+}
+
+// TestProcess_EmptyInput tests Process function with empty input
+func TestProcess_EmptyInput(t *testing.T) {
+	result, err := Process(testEmptyString, TextFormat)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+}
+
+// TestProcess_SpecialCharacters tests Process function with special characters
+func TestProcess_SpecialCharacters(t *testing.T) {
+	specialInput := "!@#$%^&*()_+-=[]{}|;':\",./<>?"
+	result, err := Process(specialInput, TextFormat)
+
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+}
+
+// TestOutput_WithFilePath tests Output function with valid file path
+func TestOutput_WithFilePath(t *testing.T) {
 	testData := "dGVzdCBkYXRh"
 	os.Remove(testOutputPath)
 	err := Output(testData, testOutputPath)
@@ -72,6 +128,14 @@ func TestOutput_Success(t *testing.T) {
 	_, statErr := os.Stat(testOutputPath)
 	assert.NoError(t, statErr)
 	os.Remove(testOutputPath)
+}
+
+// TestOutput_WithoutFilePath tests Output function without file path (prints to stdout)
+func TestOutput_WithoutFilePath(t *testing.T) {
+	testData := "dGVzdCBkYXRh"
+	err := Output(testData, "")
+
+	assert.NoError(t, err)
 }
 
 // TestOutput_InvalidPath tests Output function with invalid file path
