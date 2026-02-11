@@ -62,6 +62,72 @@ func TestValidateInput_WithoutOutputPath(t *testing.T) {
 	assert.Equal(t, "", decryptedAttestPath)
 }
 
+// TestValidateInput_WithoutFlags tests ValidateInput when flags are not set
+func TestValidateInput_WithoutFlags(t *testing.T) {
+	cmd := &cobra.Command{}
+	_, _, _, err := ValidateInput(cmd)
+	assert.Error(t, err)
+}
+
+// TestDecryptAttestationRecords_Success tests successful decryption
+func TestDecryptAttestationRecords_Success(t *testing.T) {
+	result, err := DecryptAttestationRecords(testEncAttestPath, testPrivateKeyPath)
+
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+}
+
+// TestDecryptAttestationRecords_CorruptedEncryptedData tests with corrupted encrypted data
+func TestDecryptAttestationRecords_CorruptedEncryptedData(t *testing.T) {
+	// Create a temporary file with corrupted data that looks like encrypted format
+	corruptedFile := "../../build/corrupted_attest.enc"
+	err := os.WriteFile(corruptedFile, []byte("hyper-protect-basic.corrupted.data"), 0644)
+	assert.NoError(t, err)
+	defer os.Remove(corruptedFile)
+
+	result, err := DecryptAttestationRecords(corruptedFile, testPrivateKeyPath)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+}
+
+// TestDecryptAttestationRecords_WrongPrivateKey tests with wrong private key
+func TestDecryptAttestationRecords_WrongPrivateKey(t *testing.T) {
+	// Using public key instead of private key should fail
+	result, err := DecryptAttestationRecords(testEncAttestPath, testPublicKeyPath)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+}
+
+// TestDecryptAttestationRecords_EmptyEncryptedFile tests with empty encrypted file
+func TestDecryptAttestationRecords_EmptyEncryptedFile(t *testing.T) {
+	// Create a temporary empty file
+	emptyFile := "../../build/empty_attest.enc"
+	err := os.WriteFile(emptyFile, []byte(""), 0644)
+	assert.NoError(t, err)
+	defer os.Remove(emptyFile)
+
+	result, err := DecryptAttestationRecords(emptyFile, testPrivateKeyPath)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+}
+
+// TestDecryptAttestationRecords_InvalidKeyFormat tests with invalid key format
+func TestDecryptAttestationRecords_InvalidKeyFormat(t *testing.T) {
+	// Create a temporary file with invalid key format
+	invalidKeyFile := "../../build/invalid_key.pem"
+	err := os.WriteFile(invalidKeyFile, []byte("not a valid key"), 0644)
+	assert.NoError(t, err)
+	defer os.Remove(invalidKeyFile)
+
+	result, err := DecryptAttestationRecords(testEncAttestPath, invalidKeyFile)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+}
+
 // TestPrintDecryptAttestation_ToFile tests writing decrypted attestation to file
 func TestPrintDecryptAttestation_ToFile(t *testing.T) {
 	testData := "decrypted attestation data"
@@ -79,7 +145,7 @@ func TestPrintDecryptAttestation_ToFile(t *testing.T) {
 	os.Remove(testOutputPath)
 }
 
-// TestPrintDecryptAttestation_ToStdout tests printing to stdout (empty path)
+// TestPrintDecryptAttestation_ToStdout tests printing to stdout
 func TestPrintDecryptAttestation_ToStdout(t *testing.T) {
 	testData := "decrypted attestation data"
 	err := PrintDecryptAttestation(testData, "")
@@ -90,12 +156,5 @@ func TestPrintDecryptAttestation_ToStdout(t *testing.T) {
 func TestPrintDecryptAttestation_InvalidPath(t *testing.T) {
 	testData := "decrypted attestation data"
 	err := PrintDecryptAttestation(testData, testInvalidPath)
-	assert.Error(t, err)
-}
-
-// TestValidateInput_FlagErrors tests error handling for flag retrieval
-func TestValidateInput_FlagErrors(t *testing.T) {
-	cmd := &cobra.Command{}
-	_, _, _, err := ValidateInput(cmd)
 	assert.Error(t, err)
 }
