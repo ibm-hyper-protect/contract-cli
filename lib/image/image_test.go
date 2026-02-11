@@ -100,11 +100,28 @@ func TestValidateInput_WithoutOutputPath(t *testing.T) {
 	assert.Equal(t, "", hpcrImagePath)
 }
 
-// TestValidateInput_FlagErrors tests error handling for flag retrieval
-func TestValidateInput_FlagErrors(t *testing.T) {
+// TestValidateInput_WithoutFlags tests ValidateInput when flags are not set
+func TestValidateInput_WithoutFlags(t *testing.T) {
 	cmd := &cobra.Command{}
 	_, _, _, _, err := ValidateInput(cmd)
 	assert.Error(t, err)
+}
+
+// TestValidateInput_EmptyFormat tests ValidateInput with empty format
+func TestValidateInput_EmptyFormat(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().String(InputFlagName, testApiImagePath, "")
+	cmd.Flags().String(VersionFlagName, testVersion, "")
+	cmd.Flags().String(FormatFlag, "", "")
+	cmd.Flags().String(OutputFlagName, "output.json", "")
+
+	imageListJsonPath, versionName, formatType, hpcrImagePath, err := ValidateInput(cmd)
+
+	assert.NoError(t, err)
+	assert.Equal(t, testApiImagePath, imageListJsonPath)
+	assert.Equal(t, testVersion, versionName)
+	assert.Equal(t, "", formatType)
+	assert.Equal(t, "output.json", hpcrImagePath)
 }
 
 // TestProcess_Success tests successful image processing
@@ -201,6 +218,21 @@ func TestOutput_InvalidFormat(t *testing.T) {
 	assert.Contains(t, err.Error(), invalidFormatMessage)
 }
 
+// TestOutput_EmptyFormat tests Output function with empty format
+func TestOutput_EmptyFormat(t *testing.T) {
+	testImage := ImageDetails{
+		Id:       "r006-test-id",
+		Name:     "test-image",
+		Checksum: "abc123",
+		Version:  "1.0.0",
+	}
+
+	result, err := Output(testImage, "")
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), invalidFormatMessage)
+}
+
 // TestOutput_EmptyImageDetails tests Output with empty image details
 func TestOutput_EmptyImageDetails(t *testing.T) {
 	testImage := ImageDetails{}
@@ -213,13 +245,28 @@ func TestOutput_EmptyImageDetails(t *testing.T) {
 	assert.NoError(t, jsonErr)
 }
 
-// TestImageDetails_JsonMarshaling tests JSON marshaling of ImageDetails
-func TestImageDetails_JsonMarshaling(t *testing.T) {
+// TestOutput_YamlFormatStructure tests YAML output structure
+func TestOutput_YamlFormatStructure(t *testing.T) {
 	testImage := ImageDetails{
-		Id:       "test-id",
-		Name:     "test-name",
-		Checksum: "test-checksum",
-		Version:  "test-version",
+		Id:       "r006-test-id",
+		Name:     "test-image",
+		Checksum: "abc123",
+		Version:  "1.0.0",
+	}
+
+	result, err := Output(testImage, YamlFormat)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "id: r006-test-id")
+	assert.Contains(t, result, "name: test-image")
+	assert.Contains(t, result, "checksum: abc123")
+	assert.Contains(t, result, "version: 1.0.0")
+}
+
+// TestImageDetails_EmptyFieldsJsonMarshaling tests JSON marshaling with empty fields
+func TestImageDetails_EmptyFieldsJsonMarshaling(t *testing.T) {
+	testImage := ImageDetails{
+		Id: "test-id",
 	}
 
 	jsonData, err := json.Marshal(testImage)
@@ -229,24 +276,8 @@ func TestImageDetails_JsonMarshaling(t *testing.T) {
 	var parsed ImageDetails
 	err = json.Unmarshal(jsonData, &parsed)
 	assert.NoError(t, err)
-	assert.Equal(t, testImage, parsed)
-}
-
-// TestImageDetails_YamlMarshaling tests YAML marshaling of ImageDetails
-func TestImageDetails_YamlMarshaling(t *testing.T) {
-	testImage := ImageDetails{
-		Id:       "test-id",
-		Name:     "test-name",
-		Checksum: "test-checksum",
-		Version:  "test-version",
-	}
-
-	yamlData, err := yaml.Marshal(testImage)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, yamlData)
-
-	var parsed ImageDetails
-	err = yaml.Unmarshal(yamlData, &parsed)
-	assert.NoError(t, err)
-	assert.Equal(t, testImage, parsed)
+	assert.Equal(t, testImage.Id, parsed.Id)
+	assert.Equal(t, "", parsed.Name)
+	assert.Equal(t, "", parsed.Checksum)
+	assert.Equal(t, "", parsed.Version)
 }
