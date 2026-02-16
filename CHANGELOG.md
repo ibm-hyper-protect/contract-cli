@@ -1,3 +1,18 @@
+## [1.15.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.14.1...v1.15.0) (2026-02-16)
+
+### Features
+
+* Added Support for HPCC Initdata annotation. ([bb08a05](https://github.com/ibm-hyper-protect/contract-cli/commit/bb08a059fb445896015be4d12a85940050121b78))
+* Added Support for Initdata(initdata) creation in contract-cli tool ([9e40b10](https://github.com/ibm-hyper-protect/contract-cli/commit/9e40b10b4615a2afb218491b6a2e21d3b79b7fb8))
+* Modified docs and comments ([48d9e09](https://github.com/ibm-hyper-protect/contract-cli/commit/48d9e0925463bd2da3cb3bbaa9b797704b10c14b))
+* Resloved review comments ([5b2d4dc](https://github.com/ibm-hyper-protect/contract-cli/commit/5b2d4dcc71d5ac4786a8067f094ec0e78223e2ef))
+* Resolved Review comments ([f5e431f](https://github.com/ibm-hyper-protect/contract-cli/commit/f5e431f5c3f800f5f1916d0f5522f6142fbb7a25))
+* Updated DOCS ([0daf1f8](https://github.com/ibm-hyper-protect/contract-cli/commit/0daf1f815c0b8fe5af5a50b2afe3082dfe91df7b))
+
+### Miscellaneous Chores
+
+* **deps:** update docker.io/library/hello-world docker digest to ef54e83 ([#75](https://github.com/ibm-hyper-protect/contract-cli/issues/75)) ([1a45397](https://github.com/ibm-hyper-protect/contract-cli/commit/1a45397b98d7c9b04cc1d0ab7d5d9918ae41f4db))
+
 ## [1.14.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.14.0...v1.14.1) (2026-02-16)
 
 ### Bug Fixes
