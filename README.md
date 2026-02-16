@@ -58,6 +58,7 @@ Learn more:
   - Create signed and encrypted contracts
   - Support contract expiry with CA certificates
   - Validate contract schemas
+  - Create Gzipped & Encoded initdata for HPCC Peerpod
 
 - **Archive Management**
   - Generate Base64 tar archives of `docker-compose.yaml` or `pods.yaml`
@@ -75,9 +76,6 @@ Learn more:
   - Validate network-config schemas for on-premise deployments
   - Support HPVS, HPCR RHVS, and HPCC Peer Pod configurations
 
-- **HpccInitdata Feature**
-  - Create Gzipped & Encoded initdata for HPCC Peerpod
-  - Support HPCC Peer Pod
 
 ## Installation
 
@@ -172,10 +170,10 @@ contract-cli validate-contract \
   --type hpvs
 ```
 
-### Create Hpcc initdata annotation from signed & encrypted contract
+### Create initdata annotation from signed & encrypted contract
 
 ```bash
-# Create Hpcc initdata annotation
+# Create initdata annotation
 contract-cli initdata \
   --in signed_encrypted_contract.yaml
 ```
