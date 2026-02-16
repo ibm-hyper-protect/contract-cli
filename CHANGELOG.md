@@ -1,3 +1,22 @@
+## [1.14.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.14.0...v1.14.1) (2026-02-16)
+
+### Bug Fixes
+
+* cyclonedx error ([743e9b1](https://github.com/ibm-hyper-protect/contract-cli/commit/743e9b1dd211c2c96f2ef69eb97b54e830767cad))
+* go version in github CI ([b9c10f0](https://github.com/ibm-hyper-protect/contract-cli/commit/b9c10f0c20040676e31465ceb14856e719fd4f59))
+
+### Tests
+
+* Add testcases for files under lib directory ([07b77b6](https://github.com/ibm-hyper-protect/contract-cli/commit/07b77b6f524a4e7e82808d461a71f930444e8e20))
+* adding testcases in base64_test.go for more coverage ([7eb4b2b](https://github.com/ibm-hyper-protect/contract-cli/commit/7eb4b2b0558cc78bbe0860f0a2341c47c8fbda6f))
+* adding testcases in base64Tgz_test.go for more coverage ([72b9f08](https://github.com/ibm-hyper-protect/contract-cli/commit/72b9f0819574b02c590d641e4ac08926471e72eb))
+* adding testcases in decryptAttestation_test.go for more coverage ([b6314d8](https://github.com/ibm-hyper-protect/contract-cli/commit/b6314d82ecaa06118d66e67852f8afb6f357d385))
+* adding testcases in encrypt_test.go for more coverage ([d7318ef](https://github.com/ibm-hyper-protect/contract-cli/commit/d7318ef8f57fa15f7b6ddf98e6c9c9d31966423b))
+* adding testcases in encryptString_test.go for more coverage ([49b20f9](https://github.com/ibm-hyper-protect/contract-cli/commit/49b20f9788e833e574975c634717f5b38840d5b2))
+* adding testcases in getCertificate_test.go for more coverage ([770037d](https://github.com/ibm-hyper-protect/contract-cli/commit/770037deded2c5945596a6b74128ed3c30cce0d4))
+* adding testcases in image_test.go for more coverage ([311ba56](https://github.com/ibm-hyper-protect/contract-cli/commit/311ba56fa8b29f48ca35a361c5a303bb27897f3d))
+* update testcase ([8147a31](https://github.com/ibm-hyper-protect/contract-cli/commit/8147a314d6e497273c2eaa04a20173f711f14cf0))
+
 ## [1.14.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.13.1...v1.14.0) (2026-01-20)
 
 ### Features
