@@ -19,27 +19,27 @@ import (
 	"log"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
-	"github.com/ibm-hyper-protect/contract-cli/lib/hpccinitdata"
+	"github.com/ibm-hyper-protect/contract-cli/lib/initdata"
 	"github.com/spf13/cobra"
 )
 
 // initdataCmd represents the hpccinidata command
 var initdataCmd = &cobra.Command{
-	Use:   hpccinitdata.ParameterName,
-	Short: hpccinitdata.ParameterShortDescription,
-	Long:  hpccinitdata.ParameterLongDescription,
+	Use:   initdata.ParameterName,
+	Short: initdata.ParameterShortDescription,
+	Long:  initdata.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputDataPath, outputPath, err := hpccinitdata.ValidateInput(cmd)
+		inputDataPath, outputPath, err := initdata.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		gzipInitdata, err := hpccinitdata.GenerateHpccInitdata(inputDataPath)
+		gzipInitdata, err := initdata.GenerateInitdata(inputDataPath)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		err = hpccinitdata.PrintHpccInitdata(gzipInitdata, outputPath)
+		err = initdata.PrintInitdata(gzipInitdata, outputPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -53,8 +53,8 @@ func init() {
 		"in": true,
 	}
 
-	initdataCmd.PersistentFlags().String(hpccinitdata.InputFlagName, "", hpccinitdata.InputFlagDescription)
-	initdataCmd.PersistentFlags().String(hpccinitdata.OutputFlagName, "", hpccinitdata.OutputFlagDescription)
+	initdataCmd.PersistentFlags().String(initdata.InputFlagName, "", initdata.InputFlagDescription)
+	initdataCmd.PersistentFlags().String(initdata.OutputFlagName, "", initdata.OutputFlagDescription)
 	common.SetCustomHelpTemplate(initdataCmd, requiredFlags)
 	common.SetCustomErrorTemplate(initdataCmd)
 }

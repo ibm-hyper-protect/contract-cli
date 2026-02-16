@@ -176,7 +176,7 @@ contract-cli validate-contract \
 
 ```bash
 # Create Hpcc initdata annotation
-contract-cli hpcc-init \
+contract-cli initdata \
   --in signed_encrypted_contract.yaml
 ```
 
@@ -206,7 +206,7 @@ Available Commands:
   encrypt-string                  Encrypt string in Hyper Protect format
   get-certificate                 Extract specific certificate version from download output
   help                            Help about any command
-  hpcc-init                       Gzip and Encoded hpcc initdata annotation
+  initdata                        Gzip and Encoded initdata annotation
   image                           Get HPCR image details from IBM Cloud
   validate-contract               Validate contract schema
   validate-encryption-certificate validate encryption certificate

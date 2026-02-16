@@ -19,7 +19,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-cli/lib/hpccinitdata"
+	"github.com/ibm-hyper-protect/contract-cli/lib/initdata"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,7 +30,7 @@ const (
 )
 
 var (
-	sampleGzippedInitdataCmd = []string{hpccinitdata.ParameterName, "--in", sampleSignedEncryptedContract, "--out", sampleGzippedInitdataValue}
+	sampleGzippedInitdataCmd = []string{initdata.ParameterName, "--in", sampleSignedEncryptedContract, "--out", sampleGzippedInitdataValue}
 )
 
 // Testcase to check gzipped initdata funtionality.

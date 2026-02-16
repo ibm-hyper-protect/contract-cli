@@ -19,7 +19,7 @@ Complete command reference and usage guide for the Hyper Protect Contract CLI.
   - [image](#image)
   - [validate-contract](#validate-contract)
   - [validate-network](#validate-network)
-  - [hpcc-init](#hpcc-init)
+  - [initdata](#initdata)
 - [Common Workflows](#common-workflows)
 - [Troubleshooting](#troubleshooting)
 - [Examples](#examples)
@@ -610,13 +610,13 @@ contract-cli validate-encryption-certificate --in encryption-cert.crt
 
 ---
 
-### hpcc-init
+### initdata
 Create initdata annotation from signed and encrypted contract for Hyper Protect Confidential Containers PeerPod solution
 
 #### Usage
 
 ```bash
-contract-cli hpcc-init [flags]
+contract-cli initdata [flags]
 ```
 
 #### Flags
@@ -631,7 +631,7 @@ contract-cli hpcc-init [flags]
 
 **Create Hpcc Initdata from signed & encrypted contract**
 ```bash
-contract-cli hpcc-init --in signed_encrypted_contract.yaml
+contract-cli initdata --in signed_encrypted_contract.yaml
 ```
 
 ---

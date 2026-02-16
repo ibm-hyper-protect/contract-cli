@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package hpccinitdata
+package initdata
 
 import (
 	"fmt"
@@ -24,9 +24,9 @@ import (
 )
 
 const (
-	ParameterName             = "hpcc-init"
-	ParameterShortDescription = "Gzip and Encoded hpcc initdata annotation"
-	ParameterLongDescription  = `Gzip and Encoded initdata annotation for Hyper Protect Confidential Containers`
+	ParameterName             = "initdata"
+	ParameterShortDescription = "Gzip and Encoded initdata annotation"
+	ParameterLongDescription  = `Gzip and Encoded initdata annotation`
 
 	InputFlagName        = "in"
 	InputFlagDescription = "Path of Signed and Encrypted contract"
@@ -54,8 +54,8 @@ func ValidateInput(cmd *cobra.Command) (string, string, error) {
 	return inputData, outputPath, nil
 }
 
-// GenerateGzippedInitdata - function to generate gzipped initdata
-func GenerateHpccInitdata(inputDataPath string) (string, error) {
+// GenerateInitdata - function to generate gzipped initdata
+func GenerateInitdata(inputDataPath string) (string, error) {
 	if !common.CheckFileFolderExists(inputDataPath) {
 		return "", fmt.Errorf("the contract path doesn't exist")
 	}
@@ -70,14 +70,14 @@ func GenerateHpccInitdata(inputDataPath string) (string, error) {
 	return gzipInitdata, nil
 }
 
-// PrintHpccInitdata - function to print generated gzipped initdata value
-func PrintHpccInitdata(gzippedData, outputPath string) error {
+// PrintInitdata - function to print generated gzipped initdata value
+func PrintInitdata(gzippedData, outputPath string) error {
 	if outputPath != "" {
 		err := common.WriteDataToFile(outputPath, gzippedData)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Successfully generated gzipped initdata for HPCC")
+		fmt.Println("Successfully generated gzipped initdata annotation")
 	} else {
 		fmt.Println(gzippedData)
 	}
