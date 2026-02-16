@@ -19,6 +19,7 @@ Complete command reference and usage guide for the Hyper Protect Contract CLI.
   - [image](#image)
   - [validate-contract](#validate-contract)
   - [validate-network](#validate-network)
+  - [initdata](#initdata)
 - [Common Workflows](#common-workflows)
 - [Troubleshooting](#troubleshooting)
 - [Examples](#examples)
@@ -609,6 +610,32 @@ contract-cli validate-encryption-certificate --in encryption-cert.crt
 
 ---
 
+### initdata
+Create initdata annotation from signed and encrypted contract for Hyper Protect Confidential Containers PeerPod solution
+
+#### Usage
+
+```bash
+contract-cli initdata [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to signed & encrypted contract YAML file |
+| `--out` | string | No | Path to store gzipped & encoded initdata value |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Create Hpcc Initdata from signed & encrypted contract**
+```bash
+contract-cli initdata --in signed_encrypted_contract.yaml
+```
+
+---
+
 ## Common Workflows
 
 ### Complete Contract Generation Workflow
@@ -731,6 +758,7 @@ The [`samples/`](../samples/) directory contains working examples:
 - **[Attestation Records](../samples/attestation/)** - Example attestation files
 - **[Network Configuration](../samples/network/)** - Network config examples
 - **[Docker Compose](../samples/tgz/)** - Compose file examples
+- **[Signed & Encrypted Contract](../samples/hpcc/signed-encrypt-hpcc.yaml)** - Signed & Encrypted hpcc contract
 
 ---
 
