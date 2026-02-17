@@ -31,7 +31,7 @@ const (
 Useful for encoding data that needs to be included in contracts or configurations.`
 
 	InputFlagName        = "in"
-	InputFlagDescription = "Input data to encode (text or JSON, use '-' for Standard Input)"
+	InputFlagDescription = "Input data to encode (text or JSON, use '-' for standard input)"
 
 	FormatFlagName        = "format"
 	FormatFlagDescription = "Input data format (text or json)"
@@ -85,7 +85,7 @@ func Process(inputData, formatType string) (string, error) {
 	if inputData == "-" {
 		data, err = common.ReadDataFromStdin()
 		if err != nil {
-			return "", fmt.Errorf("failed to read from Standard Input: %w", err)
+			return "", fmt.Errorf("unable to read input from standard input: %w", err)
 		}
 	} else {
 		data = inputData

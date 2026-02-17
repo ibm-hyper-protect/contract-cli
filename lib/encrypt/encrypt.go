@@ -31,7 +31,7 @@ const (
 Creates a cryptographically signed contract using your private key and encrypts it
 with the platform's encryption certificate. Supports optional contract expiry for
 enhanced security.`
-	InputFlagDescription          = "Path to unencrypted contract YAML file (use '-' for Standard Input)"
+	InputFlagDescription          = "Path to unencrypted contract YAML file (use '-' for standard input)"
 	OutputFlagDescription         = "Path to save signed and encrypted contract"
 	ContractExpiryFlag            = "contract-expiry"
 	DefaultContractExpiryFlag     = false
@@ -188,7 +188,7 @@ func commonParameters(inputDataPath, certPath, privateKeyPath string) (string, s
 	if inputDataPath == "-" {
 		inputData, err = common.ReadDataFromStdin()
 		if err != nil {
-			return "", "", "", fmt.Errorf("failed to read from Standard Input: %w", err)
+			return "", "", "", fmt.Errorf("unable to read input from standard input: %w", err)
 		}
 	} else {
 		if !common.CheckFileFolderExists(inputDataPath) {

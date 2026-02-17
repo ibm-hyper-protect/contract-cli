@@ -53,7 +53,7 @@ func ReadDataFromFile(filePath string) (string, error) {
 func ReadDataFromStdin() (string, error) {
 	content, err := io.ReadAll(os.Stdin)
 	if err != nil {
-		return "", fmt.Errorf("failed to read from Standard Input: %w", err)
+		return "", fmt.Errorf("unable to read input from standard input: %w", err)
 	}
 	return string(content), nil
 }
@@ -76,13 +76,13 @@ func IsStdinAvailable() bool {
 func ValidateStdinInput(cmd *cobra.Command, inputData string) {
 	// Check if "-" is specified but no stdin is available
 	if inputData == "-" && !IsStdinAvailable() {
-		err := fmt.Errorf("Error: '--in -' specified but no Standard Input data detected. Pipe data to Standard Input or use a file path instead")
+		err := fmt.Errorf("Error: '--in -' specified but no standard input data detected. Pipe data to standard input or use a file path instead")
 		SetMandatoryFlagError(cmd, err)
 	}
 
 	// Check if stdin has data when input data (not "-") is specified
 	if inputData != "-" && IsStdinAvailable() {
-		err := fmt.Errorf("Error: Standard Input data detected but --in specifies a file path '%s'. Use '--in -' to read from Standard Input or remove piped input to read from file", inputData)
+		err := fmt.Errorf("Error: standard input data detected but --in specifies a file path '%s'. Use '--in -' to read from standard input or remove piped input to read from file", inputData)
 		SetMandatoryFlagError(cmd, err)
 	}
 }
