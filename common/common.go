@@ -53,7 +53,7 @@ func ReadDataFromFile(filePath string) (string, error) {
 func ReadDataFromStdin() (string, error) {
 	content, err := io.ReadAll(os.Stdin)
 	if err != nil {
-		return "", fmt.Errorf("failed to read from stdin: %w", err)
+		return "", fmt.Errorf("failed to read from Standard Input: %w", err)
 	}
 	return string(content), nil
 }
@@ -69,6 +69,22 @@ func IsStdinAvailable() bool {
 	// This returns false when running interactively in terminal
 	mode := stat.Mode()
 	return (mode&os.ModeCharDevice) == 0 && stat.Size() > 0
+}
+
+// ValidateStdinInput - function to validate stdin input conflicts
+// Returns error if there's a conflict between stdin and input parameter
+func ValidateStdinInput(cmd *cobra.Command, inputData string) {
+	// Check if "-" is specified but no stdin is available
+	if inputData == "-" && !IsStdinAvailable() {
+		err := fmt.Errorf("Error: '--in -' specified but no Standard Input data detected. Pipe data to Standard Input or use a file path instead")
+		SetMandatoryFlagError(cmd, err)
+	}
+
+	// Check if stdin has data when input data (not "-") is specified
+	if inputData != "-" && IsStdinAvailable() {
+		err := fmt.Errorf("Error: Standard Input data detected but --in specifies a file path '%s'. Use '--in -' to read from Standard Input or remove piped input to read from file", inputData)
+		SetMandatoryFlagError(cmd, err)
+	}
 }
 
 // WriteDataToFile - function to write data to file (create file if doesn't exists)

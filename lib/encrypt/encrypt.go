@@ -31,7 +31,7 @@ const (
 Creates a cryptographically signed contract using your private key and encrypts it
 with the platform's encryption certificate. Supports optional contract expiry for
 enhanced security.`
-	InputFlagDescription          = "Path to unencrypted contract YAML file (use '-' for stdin)"
+	InputFlagDescription          = "Path to unencrypted contract YAML file (use '-' for Standard Input)"
 	OutputFlagDescription         = "Path to save signed and encrypted contract"
 	ContractExpiryFlag            = "contract-expiry"
 	DefaultContractExpiryFlag     = false
@@ -68,17 +68,8 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 		common.SetMandatoryFlagError(cmd, err)
 	}
 
-	// Check if "-" is specified but no stdin is available
-	if inputData == "-" && !common.IsStdinAvailable() {
-		err := fmt.Errorf("Error: '--in -' specified but no stdin data detected. Pipe data to stdin or use a file path instead")
-		common.SetMandatoryFlagError(cmd, err)
-	}
-
-	// Check if stdin has data when a file path (not "-") is specified
-	if inputData != "-" && common.IsStdinAvailable() {
-		err := fmt.Errorf("Error: stdin data detected but --in specifies a file path '%s'. Use '--in -' to read from stdin or remove piped input to read from file", inputData)
-		common.SetMandatoryFlagError(cmd, err)
-	}
+	// Validate stdin input conflicts
+	common.ValidateStdinInput(cmd, inputData)
 
 	osVersion, err := cmd.Flags().GetString(OsVersionFlagName)
 	if err != nil {
@@ -197,7 +188,7 @@ func commonParameters(inputDataPath, certPath, privateKeyPath string) (string, s
 	if inputDataPath == "-" {
 		inputData, err = common.ReadDataFromStdin()
 		if err != nil {
-			return "", "", "", fmt.Errorf("failed to read from stdin: %w", err)
+			return "", "", "", fmt.Errorf("failed to read from Standard Input: %w", err)
 		}
 	} else {
 		if !common.CheckFileFolderExists(inputDataPath) {
