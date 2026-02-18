@@ -29,7 +29,7 @@ const (
 
 Checks contract structure, required fields, and data types before encryption.
 Helps catch errors early in the development process.`
-	InputFlagDescription     = "Path to unencrypted Hyper Protect contract YAML file"
+	InputFlagDescription     = "Path to unencrypted Hyper Protect contract YAML file (use '-' for standard input)"
 	InputFlagName            = "in"
 	OsVersionFlagName        = "os"
 	OsVersionFlagDescription = "Target Hyper Protect platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
@@ -45,6 +45,9 @@ func ValidateInput(cmd *cobra.Command) (string, string, error) {
 		err := fmt.Errorf("Error: required flag '--in' is missing")
 		common.SetMandatoryFlagError(cmd, err)
 	}
+
+	// Validate stdin input
+	common.ValidateStdinInput(cmd, contract)
 
 	version, err := cmd.Flags().GetString(OsVersionFlagName)
 	if err != nil {
