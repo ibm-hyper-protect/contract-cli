@@ -126,7 +126,7 @@ contract-cli base64 [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Input data to encode (text or JSON) |
+| `--in` | string | Yes | Input data to encode (text or JSON) (use '-' for standard input) |
 | `--format` | string | No | Input data format (text or json) |
 | `--out` | string | No | Path to save Base64 encoded output |
 | `-h, --help` | - | No | Display help information |
@@ -148,6 +148,11 @@ contract-cli base64 --in '{"type": "workload"}' --format json
 contract-cli base64 --in "Hello World" --format text --out encoded.txt
 ```
 
+**Using standard input (pipe input):**
+```bash
+echo "Hello World" | contract-cli base64 --in - --format text
+```
+
 ---
 
 ### base64-tgz
@@ -164,7 +169,7 @@ contract-cli base64-tgz [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to folder containing `docker-compose.yaml` or `pods.yaml` |
+| `--in` | string | Yes | Path to folder containing `docker-compose.yaml` or `pods.yaml` (use '-' for standard input) |
 | `--output` | string | No | Output type: `plain` or `encrypted` (default: `plain`) |
 | `--cert` | string | No | Path to encryption certificate (for encrypted output) |
 | `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
@@ -212,6 +217,11 @@ contract-cli base64-tgz \
 contract-cli base64-tgz --in ./compose-folder --out archive.txt
 ```
 
+**Using standard input (pipe input):**
+```bash
+echo "pods-folder" | contract-cli base64-tgz --in -
+```
+
 ---
 
 ### decrypt-attestation
@@ -228,7 +238,7 @@ contract-cli decrypt-attestation [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to encrypted attestation file |
+| `--in` | string | Yes | Path to encrypted attestation file (use '-' for standard input) |
 | `--priv` | string | Yes | Path to private key used for decryption |
 | `--out` | string | No | Path to save decrypted attestation records |
 | `-h, --help` | - | No | Display help information |
@@ -248,6 +258,13 @@ contract-cli decrypt-attestation \
   --in se-checksums.txt.enc \
   --priv private.pem \
   --out decrypted-attestation.txt
+```
+
+**Using standard input:**
+```bash
+cat se-checksums.txt.enc | contract-cli decrypt-attestation \
+  --in - \
+  --priv private.pem
 ```
 
 ---
@@ -312,7 +329,7 @@ contract-cli encrypt [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to unencrypted Hyper Protect contract YAML file |
+| `--in` | string | Yes | Path to unencrypted Hyper Protect contract YAML file (use '-' for standard input) |
 | `--priv` | string | No* | Path to private key for signing |
 | `--cert` | string | No | Path to encryption certificate (uses latest if not specified) |
 | `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
@@ -379,6 +396,13 @@ contract-cli encrypt \
   --os hpcc-peerpod
 ```
 
+**Using standard input:**
+```bash
+echo "test-string" | contract-cli encrypt \
+  --in - \
+  --priv private.pem
+```
+
 ---
 
 ### encrypt-string
@@ -395,7 +419,7 @@ contract-cli encrypt-string [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | String data to encrypt |
+| `--in` | string | Yes | String data to encrypt (use '-' for standard input) |
 | `--format` | string | No | Input data format (text or json) |
 | `--cert` | string | No | Path to encryption certificate (uses latest if not specified) |
 | `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
@@ -430,6 +454,11 @@ contract-cli encrypt-string \
   --out encrypted-secret.txt
 ```
 
+**Using standard input:**
+```bash
+echo "my-secret-password" | contract-cli encrypt-string --in -
+```
+
 ---
 
 ### get-certificate
@@ -446,7 +475,7 @@ contract-cli get-certificate [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to download-certificate JSON output |
+| `--in` | string | Yes | Path to download-certificate JSON output (use '-' for standard input) |
 | `--version` | string | Yes | Certificate version to extract (e.g., 1.0.23) |
 | `--out` | string | No | Path to save extracted encryption certificate |
 | `-h, --help` | - | No | Display help information |
@@ -468,6 +497,11 @@ contract-cli get-certificate \
   --out cert-1.0.23.crt
 ```
 
+**Using standard input:**
+```bash
+cat "cert.json" | contract-cli get-certificate --in - --version 1.0.23
+```
+
 ---
 
 ### image
@@ -484,7 +518,7 @@ contract-cli image [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to IBM Cloud images JSON (from API, CLI, or Terraform) |
+| `--in` | string | Yes | Path to IBM Cloud images JSON (from API, CLI, or Terraform) (use '-' for standard input) |
 | `--version` | string | No | Specific HPCR version to retrieve (returns latest if not specified) |
 | `--format` | string | No | Output format for data (json, yaml, or text) |
 | `--out` | string | No | Path to save HPCR image details |
@@ -518,6 +552,12 @@ contract-cli image \
   --out hpcr-image.json
 ```
 
+**Using standard input:**
+```bash
+cat "ibm-cloud-images.json" | contract-cli image --in -
+```
+
+
 ---
 
 ### validate-contract
@@ -534,7 +574,7 @@ contract-cli validate-contract [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to unencrypted Hyper Protect contract YAML file |
+| `--in` | string | Yes | Path to unencrypted Hyper Protect contract YAML file (use '-' for standard input) |
 | `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
 | `-h, --help` | - | No | Display help information |
 
@@ -555,6 +595,11 @@ contract-cli validate-contract --in contract.yaml --os hpcr-rhvs
 contract-cli validate-contract --in contract.yaml --os hpcc-peerpod
 ```
 
+**Using standard input:**
+```bash
+cat contract.yaml | contract-cli validate-contract --in - --os hpvs
+```
+
 ---
 
 ### validate-network
@@ -571,7 +616,7 @@ contract-cli validate-network [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to network-config YAML file |
+| `--in` | string | Yes | Path to network-config YAML file (use '-' for standard input) |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
@@ -579,6 +624,11 @@ contract-cli validate-network [flags]
 **Validate network configuration:**
 ```bash
 contract-cli validate-network --in network-config.yaml
+```
+
+**Using standard input:**
+```bash
+cat network-config.yaml | contract-cli validate-network --in -
 ```
 
 ---
@@ -598,14 +648,19 @@ contract-cli validate-encryption-certificate [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to encryption certificate file |
+| `--in` | string | Yes | Path to encryption certificate file (use '-' for standard input) |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
 
-**Validate encryption certifacte configuration:**
+**Validate encryption certificate configuration:**
 ```bash
 contract-cli validate-encryption-certificate --in encryption-cert.crt
+```
+
+**Using standard input:**
+```bash
+cat encryption-cert.crt | contract-cli validate-encryption-certificate --in -
 ```
 
 ---
@@ -623,15 +678,20 @@ contract-cli initdata [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to signed & encrypted contract YAML file |
+| `--in` | string | Yes | Path to signed & encrypted contract YAML file (use '-' for standard input) |
 | `--out` | string | No | Path to store gzipped & encoded initdata value |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
 
-**Create Hpcc Initdata from signed & encrypted contract**
+**Create Hpcc Initdata from signed & encrypted contract:**
 ```bash
 contract-cli initdata --in signed_encrypted_contract.yaml
+```
+
+**Using standard input:**
+```bash
+cat signed_encrypted_contract.yaml | contract-cli initdata --in -
 ```
 
 ---
