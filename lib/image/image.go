@@ -40,7 +40,7 @@ const (
 
 Parses image information from IBM Cloud API, CLI, or Terraform output to extract
 image ID, name, checksum, and version. Supports filtering by specific HPCR version.`
-	IbmCloudJsonInputDescription = "Path to IBM Cloud images JSON (from API, CLI, or Terraform)"
+	IbmCloudJsonInputDescription = "Path to IBM Cloud images JSON (from API, CLI, or Terraform, use '-' for standard input)"
 	HpcrVersionFlagDescription   = "Specific HPCR version to retrieve (returns latest if not specified)"
 	OutputFlagDescription        = "Path to save HPCR image details"
 	invalidImagePathMessage      = "The Image details path doesn't exists"
@@ -65,6 +65,9 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, error) {
 		common.SetMandatoryFlagError(cmd, err)
 	}
 
+	// Validate stdin input
+	common.ValidateStdinInput(cmd, imageListJsonPath)
+
 	versionName, err := cmd.Flags().GetString(VersionFlagName)
 	if err != nil {
 		return "", "", "", "", err
@@ -83,13 +86,23 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, error) {
 
 // Process - function to get HPCR image details from JSON input
 func Process(imageDetailsJsonPath, versionName string) (ImageDetails, error) {
-	if !common.CheckFileFolderExists(imageDetailsJsonPath) {
-		log.Fatal(invalidImagePathMessage)
-	}
+	var imageDataJson string
+	var err error
 
-	imageDataJson, err := common.ReadDataFromFile(imageDetailsJsonPath)
-	if err != nil {
-		log.Fatal(err)
+	// Handle stdin input
+	if imageDetailsJsonPath == "-" {
+		imageDataJson, err = common.ReadDataFromStdin()
+		if err != nil {
+			return ImageDetails{}, fmt.Errorf("unable to read input from standard input: %w", err)
+		}
+	} else {
+		if !common.CheckFileFolderExists(imageDetailsJsonPath) {
+			log.Fatal(invalidImagePathMessage)
+		}
+		imageDataJson, err = common.ReadDataFromFile(imageDetailsJsonPath)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	imageId, imageName, imageChecksum, ImageVersion, err := image.HpcrSelectImage(imageDataJson, versionName)
