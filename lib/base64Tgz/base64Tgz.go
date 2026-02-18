@@ -17,6 +17,7 @@ package base64Tgz
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
@@ -32,7 +33,7 @@ const (
 Creates a compressed archive of your container configuration files, encoded as Base64
 for inclusion in Hyper Protect contracts. Supports both plain and encrypted output.`
 	InputFlagName            = "in"
-	InputFlagDescription     = "Path to folder containing docker-compose.yaml or pods.yaml"
+	InputFlagDescription     = "Path to folder containing docker-compose.yaml or pods.yaml (use '-' for standard input)"
 	OutputFlagName           = "out"
 	OutputFormatFlag         = "output"
 	OutputFlagDescription    = "Output format (plain or encrypt)"
@@ -57,6 +58,9 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 		err := fmt.Errorf("Error: required flag '--in' is missing")
 		common.SetMandatoryFlagError(cmd, err)
 	}
+
+	// Validate stdin input
+	common.ValidateStdinInput(cmd, inputData)
 
 	outputFormat, err := cmd.Flags().GetString(OutputFormatFlag)
 	if err != nil {
@@ -83,12 +87,25 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 
 // Process - function to process base64-tgz inputs
 func Process(inputData, outputFormat, hyperProtectVersion, encCertPath string) (string, error) {
+	var folderPath string
+
+	// Handle stdin input
+	if inputData == "-" {
+		path, err := common.ReadDataFromStdin()
+		if err != nil {
+			return "", fmt.Errorf("unable to read input from standard input: %w", err)
+		}
+		folderPath = strings.TrimSpace(path)
+	} else {
+		folderPath = inputData
+	}
+
 	if outputFormat == OutputFormatUnencrypted {
-		if !common.CheckFileFolderExists(inputData) {
+		if !common.CheckFileFolderExists(folderPath) {
 			return "", fmt.Errorf("the path to docker-compose.yaml or pods.yaml is not accessible")
 		}
 
-		base64Data, _, _, err := contract.HpcrTgz(inputData)
+		base64Data, _, _, err := contract.HpcrTgz(folderPath)
 		if err != nil {
 			return "", fmt.Errorf("failed to generate base64 tar - %v", err)
 		}
@@ -100,7 +117,7 @@ func Process(inputData, outputFormat, hyperProtectVersion, encCertPath string) (
 			return "", err
 		}
 
-		encryptedBase64Data, _, _, err := contract.HpcrTgzEncrypted(inputData, hyperProtectVersion, encCert)
+		encryptedBase64Data, _, _, err := contract.HpcrTgzEncrypted(folderPath, hyperProtectVersion, encCert)
 		if err != nil {
 			return "", fmt.Errorf("failed to generate encrypted base64 tar - %v", err)
 		}
