@@ -55,7 +55,7 @@ func init() {
 	requiredFlags := map[string]bool{
 		"in": true,
 	}
-	validateEncryptionCertificateCmd.PersistentFlags().String(validateEncryptionCertificate.InputFlagName, "", validateEncryptionCertificate.CertVersionFlagDescription)
+	validateEncryptionCertificateCmd.PersistentFlags().String(validateEncryptionCertificate.InputFlagName, "", validateEncryptionCertificate.InputFlagDescription)
 	common.SetCustomHelpTemplate(validateEncryptionCertificateCmd, requiredFlags)
 	common.SetCustomErrorTemplate(validateEncryptionCertificateCmd)
 }
