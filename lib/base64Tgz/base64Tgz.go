@@ -35,7 +35,7 @@ for inclusion in Hyper Protect contracts. Supports both plain and encrypted outp
 	InputFlagDescription     = "Path to folder containing docker-compose.yaml or pods.yaml"
 	OutputFlagName           = "out"
 	OutputFormatFlag         = "output"
-	OutputFlagDescription    = "Output format (plain or encrypted)"
+	OutputFlagDescription    = "Output format (plain or encrypt)"
 	OutputFormatUnencrypted  = "plain"
 	OutputFormatEncrypted    = "encrypt"
 	DefaultOutput            = OutputFormatUnencrypted
