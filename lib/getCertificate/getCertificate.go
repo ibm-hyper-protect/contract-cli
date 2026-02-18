@@ -31,7 +31,7 @@ const (
 
 Parses the JSON output from download-certificate and extracts the certificate
 for the specified version.`
-	FileInFlagDescription  = "Path to download-certificate JSON output"
+	FileInFlagDescription  = "Path to download-certificate JSON output (use '-' for standard input)"
 	VersionFlagDescription = "Certificate version to extract (e.g., 1.0.23)"
 	FileOutFlagDescription = "Path to save extracted encryption certificate"
 	InputFlagName          = "in"
@@ -80,18 +80,31 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 		}
 	}
 
+	// Validate stdin input
+	common.ValidateStdinInput(cmd, encryptionCertsPath)
+
 	return encryptionCertsPath, version, encryptionCertificatePath, nil
 }
 
 // Process - function to get encryption certificate
 func Process(encryptionCertsPath, version string) (string, error) {
-	if !common.CheckFileFolderExists(encryptionCertsPath) {
-		return "", fmt.Errorf("the path to encryption certificates doesn't exist")
-	}
+	var encryptionCertsJson string
+	var err error
 
-	encryptionCertsJson, err := common.ReadDataFromFile(encryptionCertsPath)
-	if err != nil {
-		return "", err
+	// Handle stdin input
+	if encryptionCertsPath == "-" {
+		encryptionCertsJson, err = common.ReadDataFromStdin()
+		if err != nil {
+			return "", fmt.Errorf("unable to read input from standard input: %w", err)
+		}
+	} else {
+		if !common.CheckFileFolderExists(encryptionCertsPath) {
+			return "", fmt.Errorf("the path to encryption certificates doesn't exist")
+		}
+		encryptionCertsJson, err = common.ReadDataFromFile(encryptionCertsPath)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	_, outputCertificate, _, _, _, err := certificate.HpcrGetEncryptionCertificateFromJson(encryptionCertsJson, version)
