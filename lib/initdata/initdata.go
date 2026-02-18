@@ -29,7 +29,7 @@ const (
 	ParameterLongDescription  = `Gzip and Encoded initdata annotation`
 
 	InputFlagName        = "in"
-	InputFlagDescription = "Path of Signed and Encrypted contract"
+	InputFlagDescription = "Path of Signed and Encrypted contract (use '-' for standard input)"
 
 	OutputFlagName        = "out"
 	OutputFlagDescription = "Path to save Gzipped and encoded initdata value"
@@ -47,6 +47,9 @@ func ValidateInput(cmd *cobra.Command) (string, string, error) {
 		common.SetMandatoryFlagError(cmd, err)
 	}
 
+	// Validate stdin input
+	common.ValidateStdinInput(cmd, inputData)
+
 	outputPath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
 		return "", "", err
@@ -56,13 +59,25 @@ func ValidateInput(cmd *cobra.Command) (string, string, error) {
 
 // GenerateInitdata - function to generate gzipped initdata
 func GenerateInitdata(inputDataPath string) (string, error) {
-	if !common.CheckFileFolderExists(inputDataPath) {
-		return "", fmt.Errorf("the contract path doesn't exist")
+	var inputData string
+	var err error
+
+	// Handle stdin input
+	if inputDataPath == "-" {
+		inputData, err = common.ReadDataFromStdin()
+		if err != nil {
+			return "", fmt.Errorf("unable to read input from standard input: %w", err)
+		}
+	} else {
+		if !common.CheckFileFolderExists(inputDataPath) {
+			return "", fmt.Errorf("the contract path doesn't exist")
+		}
+		inputData, err = common.ReadDataFromFile(inputDataPath)
+		if err != nil {
+			return "", err
+		}
 	}
-	inputData, err := common.ReadDataFromFile(inputDataPath)
-	if err != nil {
-		return "", err
-	}
+
 	gzipInitdata, _, _, err := contract.HpccInitdata(inputData)
 	if err != nil {
 		return "", err
