@@ -36,13 +36,21 @@ var validateNetworkConfigCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		if !common.CheckFileFolderExists(networkConfigPath) {
-			log.Fatal("The path to network-config doesn't exist")
-		}
+		var networkConfigData string
+		if networkConfigPath == "-" {
+			networkConfigData, err = common.ReadDataFromStdin()
+			if err != nil {
+				log.Fatalf("unable to read input from standard input: %v", err)
+			}
+		} else {
+			if !common.CheckFileFolderExists(networkConfigPath) {
+				log.Fatal("The path to network-config doesn't exist")
+			}
 
-		networkConfigData, err := common.ReadDataFromFile(networkConfigPath)
-		if err != nil {
-			log.Fatal(err)
+			networkConfigData, err = common.ReadDataFromFile(networkConfigPath)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		err = network.HpcrVerifyNetworkConfig(networkConfigData)

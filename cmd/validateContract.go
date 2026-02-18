@@ -41,7 +41,7 @@ var validateContractCmd = &cobra.Command{
 		if contractPath == "-" {
 			contractData, err = common.ReadDataFromStdin()
 			if err != nil {
-				log.Fatalf("failed to read from standard input: %v", err)
+				log.Fatalf("unable to read input from standard input: %v", err)
 			}
 		} else {
 			if !common.CheckFileFolderExists(contractPath) {

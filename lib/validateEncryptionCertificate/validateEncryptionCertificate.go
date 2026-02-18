@@ -61,7 +61,7 @@ func GetEncryptionCertfile(encryptionCertsPath string) (string, error) {
 	if encryptionCertsPath == "-" {
 		encryptionCert, err = common.ReadDataFromStdin()
 		if err != nil {
-			return "", fmt.Errorf("failed to read from standard input: %w", err)
+			return "", fmt.Errorf("unable to read input from standard input: %w", err)
 		}
 	} else {
 		if !common.CheckFileFolderExists(encryptionCertsPath) {
