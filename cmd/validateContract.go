@@ -36,13 +36,21 @@ var validateContractCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		contractData, err := common.ReadDataFromFile(contractPath)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if !common.CheckFileFolderExists(contractPath) {
-			log.Fatal("The path to contract doesn't exist")
+		var contractData string
+		// Handle stdin input
+		if contractPath == "-" {
+			contractData, err = common.ReadDataFromStdin()
+			if err != nil {
+				log.Fatalf("unable to read input from standard input: %v", err)
+			}
+		} else {
+			if !common.CheckFileFolderExists(contractPath) {
+				log.Fatal("The path to contract doesn't exist")
+			}
+			contractData, err = common.ReadDataFromFile(contractPath)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		err = contract.HpcrVerifyContract(contractData, version)

@@ -31,7 +31,7 @@ const (
 Creates a cryptographically signed contract using your private key and encrypts it
 with the platform's encryption certificate. Supports optional contract expiry for
 enhanced security.`
-	InputFlagDescription          = "Path to unencrypted contract YAML file"
+	InputFlagDescription          = "Path to unencrypted contract YAML file (use '-' for standard input)"
 	OutputFlagDescription         = "Path to save signed and encrypted contract"
 	ContractExpiryFlag            = "contract-expiry"
 	DefaultContractExpiryFlag     = false
@@ -67,6 +67,9 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 		err := fmt.Errorf("Error: required flag '--in' is missing")
 		common.SetMandatoryFlagError(cmd, err)
 	}
+
+	// Validate stdin input conflicts
+	common.ValidateStdinInput(cmd, inputData)
 
 	osVersion, err := cmd.Flags().GetString(OsVersionFlagName)
 	if err != nil {
@@ -179,13 +182,23 @@ func GenerateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, pri
 
 // commonParameters - function to fetch common details
 func commonParameters(inputDataPath, certPath, privateKeyPath string) (string, string, string, error) {
-	if !common.CheckFileFolderExists(inputDataPath) {
-		return "", "", "", fmt.Errorf("the contract path doesn't exist")
-	}
+	var inputData string
+	var err error
 
-	inputData, err := common.ReadDataFromFile(inputDataPath)
-	if err != nil {
-		return "", "", "", err
+	if inputDataPath == "-" {
+		inputData, err = common.ReadDataFromStdin()
+		if err != nil {
+			return "", "", "", fmt.Errorf("unable to read input from standard input: %w", err)
+		}
+	} else {
+		if !common.CheckFileFolderExists(inputDataPath) {
+			return "", "", "", fmt.Errorf("the contract path doesn't exist")
+		}
+
+		inputData, err = common.ReadDataFromFile(inputDataPath)
+		if err != nil {
+			return "", "", "", err
+		}
 	}
 
 	cert, err := common.GetDataFromFile(certPath)

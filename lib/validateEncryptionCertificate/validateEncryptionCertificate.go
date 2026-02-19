@@ -30,6 +30,7 @@ const (
 
 Validates encryption certificate for on-premise, VPC deployment.
 It will check encryption certificate validity`
+	InputFlagDescription       = "Path to encryption certificate file (use '-' for standard input)"
 	CertVersionFlagDescription = "Versions of Encryption Certificates to validate, Seperated by coma(,)"
 	InputFlagName              = "in"
 )
@@ -45,18 +46,31 @@ func ValidateInput(cmd *cobra.Command) (string, error) {
 		common.SetMandatoryFlagError(cmd, err)
 	}
 
+	// Validate stdin input
+	common.ValidateStdinInput(cmd, encryptionCertsPath)
+
 	return encryptionCertsPath, nil
 }
 
 // GetEncryptionCertfile - function to get encryption certificate
 func GetEncryptionCertfile(encryptionCertsPath string) (string, error) {
-	if !common.CheckFileFolderExists(encryptionCertsPath) {
-		return "", fmt.Errorf("The specified path does not contain the encryption certificates.")
-	}
+	var encryptionCert string
+	var err error
 
-	encryptionCert, err := common.ReadDataFromFile(encryptionCertsPath)
-	if err != nil {
-		return "", err
+	// Handle stdin input
+	if encryptionCertsPath == "-" {
+		encryptionCert, err = common.ReadDataFromStdin()
+		if err != nil {
+			return "", fmt.Errorf("unable to read input from standard input: %w", err)
+		}
+	} else {
+		if !common.CheckFileFolderExists(encryptionCertsPath) {
+			return "", fmt.Errorf("The specified path does not contain the encryption certificates.")
+		}
+		encryptionCert, err = common.ReadDataFromFile(encryptionCertsPath)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return encryptionCert, nil

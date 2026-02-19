@@ -31,7 +31,7 @@ const (
 Useful for encoding data that needs to be included in contracts or configurations.`
 
 	InputFlagName        = "in"
-	InputFlagDescription = "Input data to encode (text or JSON)"
+	InputFlagDescription = "Input data to encode (text or JSON, use '-' for standard input)"
 
 	FormatFlagName        = "format"
 	FormatFlagDescription = "Input data format (text or json)"
@@ -59,6 +59,9 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 		common.SetMandatoryFlagError(cmd, err)
 	}
 
+	// Validate stdin input conflicts
+	common.ValidateStdinInput(cmd, inputData)
+
 	formatType, err := cmd.Flags().GetString(FormatFlagName)
 	if err != nil {
 		return "", "", "", err
@@ -76,14 +79,25 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 func Process(inputData, formatType string) (string, error) {
 	var base64String string
 	var err error
+	var data string
+
+	// Check if input is from stdin
+	if inputData == "-" {
+		data, err = common.ReadDataFromStdin()
+		if err != nil {
+			return "", fmt.Errorf("unable to read input from standard input: %w", err)
+		}
+	} else {
+		data = inputData
+	}
 
 	if formatType == TextFormat {
-		base64String, _, _, err = contract.HpcrText(inputData)
+		base64String, _, _, err = contract.HpcrText(data)
 		if err != nil {
 			return "", err
 		}
 	} else if formatType == JsonFormat {
-		base64String, _, _, err = contract.HpcrJson(inputData)
+		base64String, _, _, err = contract.HpcrJson(data)
 		if err != nil {
 			return "", err
 		}

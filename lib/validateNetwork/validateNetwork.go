@@ -29,7 +29,7 @@ const (
 
 Validates network configuration for on-premise deployments, ensuring all required
 fields are present and properly formatted.`
-	InputFlagDescription = "Path to network-config YAML file"
+	InputFlagDescription = "Path to network-config YAML file (use '-' for standard input)"
 	InputFlagName        = "in"
 )
 
@@ -43,6 +43,8 @@ func ValidateInput(cmd *cobra.Command) (string, error) {
 		err := fmt.Errorf("Error: required flag '--in' is missing")
 		common.SetMandatoryFlagError(cmd, err)
 	}
+
+	common.ValidateStdinInput(cmd, networkConfig)
 
 	return networkConfig, nil
 }

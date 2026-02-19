@@ -49,6 +49,44 @@ func ReadDataFromFile(filePath string) (string, error) {
 	return string(content), nil
 }
 
+// ReadDataFromStdin - function to read data from stdin
+func ReadDataFromStdin() (string, error) {
+	content, err := io.ReadAll(os.Stdin)
+	if err != nil {
+		return "", fmt.Errorf("unable to read input from standard input: %w", err)
+	}
+	return string(content), nil
+}
+
+// IsStdinAvailable - function to check if stdin has data available (piped or redirected)
+func IsStdinAvailable() bool {
+	stat, err := os.Stdin.Stat()
+	if err != nil {
+		return false
+	}
+	// Check if stdin is a pipe or file (not a character device like terminal)
+	// This returns true when data is piped: echo "data" | command
+	// This returns false when running interactively in terminal
+	mode := stat.Mode()
+	return (mode&os.ModeCharDevice) == 0 && stat.Size() > 0
+}
+
+// ValidateStdinInput - function to validate stdin input conflicts
+// Returns error if there's a conflict between stdin and input parameter
+func ValidateStdinInput(cmd *cobra.Command, inputData string) {
+	// Check if "-" is specified but no stdin is available
+	if inputData == "-" && !IsStdinAvailable() {
+		err := fmt.Errorf("Error: '--in -' specified but no standard input data detected. Pipe data to standard input or use a file path instead")
+		SetMandatoryFlagError(cmd, err)
+	}
+
+	// Check if stdin has data when input data (not "-") is specified
+	if inputData != "-" && IsStdinAvailable() {
+		err := fmt.Errorf("Error: standard input data detected but --in specifies a file path '%s'. Use '--in -' to read from standard input or remove piped input to read from file", inputData)
+		SetMandatoryFlagError(cmd, err)
+	}
+}
+
 // WriteDataToFile - function to write data to file (create file if doesn't exists)
 func WriteDataToFile(filePath, data string) error {
 	DataFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)

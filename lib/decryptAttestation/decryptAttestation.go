@@ -33,7 +33,7 @@ const (
 Attestation records are typically found at /var/hyperprotect/se-checksums.txt.enc
 and contain cryptographic hashes for verifying workload integrity.`
 
-	DecryptAttestFileInDescription   = "Path to encrypted attestation file (se-checksums.txt.enc)"
+	DecryptAttestFileInDescription   = "Path to encrypted attestation file (se-checksums.txt.enc, use '-' for standard input)"
 	DecryptAttestFlagDescription     = "Path to save decrypted attestation records"
 	successMessageDecryptAttestation = "Successfully decrypted attestation records"
 	InputFlagName                    = "in"
@@ -83,21 +83,35 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 		}
 	}
 
+	// Validate stdin input
+	common.ValidateStdinInput(cmd, encAttestPath)
+
 	return encAttestPath, privateKeyPath, decryptedAttestPath, nil
 }
 
 // DecryptAttestationRecords - function to decrypt attestation records
 func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath string) (string, error) {
-	if !common.CheckFileFolderExists(encryptedAttestationRecordsPath) {
-		log.Fatal("The path to encrypted attestation records file doesn't exists")
-	}
-	if !common.CheckFileFolderExists(privateKeyPath) {
-		log.Fatal("The path to private key doesn't exists")
+	var encryptedChecksum string
+	var err error
+
+	// Handle stdin input
+	if encryptedAttestationRecordsPath == "-" {
+		encryptedChecksum, err = common.ReadDataFromStdin()
+		if err != nil {
+			return "", fmt.Errorf("unable to read input from standard input: %w", err)
+		}
+	} else {
+		if !common.CheckFileFolderExists(encryptedAttestationRecordsPath) {
+			log.Fatal("The path to encrypted attestation records file doesn't exists")
+		}
+		encryptedChecksum, err = common.ReadDataFromFile(encryptedAttestationRecordsPath)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	encryptedChecksum, err := common.ReadDataFromFile(encryptedAttestationRecordsPath)
-	if err != nil {
-		return "", err
+	if !common.CheckFileFolderExists(privateKeyPath) {
+		log.Fatal("The path to private key doesn't exists")
 	}
 
 	privateKey, err := common.ReadDataFromFile(privateKeyPath)

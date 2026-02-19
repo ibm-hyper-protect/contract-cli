@@ -30,7 +30,7 @@ const (
 
 Output format: hyper-protect-basic.<encrypted-password>.<encrypted-string>
 Use this to encrypt sensitive data like passwords or API keys for contracts.`
-	InputFlagDescription        = "String data to encrypt (text or JSON)"
+	InputFlagDescription        = "String data to encrypt (text or JSON, use '-' for standard input)"
 	FormatFlagDescription       = "Input data format (text or json)"
 	OutputFlagDescription       = "Path to save encrypted output"
 	successMessageEncryptString = "Successfully stored encrypted text"
@@ -55,6 +55,9 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 		err := fmt.Errorf("Error: required flag '--in' is missing")
 		common.SetMandatoryFlagError(cmd, err)
 	}
+
+	// Validate stdin input
+	common.ValidateStdinInput(cmd, inputData)
 
 	inputFormat, err := cmd.Flags().GetString(FormatFlag)
 	if err != nil {
@@ -81,6 +84,19 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 
 // Process - function to generate encrypted string of plain or JSON text
 func Process(inputData, inputFormat, hyperProtectVersion, encCertPath string) (string, error) {
+	var data string
+	var err error
+
+	// Handle stdin input
+	if inputData == "-" {
+		data, err = common.ReadDataFromStdin()
+		if err != nil {
+			return "", fmt.Errorf("unable to read input from standard input: %w", err)
+		}
+	} else {
+		data = inputData
+	}
+
 	encCert, err := common.GetDataFromFile(encCertPath)
 	if err != nil {
 		return "", err
@@ -88,12 +104,12 @@ func Process(inputData, inputFormat, hyperProtectVersion, encCertPath string) (s
 
 	var encryptedString string
 	if inputFormat == TextFormat {
-		encryptedString, _, _, err = contract.HpcrTextEncrypted(inputData, hyperProtectVersion, encCert)
+		encryptedString, _, _, err = contract.HpcrTextEncrypted(data, hyperProtectVersion, encCert)
 		if err != nil {
 			return "", err
 		}
 	} else if inputFormat == JsonFormat {
-		encryptedString, _, _, err = contract.HpcrJsonEncrypted(inputData, hyperProtectVersion, encCert)
+		encryptedString, _, _, err = contract.HpcrJsonEncrypted(data, hyperProtectVersion, encCert)
 		if err != nil {
 			return "", err
 		}
