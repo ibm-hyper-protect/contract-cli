@@ -1,3 +1,25 @@
+## [1.16.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.15.2...v1.16.0) (2026-02-19)
+
+### Features
+
+* add support for stdin for input ([a6180ba](https://github.com/ibm-hyper-protect/contract-cli/commit/a6180ba53be143fb19c5860c01c83c7bccba9790))
+* Added stdin support in base64-tgz ([2bc1619](https://github.com/ibm-hyper-protect/contract-cli/commit/2bc1619a4c59ca11772050b92bf47c64e7ff80ee))
+* Added stdin support in decryptAttestation ([f3ecbe8](https://github.com/ibm-hyper-protect/contract-cli/commit/f3ecbe885f1155b22c564d529c19a39bd77fa78a))
+* Added stdin support in encrypt string ([9f965d9](https://github.com/ibm-hyper-protect/contract-cli/commit/9f965d9bbdc6eb0c8de1477f2d9c1406f51cda90))
+* Added stdin support in get certificate ([e937e32](https://github.com/ibm-hyper-protect/contract-cli/commit/e937e32c7cf5e1e3ad63c5a673f8e2dde5c75371))
+* Added stdin support in image ([55325ab](https://github.com/ibm-hyper-protect/contract-cli/commit/55325aba4f0f13245b6bc26186f8e6a40a4eb835))
+* Added stdin support in initdata ([af1cdfa](https://github.com/ibm-hyper-protect/contract-cli/commit/af1cdfa4a965bfda47422a207392c4930d363189))
+* Added stdin support in validate contract ([ff01be2](https://github.com/ibm-hyper-protect/contract-cli/commit/ff01be2b865537ceba91f5ecb1b547222048fd80))
+* Added stdin support in validate encryption certificate ([a933a2b](https://github.com/ibm-hyper-protect/contract-cli/commit/a933a2b06ec1c24ce93041c1c64753fc78e680ce))
+* Added stdin support in validate network config ([49a125e](https://github.com/ibm-hyper-protect/contract-cli/commit/49a125e8f02c546eac11a324c6866b8264f901a7))
+* resolving review comments ([c5183f1](https://github.com/ibm-hyper-protect/contract-cli/commit/c5183f1bb75e71590d2a44d689a8a6070ea8a510))
+* resolving review comments and adding stdin functionality to base64 command ([33651f0](https://github.com/ibm-hyper-protect/contract-cli/commit/33651f0fa2eddc59a2016259907096c3b597805a))
+* updated README.md file ([8dfa231](https://github.com/ibm-hyper-protect/contract-cli/commit/8dfa231622ac67a1be4b005efe124f46224fe4d0))
+
+### Bug Fixes
+
+* fixing OutputFlagDescription of base64 tgz command: ([77bc739](https://github.com/ibm-hyper-protect/contract-cli/commit/77bc739b227ce4b04419d5755c36146a90a7f411))
+
 ## [1.15.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.15.1...v1.15.2) (2026-02-18)
 
 ### Bug Fixes
