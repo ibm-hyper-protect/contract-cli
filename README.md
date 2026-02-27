@@ -226,8 +226,8 @@ Use "contract-cli [command] --help" for more information about a command.
 
 Comprehensive documentation is available at:
 
-- **[User Documentation](docs/README.md)** - Detailed command reference and usage examples
-- **[Command Reference](docs/README.md)** - Complete guide for all CLI commands
+- **[User / Command Documentation](https://ibm-hyper-protect.github.io/contract-cli)** - Detailed command reference and usage examples
+- **[Sample Command Reference](https://github.com/ibm-hyper-protect/linuxone-vsi-automation-samples/tree/master/cli-hpvs)** - Example CLI commands and usage demonstrations
 
 ## Supported Platforms
 

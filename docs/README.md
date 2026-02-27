@@ -824,6 +824,7 @@ The [`samples/`](../samples/) directory contains working examples:
 - **[Network Configuration](../samples/network/)** - Network config examples
 - **[Docker Compose](../samples/tgz/)** - Compose file examples
 - **[Signed & Encrypted Contract](../samples/hpcc/signed-encrypt-hpcc.yaml)** - Signed & Encrypted hpcc contract
+- **[Sample Command Reference](https://github.com/ibm-hyper-protect/linuxone-vsi-automation-samples/tree/master/cli-hpvs)** - Example CLI commands and usage demonstrations
 
 ---
 
