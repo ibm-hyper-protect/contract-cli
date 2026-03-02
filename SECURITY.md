@@ -30,7 +30,7 @@ The `contract-cli` team takes security vulnerabilities seriously. We appreciate 
 
 **Or, report via email:**
 
-Contact the project maintainers listed in [MAINTAINERS.md](MAINTAINERS.md) directly with details about the vulnerability.
+Contact the Security maintainers listed in [MAINTAINERS.md](MAINTAINERS.md) directly with details about the vulnerability.
 
 ### What to Include in Your Report
 
