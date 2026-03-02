@@ -99,7 +99,7 @@ workload: |
   type: workload
   compose:
     archive: your-archive
-EOF
+EOF 
 
 # 3. Validate the contract
 contract-cli validate-contract --in contract.yaml --os hpvs
