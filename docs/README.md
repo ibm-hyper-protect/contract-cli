@@ -1,10 +1,5 @@
 # Contract CLI Documentation
 
-> **Note:** The offering names have been changed:
-> - **Hyper Protect Virtual Servers (HPVS)** → **IBM Confidential Computing Container Runtime (CCCR)**
-> - **Hyper Protect Container Runtime for Red Hat Virtualization (HPCR-RHVS)** → **IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions (CCCRV)**
-> - **Hyper Protect Confidential Container (HPCC)** → **IBM Confidential Computing Containers for Red Hat OpenShift Container Platform**
-
 Complete command reference and usage guide for the Hyper Protect Contract CLI.
 
 ## Table of Contents
@@ -31,7 +26,7 @@ Complete command reference and usage guide for the Hyper Protect Contract CLI.
 
 ## Introduction
 
-The Contract CLI automates the process of generating and managing contracts for provisioning IBM Hyper Protect services including IBM Confidential Computing Container Runtime (CCCR) for VPC, IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions (CCCRV), and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform. It provides a comprehensive set of commands for:
+The Contract CLI automates the process of generating and managing contracts for provisioning IBM Hyper Protect services including Hyper Protect Virtual Servers (HPVS) for VPC, Hyper Protect Container Runtime (HPCR) for RHVS, and Hyper Protect Confidential Container (HPCC) for Peer Pods. It provides a comprehensive set of commands for:
 
 - Generating signed and encrypted contracts
 - Managing encryption certificates
@@ -104,7 +99,7 @@ workload: |
   type: workload
   compose:
     archive: your-archive
-EOF
+EOF 
 
 # 3. Validate the contract
 contract-cli validate-contract --in contract.yaml --os hpvs
@@ -162,7 +157,7 @@ echo "Hello World" | contract-cli base64 --in - --format text
 
 ### base64-tgz
 
-Generate Base64-encoded tar.gz archive of docker-compose.yaml or pods.yaml. Creates a compressed archive of your container configuration files, encoded as Base64 for inclusion in contracts. Supports both plain and encrypted output.
+Generate Base64-encoded tar.gz archive of docker-compose.yaml or pods.yaml. Creates a compressed archive of your container configuration files, encoded as Base64 for inclusion in Hyper Protect contracts. Supports both plain and encrypted output.
 
 #### Usage
 
@@ -201,7 +196,7 @@ contract-cli base64-tgz \
   --cert encryption.crt
 ```
 
-**For CCCRV:**
+**For HPCR-RHVS:**
 ```bash
 contract-cli base64-tgz \
   --in ./pods-folder \
@@ -209,7 +204,7 @@ contract-cli base64-tgz \
   --os hpcr-rhvs
 ```
 
-**For IBM Confidential Computing Containers for Red Hat OpenShift Container Platform:**
+**For HPCC Peer Pods:**
 ```bash
 contract-cli base64-tgz \
   --in ./pods-folder \
@@ -276,7 +271,7 @@ cat se-checksums.txt.enc | contract-cli decrypt-attestation \
 
 ### download-certificate
 
-Download encryption certificates from the IBM Hyper Protect Repository. Retrieves the latest or specific versions of CCCR encryption certificates required for contract encryption and workload deployment.
+Download encryption certificates from the IBM Hyper Protect Repository. Retrieves the latest or specific versions of HPCR encryption certificates required for contract encryption and workload deployment.
 
 #### Usage
 
@@ -322,7 +317,7 @@ contract-cli download-certificate \
 
 ### encrypt
 
-Generate a signed and encrypted contract for deployment. Supports optional contract expiry for enhanced security.
+Generate a signed and encrypted contract for Hyper Protect deployment. Supports optional contract expiry for enhanced security.
 
 #### Usage
 
@@ -334,7 +329,7 @@ contract-cli encrypt [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to unencrypted contract YAML file (use '-' for standard input) |
+| `--in` | string | Yes | Path to unencrypted Hyper Protect contract YAML file (use '-' for standard input) |
 | `--priv` | string | No* | Path to private key for signing |
 | `--cert` | string | No | Path to encryption certificate (uses latest if not specified) |
 | `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
@@ -385,7 +380,7 @@ contract-cli encrypt \
   --expiry 90
 ```
 
-**For CCCRV:**
+**For HPCR-RHVS:**
 ```bash
 contract-cli encrypt \
   --in contract.yaml \
@@ -393,7 +388,7 @@ contract-cli encrypt \
   --os hpcr-rhvs
 ```
 
-**For IBM Confidential Computing Containers for Red Hat OpenShift Container Platform:**
+**For HPCC Peer Pods:**
 ```bash
 contract-cli encrypt \
   --in contract.yaml \
@@ -511,7 +506,7 @@ cat "cert.json" | contract-cli get-certificate --in - --version 1.0.23
 
 ### image
 
-Retrieve IBM Confidential Computing Container Runtime (CCCR) image details from IBM Cloud. Parses image information from IBM Cloud API, CLI, or Terraform output to extract image ID, name, checksum, and version. Supports filtering by specific CCCR version.
+Retrieve Hyper Protect Container Runtime (HPCR) image details from IBM Cloud. Parses image information from IBM Cloud API, CLI, or Terraform output to extract image ID, name, checksum, and version. Supports filtering by specific HPCR version.
 
 #### Usage
 
@@ -524,9 +519,9 @@ contract-cli image [flags]
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to IBM Cloud images JSON (from API, CLI, or Terraform) (use '-' for standard input) |
-| `--version` | string | No | Specific CCCR version to retrieve (returns latest if not specified) |
+| `--version` | string | No | Specific HPCR version to retrieve (returns latest if not specified) |
 | `--format` | string | No | Output format for data (json, yaml, or text) |
-| `--out` | string | No | Path to save CCCR image details |
+| `--out` | string | No | Path to save HPCR image details |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
@@ -579,23 +574,23 @@ contract-cli validate-contract [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to unencrypted contract YAML file (use '-' for standard input) |
+| `--in` | string | Yes | Path to unencrypted Hyper Protect contract YAML file (use '-' for standard input) |
 | `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
 
-**Validate CCCR contract:**
+**Validate HPVS contract:**
 ```bash
 contract-cli validate-contract --in contract.yaml --os hpvs
 ```
 
-**Validate CCCRV contract:**
+**Validate HPCR-RHVS contract:**
 ```bash
 contract-cli validate-contract --in contract.yaml --os hpcr-rhvs
 ```
 
-**Validate IBM Confidential Computing Containers for Red Hat OpenShift Container Platform contract:**
+**Validate HPCC Peer Pods contract:**
 ```bash
 contract-cli validate-contract --in contract.yaml --os hpcc-peerpod
 ```
@@ -671,7 +666,7 @@ cat encryption-cert.crt | contract-cli validate-encryption-certificate --in -
 ---
 
 ### initdata
-Create initdata annotation from signed and encrypted contract for IBM Confidential Computing Containers for Red Hat OpenShift Container Platform
+Create initdata annotation from signed and encrypted contract for Hyper Protect Confidential Containers PeerPod solution
 
 #### Usage
 
@@ -786,7 +781,7 @@ Error: contract validation failed
 
 **Solution:**
 - Run `validate-contract` to see specific schema errors
-- Check contract structure matches CCCR/CCCRV requirements
+- Check contract structure matches HPVS/HPCR requirements
 - Ensure all required fields are present
 
 ### Certificate Version Not Found
@@ -824,7 +819,6 @@ The [`samples/`](../samples/) directory contains working examples:
 - **[Network Configuration](../samples/network/)** - Network config examples
 - **[Docker Compose](../samples/tgz/)** - Compose file examples
 - **[Signed & Encrypted Contract](../samples/hpcc/signed-encrypt-hpcc.yaml)** - Signed & Encrypted hpcc contract
-- **[Sample Command Reference](https://github.com/ibm-hyper-protect/linuxone-vsi-automation-samples/tree/master/cli-hpvs)** - Example CLI commands and usage demonstrations
 
 ---
 
