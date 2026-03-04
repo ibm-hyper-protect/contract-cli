@@ -64,11 +64,9 @@ func IsStdinAvailable() bool {
 	if err != nil {
 		return false
 	}
-	// Check if stdin is a pipe or file (not a character device like terminal)
-	// This returns true when data is piped: echo "data" | command
-	// This returns false when running interactively in terminal
-	mode := stat.Mode()
-	return (mode&os.ModeCharDevice) == 0 && stat.Size() > 0
+
+	// If stdin is NOT a character device, then data is being piped or redirected
+	return (stat.Mode() & os.ModeCharDevice) == 0
 }
 
 // ValidateStdinInput - function to validate stdin input conflicts

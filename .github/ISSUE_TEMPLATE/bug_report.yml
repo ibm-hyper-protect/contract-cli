@@ -72,7 +72,7 @@ body:
       render: bash
       placeholder: |
         contract-cli encrypt \
-          --contract contract.yaml \
+          --in contract.yaml \
           --key private.pem \
           --output output.yaml
     validations:

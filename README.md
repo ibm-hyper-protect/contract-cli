@@ -134,7 +134,7 @@ openssl genrsa -out private.pem 4096
 
 # Generate signed and encrypted contract
 contract-cli encrypt \
-  --contract contract.yaml \
+  --in contract.yaml \
   --key private.pem \
   --output encrypted-contract.yaml
 ```
@@ -166,7 +166,7 @@ contract-cli validate-encryption-certificate \
 ```bash
 # Validate contract schema
 contract-cli validate-contract \
-  --contract contract.yaml \
+  --in contract.yaml \
   --type hpvs
 ```
 

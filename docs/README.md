@@ -456,7 +456,11 @@ contract-cli encrypt-string \
 
 **Using standard input:**
 ```bash
+# Encrypt echo statement
 echo "my-secret-password" | contract-cli encrypt-string --in -
+
+# Encrypt file content
+cat workload.yaml | contract-cli encrypt-string --in -
 ```
 
 ---
