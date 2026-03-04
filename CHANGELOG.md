@@ -1,3 +1,14 @@
+## [1.16.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.16.1...v1.16.2) (2026-03-04)
+
+### Bug Fixes
+
+* doc error ([fdff94d](https://github.com/ibm-hyper-protect/contract-cli/commit/fdff94dfa7f32741cb92ba4d870e363d55228275))
+* STD error ([e5f390e](https://github.com/ibm-hyper-protect/contract-cli/commit/e5f390e03283f94b3f79e220f757c637764ba3fd))
+
+### Documentation
+
+* update examples ([7ec59f7](https://github.com/ibm-hyper-protect/contract-cli/commit/7ec59f7c89bde955544e926973a7231a25c3ac3c))
+
 ## [1.16.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.16.0...v1.16.1) (2026-03-04)
 
 ### Bug Fixes
