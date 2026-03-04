@@ -180,7 +180,7 @@ We actively welcome your pull requests! However, please follow this process:
 
 ### CLI-Specific Guidelines
 
-- **Consistent flag names** - Follow existing naming conventions (e.g., `--contract`, `--key`, `--output`)
+- **Consistent flag names** - Follow existing naming conventions (e.g., `--in`, `--key`, `--output`)
 - **Clear error messages** - Provide helpful, actionable error messages to users
 - **Help text** - Write clear descriptions for commands and flags
 - **Exit codes** - Use appropriate exit codes (0 for success, non-zero for errors)
@@ -342,7 +342,7 @@ func TestEncryptCommand(t *testing.T) {
     }{
         {
             name:    "valid contract",
-            args:    []string{"--contract", "test.yaml", "--key", "key.pem"},
+            args:    []string{"--in", "test.yaml", "--key", "key.pem"},
             wantErr: false,
         },
         {
