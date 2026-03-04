@@ -1,3 +1,18 @@
+## [1.16.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.16.0...v1.16.1) (2026-03-04)
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.11.0 ([#84](https://github.com/ibm-hyper-protect/contract-cli/issues/84)) ([203025e](https://github.com/ibm-hyper-protect/contract-cli/commit/203025eec1b52f961756484f92496a6417973f5f))
+
+### Documentation
+
+* added peer pods ([5b00f3d](https://github.com/ibm-hyper-protect/contract-cli/commit/5b00f3d9a2abed4332d901c1f86c8ff2ef16b362))
+* change offering name to CCCR ([9a699e2](https://github.com/ibm-hyper-protect/contract-cli/commit/9a699e2ec224eab295bcc5e5b53598028040b53c))
+* fix commit message ([05c2311](https://github.com/ibm-hyper-protect/contract-cli/commit/05c2311424c43fb86df28424cbac369f0bc283c1))
+* update maintainers ([7c3fcb8](https://github.com/ibm-hyper-protect/contract-cli/commit/7c3fcb87464c5811765e259dce288af851723465))
+* update security details ([61d4c8d](https://github.com/ibm-hyper-protect/contract-cli/commit/61d4c8d9b3e98da79a4f22c2e0fd3253f00df1f1))
+* updated readme with cli url ([05ae2cc](https://github.com/ibm-hyper-protect/contract-cli/commit/05ae2ccd567ecc6af3b0facc2b68aed063289494))
+
 ## [1.16.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.15.2...v1.16.0) (2026-02-19)
 
 ### Features
