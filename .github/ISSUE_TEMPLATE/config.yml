@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Documentation
-    url: https://github.com/ibm-hyper-protect/contract-cli/blob/main/docs/README.md
+    url: https://ibm-hyper-protect.github.io/contract-cli/
     about: Read the complete CLI documentation and usage guides
   - name: Security Issues
     url: https://github.com/ibm-hyper-protect/contract-cli/security/advisories/new
