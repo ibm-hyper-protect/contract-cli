@@ -315,6 +315,40 @@ contract-cli download-certificate \
 
 ---
 
+### sign-contract
+
+Generates a signed contract from a contract with encrypted workload and env
+
+#### Usage
+
+```bash
+Usage:
+  contract-cli sign-contract [flags]
+
+Mandatory Flags:
+  --in    Path to encrypted contract
+
+Optional Flags:
+  --help  help for sign-contract
+  --out   Path to save encrypted output
+  --priv  Path to private key file for signing
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+| `--in` | string | Yes | Path to encrypted Hyper Protect contract YAML file (use '-' for standard input) |
+| `--priv` | string | Yes | Path to private key for signing |
+| `--out` | string | No | Path to save signed and encrypted contract |
+
+#### Examples
+
+```bash
+contract-cli sign-contract --in contract.yaml --priv private.pem
+```
+
+---
+
 ### encrypt
 
 Generate a signed and encrypted contract for Hyper Protect deployment. Supports optional contract expiry for enhanced security.
