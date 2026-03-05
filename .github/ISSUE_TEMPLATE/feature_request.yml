@@ -19,7 +19,7 @@ body:
       options:
         - label: I have searched [existing issues](https://github.com/ibm-hyper-protect/contract-cli/issues) to avoid duplicates
           required: true
-        - label: I have read the [documentation](https://github.com/ibm-hyper-protect/contract-cli/blob/main/docs/README.md)
+        - label: I have read the [documentation](https://ibm-hyper-protect.github.io/contract-cli/
           required: true
         - label: This feature is not already available in the latest version
           required: true

@@ -32,7 +32,7 @@ Supports:
   - Hyper Protect Container Runtime (HPCR) for RHVS
   - Hyper Protect Confidential Container (HPCC) Peer Pods
 
-Documentation: https://github.com/ibm-hyper-protect/contract-cli/blob/main/docs/README.md`
+Documentation: https://ibm-hyper-protect.github.io/contract-cli/`
 )
 
 var (

@@ -21,7 +21,7 @@ body:
           required: true
         - label: I am using the latest version of contract-cli
           required: true
-        - label: I have read the [documentation](https://github.com/ibm-hyper-protect/contract-cli/blob/main/docs/README.md)
+        - label: I have read the [documentation](https://ibm-hyper-protect.github.io/contract-cli/)
           required: true
 
   - type: textarea

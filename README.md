@@ -55,7 +55,7 @@ Learn more:
 
 - **Contract Generation**
   - Generate Base64-encoded data from text, JSON, and docker compose / podman play archives
-  - Create signed and encrypted contracts
+  - Create signed and signed & encrypted contracts
   - Support contract expiry with CA certificates
   - Validate contract schemas
   - Create Gzipped & Encoded initdata for HPCC Peerpod
@@ -189,7 +189,7 @@ Supports:
   - Hyper Protect Container Runtime (HPCR) for RHVS
   - Hyper Protect Confidential Container (HPCC) Peer Pods
 
-Documentation: https://github.com/ibm-hyper-protect/contract-cli/blob/main/docs/README.md
+Documentation: https://ibm-hyper-protect.github.io/contract-cli/
 
 Usage:
   contract-cli [flags]
@@ -204,8 +204,9 @@ Available Commands:
   encrypt-string                  Encrypt string in Hyper Protect format
   get-certificate                 Extract specific certificate version from download output
   help                            Help about any command
-  initdata                        Gzip and Encoded initdata annotation
   image                           Get HPCR image details from IBM Cloud
+  initdata                        Gzip and Encoded initdata annotation
+  sign-contract                   Sign an encrypted contract
   validate-contract               Validate contract schema
   validate-encryption-certificate validate encryption certificate
   validate-network                Validate network configuration schema
