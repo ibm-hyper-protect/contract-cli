@@ -1,3 +1,20 @@
+## [1.17.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.16.4...v1.17.0) (2026-03-05)
+
+### Features
+
+* add support for sign contract ([7d9d716](https://github.com/ibm-hyper-protect/contract-cli/commit/7d9d7160e4105810fe7d30e2d99e310ca00dae87))
+* update contract-go to latest version ([bd79fce](https://github.com/ibm-hyper-protect/contract-cli/commit/bd79fced68330a4e67dc61a614e668392d3e5346))
+
+### Documentation
+
+* add example ([ed0ba89](https://github.com/ibm-hyper-protect/contract-cli/commit/ed0ba8932057db477f79018579f7fdbda7892525))
+* update user documentation link ([aa775ba](https://github.com/ibm-hyper-protect/contract-cli/commit/aa775ba14a2d47c7a3dd7c91b6ec06acf3736028))
+
+### Miscellaneous Chores
+
+* go tidy things ([5615550](https://github.com/ibm-hyper-protect/contract-cli/commit/5615550f4da5bba2a88a189592c11216e9b6eee2))
+* make file change ([0af657f](https://github.com/ibm-hyper-protect/contract-cli/commit/0af657ffca809ec5f9b76e7525fef215aa6544fc))
+
 ## [1.16.4](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.16.3...v1.16.4) (2026-03-05)
 
 ### Bug Fixes
