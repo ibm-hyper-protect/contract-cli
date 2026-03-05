@@ -1,6 +1,6 @@
 APP_NAME := contract-cli
 OUTPUT := build
-VERSION ?= 0.0.1
+VERSION ?= 0.0.0
 BUILD_DATE ?= $(shell date -u)
 
 LDFLAGS_COMMON := -s -w -X 'main.version=${VERSION}' -X 'main.buildDate=${BUILD_DATE}'
