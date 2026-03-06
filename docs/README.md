@@ -1,6 +1,6 @@
 # Contract CLI Documentation
 
-Complete command reference and usage guide for the Hyper Protect Contract CLI.
+Complete command reference and usage guide for the IBM Confidential Computing Contract CLI.
 
 ## Table of Contents
 
@@ -13,20 +13,24 @@ Complete command reference and usage guide for the Hyper Protect Contract CLI.
   - [base64-tgz](#base64-tgz)
   - [decrypt-attestation](#decrypt-attestation)
   - [download-certificate](#download-certificate)
+  - [sign-contract](#sign-contract)
   - [encrypt](#encrypt)
   - [encrypt-string](#encrypt-string)
   - [get-certificate](#get-certificate)
   - [image](#image)
   - [validate-contract](#validate-contract)
   - [validate-network](#validate-network)
+  - [validate-encryption-certificate](#validate-encryption-certificate)
   - [initdata](#initdata)
 - [Common Workflows](#common-workflows)
+- [CI/CD Integration](#cicd-integration)
+- [Exit Codes](#exit-codes)
 - [Troubleshooting](#troubleshooting)
 - [Examples](#examples)
 
 ## Introduction
 
-The Contract CLI automates the process of generating and managing contracts for provisioning IBM Hyper Protect services including Hyper Protect Virtual Servers (HPVS) for VPC, Hyper Protect Container Runtime (HPCR) for RHVS, and Hyper Protect Confidential Container (HPCC) for Peer Pods. It provides a comprehensive set of commands for:
+The Contract CLI automates the process of generating and managing contracts for provisioning IBM Confidential Computing services including IBM Confidential Computing Container Runtime, IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions, and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform. It provides a comprehensive set of commands for:
 
 - Generating signed and encrypted contracts
 - Managing encryption certificates
@@ -317,41 +321,45 @@ contract-cli download-certificate \
 
 ### sign-contract
 
-Generates a signed contract from a contract with encrypted workload and env
+Generates a signed contract from a contract with encrypted workload and env sections.
 
 #### Usage
 
 ```bash
-Usage:
-  contract-cli sign-contract [flags]
-
-Mandatory Flags:
-  --in    Path to encrypted contract
-
-Optional Flags:
-  --help  help for sign-contract
-  --out   Path to save encrypted output
-  --priv  Path to private key file for signing
+contract-cli sign-contract [flags]
 ```
 
 #### Flags
 
 | Flag | Type | Required | Description |
-| `--in` | string | Yes | Path to encrypted Hyper Protect contract YAML file (use '-' for standard input) |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to encrypted IBM Confidential Computing contract YAML file (use '-' for standard input) |
 | `--priv` | string | Yes | Path to private key for signing |
 | `--out` | string | No | Path to save signed and encrypted contract |
+| `-h, --help` | - | No | Display help information |
 
 #### Examples
 
+**Sign a contract:**
 ```bash
 contract-cli sign-contract --in contract.yaml --priv private.pem
+```
+
+**Sign and save to file:**
+```bash
+contract-cli sign-contract --in contract.yaml --priv private.pem --out signed-contract.yaml
+```
+
+**Using standard input:**
+```bash
+cat contract.yaml | contract-cli sign-contract --in - --priv private.pem
 ```
 
 ---
 
 ### encrypt
 
-Generate a signed and encrypted contract for Hyper Protect deployment. Supports optional contract expiry for enhanced security.
+Generate a signed and encrypted contract for IBM Confidential Computing deployment. Supports optional contract expiry for enhanced security.
 
 #### Usage
 
@@ -363,7 +371,7 @@ contract-cli encrypt [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to unencrypted Hyper Protect contract YAML file (use '-' for standard input) |
+| `--in` | string | Yes | Path to unencrypted IBM Confidential Computing contract YAML file (use '-' for standard input) |
 | `--priv` | string | No* | Path to private key for signing |
 | `--cert` | string | No | Path to encryption certificate (uses latest if not specified) |
 | `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
@@ -441,7 +449,7 @@ echo "test-string" | contract-cli encrypt \
 
 ### encrypt-string
 
-Encrypt strings using the Hyper Protect encryption format. Output format: `hyper-protect-basic.<encrypted-password>.<encrypted-string>`. Use this to encrypt sensitive data like passwords or API keys for contracts.
+Encrypt strings using the IBM Confidential Computing encryption format. Output format: `hyper-protect-basic.<encrypted-password>.<encrypted-string>`. Use this to encrypt sensitive data like passwords or API keys for contracts.
 
 #### Usage
 
@@ -544,7 +552,7 @@ cat "cert.json" | contract-cli get-certificate --in - --version 1.0.23
 
 ### image
 
-Retrieve Hyper Protect Container Runtime (HPCR) image details from IBM Cloud. Parses image information from IBM Cloud API, CLI, or Terraform output to extract image ID, name, checksum, and version. Supports filtering by specific HPCR version.
+Retrieve IBM Confidential Computing Container Runtime image details from IBM Cloud. Parses image information from IBM Cloud API, CLI, or Terraform output to extract image ID, name, checksum, and version. Supports filtering by specific version.
 
 #### Usage
 
@@ -600,7 +608,7 @@ cat "ibm-cloud-images.json" | contract-cli image --in -
 
 ### validate-contract
 
-Validate an unencrypted contract against the Hyper Protect schema. Checks contract structure, required fields, and data types before encryption to help catch errors early in the development process.
+Validate an unencrypted contract against the IBM Confidential Computing schema. Checks contract structure, required fields, and data types before encryption to help catch errors early in the development process.
 
 #### Usage
 
@@ -612,7 +620,7 @@ contract-cli validate-contract [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to unencrypted Hyper Protect contract YAML file (use '-' for standard input) |
+| `--in` | string | Yes | Path to unencrypted IBM Confidential Computing contract YAML file (use '-' for standard input) |
 | `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
 | `-h, --help` | - | No | Display help information |
 
@@ -704,7 +712,7 @@ cat encryption-cert.crt | contract-cli validate-encryption-certificate --in -
 ---
 
 ### initdata
-Create initdata annotation from signed and encrypted contract for Hyper Protect Confidential Containers PeerPod solution
+Create initdata annotation from signed and encrypted contract for IBM Confidential Computing Containers for Red Hat OpenShift Container Platform (Peer Pod) solution.
 
 #### Usage
 
@@ -722,7 +730,7 @@ contract-cli initdata [flags]
 
 #### Examples
 
-**Create Hpcc Initdata from signed & encrypted contract:**
+**Create initdata from signed & encrypted contract:**
 ```bash
 contract-cli initdata --in signed_encrypted_contract.yaml
 ```
@@ -797,6 +805,79 @@ contract-cli get-certificate \
 
 ---
 
+## CI/CD Integration
+
+The CLI supports `stdin` input (`--in -`) for all commands, making it easy to integrate into CI/CD pipelines.
+
+### GitHub Actions Example
+
+```yaml
+name: Generate Contract
+on:
+  push:
+    branches: [main]
+
+jobs:
+  generate-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download contract-cli
+        run: |
+          curl -sL https://github.com/ibm-hyper-protect/contract-cli/releases/latest/download/contract-cli-linux-amd64 -o contract-cli
+          chmod +x contract-cli
+
+      - name: Validate contract
+        run: ./contract-cli validate-contract --in contract.yaml --os hpvs
+
+      - name: Generate signed and encrypted contract
+        run: |
+          ./contract-cli encrypt \
+            --in contract.yaml \
+            --priv "${{ secrets.PRIVATE_KEY_PATH }}" \
+            --out encrypted-contract.yaml
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-contract
+          path: encrypted-contract.yaml
+```
+
+### Shell Script Pattern
+
+```bash
+#!/bin/bash
+set -euo pipefail
+
+# Validate → Encrypt → Deploy pattern
+if ! contract-cli validate-contract --in contract.yaml --os hpvs; then
+  echo "Contract validation failed" >&2
+  exit 1
+fi
+
+contract-cli encrypt \
+  --in contract.yaml \
+  --priv private.pem \
+  --out encrypted-contract.yaml
+
+echo "Contract generated successfully"
+```
+
+---
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success |
+| `1` | General error (invalid input, missing files, encryption failure, etc.) |
+
+All error messages are written to `stderr`. Successful output is written to `stdout` (unless `--out` is specified).
+
+---
+
 ## Troubleshooting
 
 ### OpenSSL Not Found
@@ -819,7 +900,7 @@ Error: contract validation failed
 
 **Solution:**
 - Run `validate-contract` to see specific schema errors
-- Check contract structure matches HPVS/HPCR requirements
+- Check contract structure matches IBM Confidential Computing requirements
 - Ensure all required fields are present
 
 ### Certificate Version Not Found
@@ -851,12 +932,14 @@ Error: permission denied reading file
 
 The [`samples/`](../samples/) directory contains working examples:
 
-- **[Simple Contract](../samples/simple_contract.yaml)** - Basic contract structure
-- **[Contract with Expiry](../samples/contract_expiry.yaml)** - Contract with expiration
+- **[Contract](../samples/contract.yaml)** - Basic contract structure
+- **[Contract with Expiry](../samples/contract-expiry/)** - Contract with expiration
 - **[Attestation Records](../samples/attestation/)** - Example attestation files
+- **[Certificate Examples](../samples/certificate/)** - Encryption certificate samples
 - **[Network Configuration](../samples/network/)** - Network config examples
 - **[Docker Compose](../samples/tgz/)** - Compose file examples
-- **[Signed & Encrypted Contract](../samples/hpcc/signed-encrypt-hpcc.yaml)** - Signed & Encrypted hpcc contract
+- **[Signed & Encrypted Contract](../samples/hpcc/signed-encrypt-hpcc.yaml)** - Signed & Encrypted HPCC contract
+- **[Contract Signing](../samples/sign/)** - Contract signing examples
 
 ---
 
@@ -865,7 +948,21 @@ The [`samples/`](../samples/) directory contains working examples:
 - **[Main README](../README.md)** - Project overview and quick start
 - **[Contributing Guide](../CONTRIBUTING.md)** - How to contribute
 - **[Security Policy](../SECURITY.md)** - Security best practices
-- **[IBM Hyper Protect Documentation](https://www.ibm.com/docs/en/hpvs/2.2.x)** - Official IBM docs
+- **[Changelog](../CHANGELOG.md)** - Release history and version notes
+
+
+### IBM Confidential Computing Documentation
+
+- [Confidential computing with LinuxONE](https://cloud.ibm.com/docs/vpc?topic=vpc-about-se)
+- [IBM Confidential Computing Container Runtime](https://www.ibm.com/docs/en/cccr/2.2.x)
+- [IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions](https://www.ibm.com/docs/en/ccrv/1.1.x)
+- [IBM Confidential Computing Containers for Red Hat OpenShift](https://www.ibm.com/docs/en/ccro/1.1.x)
+
+### Related Projects
+
+- [contract-go](https://github.com/ibm-hyper-protect/contract-go) - Go library
+- [terraform-provider-hpcr](https://github.com/ibm-hyper-protect/terraform-provider-hpcr) - Terraform provider
+- [k8s-operator-hpcr](https://github.com/ibm-hyper-protect/k8s-operator-hpcr) - Kubernetes operator
 
 ---
 

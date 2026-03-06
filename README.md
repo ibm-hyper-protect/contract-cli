@@ -6,17 +6,17 @@
 [![GitHub All Releases](https://img.shields.io/github/downloads/ibm-hyper-protect/contract-cli/total.svg)](https://github.com/ibm-hyper-protect/contract-cli/releases/latest)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-A command-line tool for automating the provisioning and management of IBM Hyper Protect confidential computing workloads.
+A command-line tool for automating the provisioning and management of IBM Confidential Computing workloads on IBM Z and LinuxONE.
 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Who Is This For?](#who-is-this-for)
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
 - [Documentation](#documentation)
-- [Supported Platforms](#supported-platforms)
 - [Examples](#examples)
 - [Related Projects](#related-projects)
 - [Contributing](#contributing)
@@ -25,23 +25,35 @@ A command-line tool for automating the provisioning and management of IBM Hyper 
 
 ## Overview
 
-The Contract CLI automates the provisioning of IBM Hyper Protect confidential computing solutions:
+The Contract CLI automates the provisioning of IBM Confidential Computing solutions:
 
-- **Hyper Protect Virtual Servers (HPVS)** - Secure virtual servers on IBM Cloud
-- **Hyper Protect Container Runtime (HPCR)** for RedHat Virtualization (RHVS)
-- **Hyper Protect Confidential Container (HPCC)** for Red Hat OpenShift Peer Pods
+- **IBM Confidential Computing Container Runtime** (formerly known as Hyper Protect Virtual Servers) — Deploy confidential computing workloads on IBM Z and LinuxONE using IBM Secure Execution for Linux
+- **IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions** (formerly known as Hyper Protect Container Runtime for Red Hat Virtualization Solutions) — Purpose-built for hosting critical, centralized services within tightly controlled virtualized environments on IBM Z
+- **IBM Confidential Computing Containers for Red Hat OpenShift Container Platform** (formerly known as IBM Hyper Protect Confidential Container for Red Hat OpenShift Container Platform) — Deploy isolated workloads using IBM Secure Execution for Linux, integrated with Red Hat OpenShift Container Platform
 
-This CLI tool leverages [ibm-hyper-protect/contract-go](https://github.com/ibm-hyper-protect/contract-go) for all cryptographic operations and contract management functionality, providing a user-friendly command-line interface for deploying workloads in secure enclaves on IBM LinuxONE.
+This CLI tool leverages [ibm-hyper-protect/contract-go](https://github.com/ibm-hyper-protect/contract-go) for all cryptographic operations and contract management functionality, providing a user-friendly command-line interface for deploying workloads in secure enclaves on IBM Z and LinuxONE.
 
-### What are Hyper Protect Services?
+### What is IBM Confidential Computing?
 
-IBM Hyper Protect services provide confidential computing capabilities that protect data in use by leveraging Secure Execution feature of Z.
+IBM Confidential Computing services protect data in use by leveraging the IBM Secure Execution for Linux feature on IBM Z and LinuxONE hardware. Each deployment is configured through a **contract** — an encrypted YAML definition file that specifies workload, environment, and attestation settings.
 
 Learn more:
 
 - [Confidential computing with LinuxONE](https://cloud.ibm.com/docs/vpc?topic=vpc-about-se)
-- [IBM Hyper Protect Virtual Servers](https://www.ibm.com/docs/en/hpvs/2.2.x)
-- [IBM Hyper Protect Confidential Container for Red Hat OpenShift](https://www.ibm.com/docs/en/hpcc/1.1.x)
+- [IBM Confidential Computing Container Runtime](https://www.ibm.com/docs/en/cccr/2.2.x)
+- [IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions](https://www.ibm.com/docs/en/ccrv/1.1.x)
+- [IBM Confidential Computing Containers for Red Hat OpenShift](https://www.ibm.com/docs/en/ccro/1.1.x)
+
+### Who Is This For?
+
+This CLI is for **developers, DevOps engineers, and platform teams** who need to generate, sign, and encrypt deployment contracts for IBM Confidential Computing services. Common use cases include:
+
+- **Scripting & Automation** — Generate contracts in CI/CD pipelines
+- **Certificate Management** — Download and verify IBM encryption certificates
+- **Attestation** — Decrypt and verify workload integrity records
+- **Validation** — Validate contracts and network configurations before deployment
+
+> **Go developers** who need programmatic access should use the [contract-go](https://github.com/ibm-hyper-protect/contract-go) library directly. For infrastructure-as-code workflows, see the [terraform-provider-hpcr](https://github.com/ibm-hyper-protect/terraform-provider-hpcr) Terraform provider.
 
 ## Features
 
@@ -49,7 +61,7 @@ Learn more:
   - Decrypt encrypted attestation records
 
 - **Certificate Operations**
-  - Download HPVS encryption certificates from IBM Cloud
+  - Download encryption certificates from IBM Cloud
   - Extract specific encryption certificates by version
   - Validate expiry of encryption certificate
 
@@ -58,18 +70,18 @@ Learn more:
   - Create signed and signed & encrypted contracts
   - Support contract expiry with CA certificates
   - Validate contract schemas
-  - Create Gzipped & Encoded initdata for HPCC Peerpod
+  - Create Gzipped & Encoded initdata for IBM Confidential Computing Containers Peer Pod
 
 - **Archive Management**
   - Generate Base64 tar archives of `docker-compose.yaml` or `pods.yaml`
   - Support encrypted base64 tar generation
 
 - **String Encryption**
-  - Encrypt strings using Hyper Protect format
+  - Encrypt strings using IBM Confidential Computing format
   - Support both text and JSON input
 
 - **Image Selection**
-  - Retrieve latest HPCR image details from IBM Cloud
+  - Retrieve latest IBM Confidential Computing Container Runtime image details from IBM Cloud
   - Filter images by semantic versioning
 
 - **Network Validation**
@@ -80,6 +92,15 @@ Learn more:
 ## Installation
 
 Download the CLI tool for your operating system from the [releases page](https://github.com/ibm-hyper-protect/contract-cli/releases/latest).
+
+#### Verify Download (Recommended)
+
+After downloading, verify the binary checksum:
+
+```bash
+# Compare with the checksum published on the releases page
+sha256sum contract-cli-linux-amd64
+```
 
 ### Supported Platforms
 
@@ -135,8 +156,8 @@ openssl genrsa -out private.pem 4096
 # Generate signed and encrypted contract
 contract-cli encrypt \
   --in contract.yaml \
-  --key private.pem \
-  --output encrypted-contract.yaml
+  --priv private.pem \
+  --out encrypted-contract.yaml
 ```
 
 ### Download and Use Encryption Certificates
@@ -144,16 +165,16 @@ contract-cli encrypt \
 ```bash
 # Download the latest encryption certificates
 contract-cli download-certificate \
-  --output certificates.json
+  --out certificates.json
 
 # Extract a specific version
 contract-cli get-certificate \
-  --input certificates.json \
+  --in certificates.json \
   --version "1.0.0" \
-  --output cert-1.0.0.crt
+  --out cert-1.0.0.crt
 ```
 
-### Validate encryption certitifacate
+### Validate Encryption Certificate
 
 ```bash
 # validate downloaded encryption certificate
@@ -167,7 +188,7 @@ contract-cli validate-encryption-certificate \
 # Validate contract schema
 contract-cli validate-contract \
   --in contract.yaml \
-  --type hpvs
+  --os hpvs
 ```
 
 ### Create initdata annotation from signed & encrypted contract
@@ -182,12 +203,12 @@ contract-cli initdata \
 
 ```bash
 $ contract-cli --help
-Contract CLI automates contract generation and management for IBM Hyper Protect services.
+Contract CLI automates contract generation and management for IBM Confidential Computing services.
 
 Supports:
-  - Hyper Protect Virtual Servers (HPVS) for VPC
-  - Hyper Protect Container Runtime (HPCR) for RHVS
-  - Hyper Protect Confidential Container (HPCC) Peer Pods
+  - IBM Confidential Computing Container Runtime
+  - IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions
+  - IBM Confidential Computing Containers for Red Hat OpenShift Container Platform
 
 Documentation: https://ibm-hyper-protect.github.io/contract-cli/
 
@@ -201,14 +222,14 @@ Available Commands:
   decrypt-attestation             Decrypt encrypted attestation records
   download-certificate            Download encryption certificates
   encrypt                         Generate signed and encrypted contract
-  encrypt-string                  Encrypt string in Hyper Protect format
+  encrypt-string                  Encrypt string in IBM Confidential Computing format
   get-certificate                 Extract specific certificate version from download output
   help                            Help about any command
-  image                           Get HPCR image details from IBM Cloud
+  image                           Get IBM Confidential Computing Container Runtime image details from IBM Cloud
   initdata                        Gzip and Encoded initdata annotation
   sign-contract                   Sign an encrypted contract
   validate-contract               Validate contract schema
-  validate-encryption-certificate validate encryption certificate
+  validate-encryption-certificate Validate encryption certificate
   validate-network                Validate network configuration schema
 
 Flags:
@@ -222,39 +243,33 @@ Use "contract-cli [command] --help" for more information about a command.
 
 Comprehensive documentation is available at:
 
-- **[User Documentation](docs/README.md)** - Detailed command reference and usage examples
-- **[Command Reference](docs/README.md)** - Complete guide for all CLI commands
-
-## Supported Platforms
-
-| Platform | Description | Support Status |
-|----------|-------------|----------------|
-| HPVS | Hyper Protect Virtual Servers | Supported |
-| HPCR-RHVS | Hyper Protect Container Runtime for Red Hat Virtualization | Supported |
-| HPCC-PeerPod | Hyper Protect Confidential Container Peer Pods | Supported |
+- **[Command Reference & User Guide](https://ibm-hyper-protect.github.io/contract-cli/)** - Detailed command reference, workflows, and usage examples
+- **[Changelog](CHANGELOG.md)** - Release history and version notes
 
 ## Examples
 
 The [`samples/`](samples/) directory contains example configurations:
 
-- [Simple Contract](samples/simple_contract.yaml)
-- [Contract with Expiry](samples/contract_expiry.yaml)
+- [Contract](samples/contract.yaml)
+- [Contract with Expiry](samples/contract-expiry/)
 - [Attestation Records](samples/attestation/)
+- [Certificate Examples](samples/certificate/)
 - [Network Configuration](samples/network/)
 - [Docker Compose Examples](samples/tgz/)
-- [Sample Singed & Encrypted Contract](samples/hpcc/signed-encrypt-hpcc.yaml)
+- [Signed & Encrypted Contract](samples/hpcc/signed-encrypt-hpcc.yaml)
+- [Contract Signing](samples/sign/)
 
 ## Related Projects
 
-This CLI tool is part of the IBM Hyper Protect ecosystem:
+This CLI tool is part of the IBM Confidential Computing ecosystem:
 
-| Project | Description |
-|---------|-------------|
-| [contract-go](https://github.com/ibm-hyper-protect/contract-go) | Core Go library for Hyper Protect contracts |
-| [terraform-provider-hpcr](https://github.com/ibm-hyper-protect/terraform-provider-hpcr) | Terraform provider for Hyper Protect contracts |
-| [k8s-operator-hpcr](https://github.com/ibm-hyper-protect/k8s-operator-hpcr) | Kubernetes operator for contract management |
-| [linuxone-vsi-automation-samples](https://github.com/ibm-hyper-protect/linuxone-vsi-automation-samples) | Terraform examples for HPVS and HPCR RHVS |
-| [hyper-protect-virtual-server-samples](https://github.com/ibm-hyper-protect/hyper-protect-virtual-server-samples) | HPVS feature samples and scripts |
+| Project | Description | When to Use |
+|---------|-------------|-------------|
+| [contract-go](https://github.com/ibm-hyper-protect/contract-go) | Core Go library for IBM Confidential Computing contracts | When you need programmatic access from Go code |
+| [terraform-provider-hpcr](https://github.com/ibm-hyper-protect/terraform-provider-hpcr) | Terraform provider for IBM Confidential Computing contracts | When managing infrastructure as code with Terraform |
+| [k8s-operator-hpcr](https://github.com/ibm-hyper-protect/k8s-operator-hpcr) | Kubernetes operator for contract management | When managing contracts in Kubernetes clusters |
+| [linuxone-vsi-automation-samples](https://github.com/ibm-hyper-protect/linuxone-vsi-automation-samples) | Terraform examples for IBM Confidential Computing deployments | For deployment automation reference |
+| [hyper-protect-virtual-server-samples](https://github.com/ibm-hyper-protect/hyper-protect-virtual-server-samples) | IBM Confidential Computing feature samples and scripts | For feature samples and reference scripts |
 
 ## Contributing
 
