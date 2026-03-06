@@ -115,7 +115,7 @@ func VerifySignatureAttestationRecords(attestationPath, signaturePath, certPath 
 		}
 	}
 
-	// Read signature file (binary data)
+	// Read signature file
 	if !common.CheckFileFolderExists(signaturePath) {
 		log.Fatal("The path to signature file doesn't exist")
 	}
