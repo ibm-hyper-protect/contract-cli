@@ -24,13 +24,13 @@ import (
 
 const (
 	toolName             = "contract-cli"
-	toolShortDescription = "A CLI tool for managing IBM Hyper Protect contracts and configurations"
-	toolLongDescription  = `Contract CLI automates contract generation and management for IBM Hyper Protect services.
+	toolShortDescription = "A CLI tool for managing IBM Confidential Computing contracts and configurations"
+	toolLongDescription  = `Contract CLI automates contract generation and management for IBM Confidential Computing services.
 
 Supports:
-  - Hyper Protect Virtual Servers (HPVS) for VPC
-  - Hyper Protect Container Runtime (HPCR) for RHVS
-  - Hyper Protect Confidential Container (HPCC) Peer Pods
+  - IBM Confidential Computing Container Runtime
+  - IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions
+  - IBM Confidential Computing Containers for Red Hat OpenShift Container Platform
 
 Documentation: https://ibm-hyper-protect.github.io/contract-cli/`
 )

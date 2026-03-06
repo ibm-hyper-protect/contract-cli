@@ -35,14 +35,14 @@ type ImageDetails struct {
 
 const (
 	ParameterName             = "image"
-	ParameterShortDescription = "Get HPCR image details from IBM Cloud"
-	ParameterLongDescription  = `Retrieve Hyper Protect Container Runtime (HPCR) image details from IBM Cloud.
+	ParameterShortDescription = "Get IBM Confidential Computing Container Runtime image details from IBM Cloud"
+	ParameterLongDescription  = `Retrieve IBM Confidential Computing Container Runtime image details from IBM Cloud.
 
 Parses image information from IBM Cloud API, CLI, or Terraform output to extract
-image ID, name, checksum, and version. Supports filtering by specific HPCR version.`
+image ID, name, checksum, and version. Supports filtering by specific version.`
 	IbmCloudJsonInputDescription = "Path to IBM Cloud images JSON (from API, CLI, or Terraform, use '-' for standard input)"
-	HpcrVersionFlagDescription   = "Specific HPCR version to retrieve (returns latest if not specified)"
-	OutputFlagDescription        = "Path to save HPCR image details"
+	HpcrVersionFlagDescription   = "Specific version to retrieve (returns latest if not specified)"
+	OutputFlagDescription        = "Path to save image details"
 	invalidImagePathMessage      = "The Image details path doesn't exists"
 	invalidFormatMessage         = "invalid output format"
 	InputFlagName                = "in"
@@ -84,7 +84,7 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, error) {
 	return imageListJsonPath, versionName, formatType, hpcrImagePath, nil
 }
 
-// Process - function to get HPCR image details from JSON input
+// Process - function to get IBM Confidential Computing Container Runtime image details from JSON input
 func Process(imageDetailsJsonPath, versionName string) (ImageDetails, error) {
 	var imageDataJson string
 	var err error

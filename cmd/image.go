@@ -50,7 +50,7 @@ var imageCmd = &cobra.Command{
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println("Successfully stored HPCR image details")
+			fmt.Println("Successfully stored image details")
 		} else {
 			fmt.Println(result)
 		}

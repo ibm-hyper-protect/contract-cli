@@ -25,8 +25,8 @@ import (
 
 const (
 	ParameterName             = "encrypt-string"
-	ParameterShortDescription = "Encrypt string in Hyper Protect format"
-	ParameterLongDescription  = `Encrypt strings using the Hyper Protect encryption format.
+	ParameterShortDescription = "Encrypt string in IBM Confidential Computing format"
+	ParameterLongDescription  = `Encrypt strings using the IBM Confidential Computing encryption format.
 
 Output format: hyper-protect-basic.<encrypted-password>.<encrypted-string>
 Use this to encrypt sensitive data like passwords or API keys for contracts.`
@@ -40,7 +40,7 @@ Use this to encrypt sensitive data like passwords or API keys for contracts.`
 	TextFormat                  = "text"
 	JsonFormat                  = "json"
 	OsVersionFlagName           = "os"
-	OsVersionFlagDescription    = "Target Hyper Protect platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
+	OsVersionFlagDescription    = "Target IBM Confidential Computing platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
 	CertFlagName                = "cert"
 	CertFlagDescription         = "Path to encryption certificate file"
 )

@@ -31,7 +31,7 @@ const (
 	ParameterLongDescription  = `Generate Base64-encoded tar.gz archive of docker-compose.yaml or pods.yaml.
 
 Creates a compressed archive of your container configuration files, encoded as Base64
-for inclusion in Hyper Protect contracts. Supports both plain and encrypted output.`
+for inclusion in IBM Confidential Computing contracts. Supports both plain and encrypted output.`
 	InputFlagName            = "in"
 	InputFlagDescription     = "Path to folder containing docker-compose.yaml or pods.yaml (use '-' for standard input)"
 	OutputFlagName           = "out"
@@ -42,7 +42,7 @@ for inclusion in Hyper Protect contracts. Supports both plain and encrypted outp
 	DefaultOutput            = OutputFormatUnencrypted
 	OutputPathDescription    = "Path to save Base64 tar.gz output"
 	OsVersionFlagName        = "os"
-	OsVersionFlagDescription = "Target Hyper Protect platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
+	OsVersionFlagDescription = "Target IBM Confidential Computing platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
 	CertFlagName             = "cert"
 	CertPathDescription      = "Path to encryption certificate file"
 )
