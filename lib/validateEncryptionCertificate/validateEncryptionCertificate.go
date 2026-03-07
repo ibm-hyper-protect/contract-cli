@@ -25,8 +25,8 @@ import (
 const (
 	// Validate Encryption certificates
 	ParameterName             = "validate-encryption-certificate"
-	ParameterShortDescription = "validate encryption certificate"
-	ParameterLongDescription  = `validate encryption certificate for HPCR from IBM Hyper Protect Repository
+	ParameterShortDescription = "Validate encryption certificate"
+	ParameterLongDescription  = `Validate encryption certificate for HPCR from IBM Hyper Protect Repository
 
 Validates encryption certificate for on-premise, VPC deployment.
 It will check encryption certificate validity`
