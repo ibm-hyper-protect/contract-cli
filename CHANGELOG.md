@@ -1,3 +1,21 @@
+## [1.19.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.18.0...v1.19.0) (2026-03-08)
+
+### Features
+
+* add support for homebrew token ([c5b542d](https://github.com/ibm-hyper-protect/contract-cli/commit/c5b542d0dcdb54ab69682571880ec372e3b2d1de))
+* add support to build packages ([ff1cf7d](https://github.com/ibm-hyper-protect/contract-cli/commit/ff1cf7d5ebc43f03948271ac5bf62841a6cd959f))
+
+### Documentation
+
+* add command to install specific version for brew and winget ([8aefcbf](https://github.com/ibm-hyper-protect/contract-cli/commit/8aefcbf35e4cb95003561ceda9b55aac7f5079f8))
+* cosign changes ([64c8b59](https://github.com/ibm-hyper-protect/contract-cli/commit/64c8b5908508bc0e7d87ecf6d9888feb9ed0508d))
+* update compliance docs ([8891279](https://github.com/ibm-hyper-protect/contract-cli/commit/8891279ed5aa200f034686bbb1cccb76719e12e6))
+* update documentation with the latest changes ([0b1a2d1](https://github.com/ibm-hyper-protect/contract-cli/commit/0b1a2d1dcc9a18ddbf5f53b356f63d6da0eccca9))
+
+### Miscellaneous Chores
+
+* update .gitignore ([2d27eea](https://github.com/ibm-hyper-protect/contract-cli/commit/2d27eea8b44feb0a80d3874136901069d90a7c0c))
+
 ## [1.18.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.17.1...v1.18.0) (2026-03-08)
 
 ### Features
