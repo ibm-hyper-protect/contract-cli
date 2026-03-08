@@ -97,6 +97,9 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
 ```bash
 brew tap ibm-hyper-protect/contract-cli https://github.com/ibm-hyper-protect/contract-cli
 brew install contract-cli
+
+# Install a specific version
+brew install contract-cli@1.2.0
 ```
 
 ### Debian / Ubuntu (apt)
@@ -147,6 +150,9 @@ Multi-architecture support: `amd64`, `arm64`, `s390x`, `ppc64le`.
 
 ```powershell
 winget install ibmcc-contract-cli
+
+# Install a specific version
+winget install ibmcc-contract-cli --version 1.2.0
 ```
 
 ### Direct Binary Download
