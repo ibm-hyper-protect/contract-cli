@@ -19,7 +19,7 @@ The Lead Maintainer is responsible for:
 - **Project Direction**
   - Setting the technical direction and roadmap
   - Making final decisions on major architectural changes
-  - Coordinating with IBM Hyper Protect team
+  - Coordinating with IBM Confidential Computing team
 
 - **Release Management**
   - Managing release schedules and versioning
@@ -67,7 +67,7 @@ All maintainers are expected to:
 5. **Stay Informed**
    - Keep up with issues and discussions
    - Monitor security advisories for dependencies
-   - Stay current with Go and IBM Hyper Protect ecosystem changes
+   - Stay current with Go and IBM Confidential Computing ecosystem changes
 
 ## Becoming a Maintainer
 
