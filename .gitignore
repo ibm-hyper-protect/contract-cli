@@ -1,2 +1,7 @@
-build
+# Build artifacts
+build/
+dist/
 contract-cli
+
+# OS artifacts
+.DS_Store
