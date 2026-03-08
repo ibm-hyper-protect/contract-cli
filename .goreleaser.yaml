@@ -109,7 +109,6 @@ sboms:
     args:
       - "${artifact}"
       - "--output"
-      - "cyclonedx-json={{ .DocumentName }}"
       - "cyclonedx-json=${document}"
 
 # Linux Packages (nfpm – deb/rpm)
