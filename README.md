@@ -92,26 +92,94 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
 
 ## Installation
 
+### Homebrew (macOS / Linux)
+
+```bash
+brew tap ibm-hyper-protect/contract-cli https://github.com/ibm-hyper-protect/contract-cli
+brew install contract-cli
+```
+
+### Debian / Ubuntu (apt)
+
+Download the `.deb` package from the [releases page](https://github.com/ibm-hyper-protect/contract-cli/releases/latest) and install:
+
+```bash
+# Download (replace VERSION and ARCH as needed)
+curl -LO https://github.com/ibm-hyper-protect/contract-cli/releases/latest/download/contract-cli_VERSION_linux_amd64.deb
+
+# Install
+sudo dpkg -i contract-cli_*.deb
+```
+
+### Fedora / RHEL / Rocky / Alma (dnf/yum)
+
+Download the `.rpm` package from the [releases page](https://github.com/ibm-hyper-protect/contract-cli/releases/latest) and install:
+
+```bash
+# Download (replace VERSION and ARCH as needed)
+curl -LO https://github.com/ibm-hyper-protect/contract-cli/releases/latest/download/contract-cli_VERSION_linux_amd64.rpm
+
+# Install
+sudo rpm -i contract-cli_*.rpm
+```
+
+### Docker
+
+```bash
+# Run using the Docker image
+docker run --rm ghcr.io/ibm-hyper-protect/contract-cli --version
+
+# Example: encrypt a contract
+docker run --rm -v "$(pwd):/work" -w /work \
+  ghcr.io/ibm-hyper-protect/contract-cli encrypt \
+  --in contract.yaml --priv private.pem --out encrypted.yaml
+```
+
+Available tags:
+- `ghcr.io/ibm-hyper-protect/contract-cli:latest` — latest release
+- `ghcr.io/ibm-hyper-protect/contract-cli:<version>` — specific version
+
+Multi-architecture support: `amd64`, `arm64`, `s390x`, `ppc64le`.
+
+### Windows (Winget)
+
+> **Note:** Winget package submission is in progress. In the meantime, download the Windows binary from the [releases page](https://github.com/ibm-hyper-protect/contract-cli/releases/latest).
+
+```powershell
+winget install ibmcc-contract-cli
+```
+
+### Direct Binary Download
+
 Download the CLI tool for your operating system from the [releases page](https://github.com/ibm-hyper-protect/contract-cli/releases/latest).
 
 #### Verify Download (Recommended)
 
-After downloading, verify the binary checksum:
+After downloading, verify the binary using the checksum file:
 
 ```bash
-# Compare with the checksum published on the releases page
-sha256sum contract-cli-linux-amd64
+# Download the checksums file
+curl -LO https://github.com/ibm-hyper-protect/contract-cli/releases/latest/download/checksums.txt
+
+# Verify (Linux/macOS)
+sha256sum --check checksums.txt --ignore-missing
+
+# Verify cosign signature (if cosign is installed)
+cosign verify-blob \
+  --key https://github.com/ibm-hyper-protect/contract-cli/releases/latest/download/checksums.txt.pem \
+  --signature https://github.com/ibm-hyper-protect/contract-cli/releases/latest/download/checksums.txt.sig \
+  checksums.txt
 ```
 
 ### Supported Platforms
 
 The CLI is available for the following platforms:
 
-| OS | Architecture | Binary |
-|----|--------------|--------|
-| Linux | amd64, arm64, s390x, ppc64le | `contract-cli-linux-*` |
-| macOS | amd64, arm64 | `contract-cli-darwin-*` |
-| Windows | amd64, arm64 | `contract-cli-windows-*.exe` |
+| OS | Architecture | Package Formats |
+|----|--------------|-----------------|
+| Linux | amd64, arm64, s390x, ppc64le | Binary, `.deb`, `.rpm`, `.tar.gz`, Docker |
+| macOS | amd64, arm64 | Binary, `.tar.gz`, Homebrew |
+| Windows | amd64, arm64 | Binary, `.zip`, Winget |
 
 ### Prerequisites
 
@@ -130,6 +198,12 @@ export OPENSSL_BIN=/usr/bin/openssl
 
 # Windows (PowerShell)
 $env:OPENSSL_BIN="C:\Program Files\OpenSSL-Win64\bin\openssl.exe"
+
+# Docker
+docker run --rm -e OPENSSL_BIN=/usr/bin/openssl \
+  -v "$(pwd):/work" -w /work \
+  ghcr.io/ibm-hyper-protect/contract-cli encrypt \
+  --in contract.yaml --priv private.pem --out encrypted.yaml
 ```
 
 ## Quick Start
