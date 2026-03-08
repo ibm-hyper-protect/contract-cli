@@ -1,3 +1,9 @@
+## [1.19.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.19.0...v1.19.1) (2026-03-08)
+
+### Bug Fixes
+
+* goreleaser for cyclonedx error ([2bc7a72](https://github.com/ibm-hyper-protect/contract-cli/commit/2bc7a721eddf5b5ad842a1bd19ce519c69cefc15))
+
 ## [1.19.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.18.0...v1.19.0) (2026-03-08)
 
 ### Features
