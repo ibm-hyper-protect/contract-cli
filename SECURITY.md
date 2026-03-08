@@ -104,7 +104,7 @@ When using `contract-cli`, we recommend:
    - Verify cosign signatures to confirm releases are published by the project maintainers:
      ```bash
      cosign verify-blob \
-       --key cosign.pub \
+       --key cosign/cosign.pub \
        --signature checksums.txt.sig \
        checksums.txt
      ```
