@@ -1,3 +1,14 @@
+## [1.18.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.17.1...v1.18.0) (2026-03-08)
+
+### Features
+
+* update print statements with new product names ([68bd5c0](https://github.com/ibm-hyper-protect/contract-cli/commit/68bd5c0ec4afb6c4cc20411f87e97167b5de4d48))
+
+### Documentation
+
+* add badges and some minor changes ([157be5a](https://github.com/ibm-hyper-protect/contract-cli/commit/157be5a0b5ddb565cc16bda86ea9fbf5760a2ec1))
+* update user documentation & policies ([bf498d3](https://github.com/ibm-hyper-protect/contract-cli/commit/bf498d3ad276861dcb2b1b5390f226b7b0787c41))
+
 ## [1.17.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.17.0...v1.17.1) (2026-03-06)
 
 ### Bug Fixes
