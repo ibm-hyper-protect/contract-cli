@@ -88,7 +88,7 @@ We actively welcome your pull requests! However, please follow this process:
 
 ### Prerequisites
 
-- **Go 1.24.7 or later**
+- **Go 1.25.6 or later**
 - **OpenSSL** - Required for encryption operations
 - **Make** - For running build commands
 - **Git** - For version control
