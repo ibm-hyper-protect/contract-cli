@@ -1,3 +1,18 @@
+# Copyright (c) 2025 IBM Corp.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 name: contract-cli CI
 
 on:
@@ -51,7 +66,6 @@ jobs:
             echo "Commit: $short_sha"
             echo "Message: $commit_message"
             echo ""
-            echo "────────────────────────────────────────"
             echo "Valid format: <type>(<optional-scope>): <description>"
             echo ""
             echo "Allowed types: feat, fix, docs, perf, revert, chore, refactor, test, build, ci"
@@ -107,12 +121,21 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+    outputs:
+      new_release: ${{ steps.check_release.outputs.new_release }}
+      release_tag: ${{ steps.check_release.outputs.release_tag }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      - name: Get tags before release
+        id: before_release
+        run: |
+          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "none")
+          echo "latest_tag=$latest_tag" >> $GITHUB_OUTPUT
 
       - name: Cache Node modules
         uses: actions/cache@v5
@@ -126,16 +149,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Set up Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{ env.GO_VERSION }}
-
-      - name: Install cyclonedx-gomod
-        run: |
-          go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
-          echo "$HOME/go/bin" >> $GITHUB_PATH
 
       - name: Determine dry run mode
         id: dry_run
@@ -170,75 +183,94 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get latest Git tag
-        id: get_tag
+      - name: Check if new release was created
+        id: check_release
         if: steps.dry_run.outputs.dry_run == 'false'
         run: |
-          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -z "$tag" ]; then
-            echo "No tags found in repository"
-            exit 1
+          # Fetch any new tags created by semantic-release
+          git fetch --tags --force
+
+          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "none")
+          before_tag="${{ steps.before_release.outputs.latest_tag }}"
+
+          if [[ "$latest_tag" != "$before_tag" && "$latest_tag" != "none" ]]; then
+            echo "New release detected: $latest_tag"
+            echo "new_release=true" >> $GITHUB_OUTPUT
+            echo "release_tag=$latest_tag" >> $GITHUB_OUTPUT
+          else
+            echo "No new release was created"
+            echo "new_release=false" >> $GITHUB_OUTPUT
           fi
-          echo "tag=$tag" >> $GITHUB_OUTPUT
 
-      - name: Generate SBOM
-        id: generate_sbom
-        if: steps.dry_run.outputs.dry_run == 'false'
-        run: |
-          sbom_file="contract-cli-${{ steps.get_tag.outputs.tag }}.sbom.json"
-          cyclonedx-gomod mod -licenses -json -output "$sbom_file"
-          echo "sbom_file=$sbom_file" >> $GITHUB_OUTPUT
+  # Package & Publish (GoReleaser)
+  package:
+    needs: [release]
+    if: needs.release.outputs.new_release == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
 
-      - name: Build release binaries
-        if: steps.dry_run.outputs.dry_run == 'false'
-        run: |
-          set -euo pipefail
-          make clean
-          make release VERSION=${{ steps.get_tag.outputs.tag }} BUILD_DATE="$(date -u)"
-
-      - name: Compress executables and generate sha256sum
-        if: steps.dry_run.outputs.dry_run == 'false'
-        run: |
-          set -euo pipefail
-          for binary in build/*
-          do
-            # Skip hidden files (like .gitkeep)
-            [[ "$(basename "$binary")" == .* ]] && continue
-
-            # Skip if not a regular file
-            [[ ! -f "$binary" ]] && continue
-
-            if [[ "$binary" != *darwin* && "$binary" != *windows_arm64* && "$binary" != *s390x* ]]; then
-              if ! upx --best --lzma "$binary"; then
-                echo "WARNING: UPX compression failed for $binary"
-              fi
-            else
-              echo "Skipping UPX for binary: $binary"
-            fi
-
-            sha256sum "$binary" > "$binary.sha256"
-          done
-
-      - name: Clean up build directory
-        if: steps.dry_run.outputs.dry_run == 'false'
-        run: |
-          # Remove .gitkeep and any other hidden files
-          find build -name ".*" -type f -delete
-
-      - name: Upload SBOM to GitHub Release
-        if: steps.dry_run.outputs.dry_run == 'false'
-        uses: softprops/action-gh-release@v2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
         with:
-          files: ${{ steps.generate_sbom.outputs.sbom_file }}
-          tag_name: ${{ steps.get_tag.outputs.tag }}
+          fetch-depth: 0
+          ref: ${{ needs.release.outputs.release_tag }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Cache Go modules
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      # Docker Buildx for multi-arch images
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # QEMU for cross-platform Docker builds (arm64, s390x, ppc64le)
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: linux/arm64,linux/s390x,linux/ppc64le
+
+      # Login to GitHub Container Registry
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Install cosign for signing
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      # Install syft for SBOM generation
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0
+
+      # Run GoReleaser
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload binaries and sha256 to GitHub Release
-        if: steps.dry_run.outputs.dry_run == 'false'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.get_tag.outputs.tag }}
-          files: build/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          CHANGELOG_DISABLE: "true"

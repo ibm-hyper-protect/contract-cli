@@ -1,0 +1,211 @@
+# Copyright (c) 2025 IBM Corp.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# GoReleaser configuration for contract-cli
+# Documentation: https://goreleaser.com
+
+version: 2
+
+project_name: contract-cli
+
+# Builds
+builds:
+  - id: contract-cli
+    main: .
+    binary: contract-cli
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+      - s390x
+      - ppc64le
+    # Exclude unsupported OS/arch combinations
+    ignore:
+      - goos: darwin
+        goarch: s390x
+      - goos: darwin
+        goarch: ppc64le
+      - goos: windows
+        goarch: s390x
+      - goos: windows
+        goarch: ppc64le
+    ldflags:
+      - -s -w
+      - -X 'main.version={{ .Version }}'
+      - -X 'main.buildDate={{ .Date }}'
+      - -X 'main.osName={{ if eq .Os "linux" }}Linux{{ else if eq .Os "darwin" }}Darwin{{ else }}Windows{{ end }}'
+      - -X 'main.osArch={{ if eq .Arch "amd64" }}x86_64{{ else if eq .Arch "arm64" }}ARM64{{ else if eq .Arch "s390x" }}S390x{{ else }}Ppc64le{{ end }}'
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+# Archives
+archives:
+  - id: default
+    formats:
+      - tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - LICENSE
+      - README.md
+
+# Checksum
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+# Signing (cosign)
+signs:
+  - cmd: cosign
+    env:
+      - COSIGN_EXPERIMENTAL=0
+    certificate: "${artifact}.pem"
+    args:
+      - sign-blob
+      - "--output-certificate=${certificate}"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+      - "--yes"
+    artifacts: checksum
+    output: true
+
+# Docker Signing (cosign)
+docker_signs:
+  - cmd: cosign
+    env:
+      - COSIGN_EXPERIMENTAL=0
+    output: true
+    args:
+      - sign
+      - "${artifact}"
+      - "--yes"
+
+# SBOM (syft – CycloneDX)
+sboms:
+  - artifacts: archive
+    documents:
+      - "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.sbom.cdx.json"
+    cmd: syft
+    args:
+      - "${artifact}"
+      - "--output"
+      - "cyclonedx-json={{ .DocumentName }}"
+
+# Linux Packages (nfpm – deb/rpm)
+nfpms:
+  - id: contract-cli-packages
+    package_name: contract-cli
+    vendor: IBM Corp.
+    homepage: https://github.com/ibm-hyper-protect/contract-cli
+    maintainer: IBM Hyper Protect <hyper-protect@ibm.com>
+    description: |-
+      A CLI tool for managing IBM Confidential Computing contracts and configurations.
+      Automates contract generation, signing, encryption, and validation for
+      IBM Confidential Computing Container Runtime and related services.
+    license: Apache-2.0
+    section: utils
+    priority: optional
+    formats:
+      - deb
+      - rpm
+    dependencies:
+      - openssl
+    bindir: /usr/bin
+    contents:
+      - src: LICENSE
+        dst: /usr/share/doc/contract-cli/LICENSE
+      - src: README.md
+        dst: /usr/share/doc/contract-cli/README.md
+
+# Docker Images (v2 – multi-arch)
+dockers_v2:
+  - images:
+      - "ghcr.io/ibm-hyper-protect/contract-cli"
+    tags:
+      - "{{ .Version }}"
+      - "latest"
+    dockerfile: Dockerfile
+    platforms:
+      - linux/amd64
+      - linux/arm64
+      - linux/s390x
+      - linux/ppc64le
+    labels:
+      "org.opencontainers.image.title": "{{ .ProjectName }}"
+      "org.opencontainers.image.version": "{{ .Version }}"
+      "org.opencontainers.image.created": "{{ .Date }}"
+      "org.opencontainers.image.revision": "{{ .FullCommit }}"
+      "org.opencontainers.image.source": "https://github.com/ibm-hyper-protect/contract-cli"
+      "org.opencontainers.image.licenses": "Apache-2.0"
+      "org.opencontainers.image.vendor": "IBM Corp."
+      "org.opencontainers.image.description": "CLI tool for managing IBM Confidential Computing contracts and configurations"
+    extra_files:
+      - LICENSE
+      - README.md
+
+# Homebrew Cask
+homebrew_casks:
+  - name: contract-cli
+    directory: Casks
+    repository:
+      owner: ibm-hyper-protect
+      name: contract-cli
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    commit_author:
+      name: github-actions[bot]
+      email: github-actions[bot]@users.noreply.github.com
+    commit_msg_template: "chore(homebrew): update cask for {{ .ProjectName }} {{ .Tag }}"
+    homepage: https://github.com/ibm-hyper-protect/contract-cli
+    description: "CLI tool for managing IBM Confidential Computing contracts and configurations"
+    license: Apache-2.0
+    dependencies:
+      - formula: openssl
+    binaries:
+      - contract-cli
+    url:
+      verified: github.com/ibm-hyper-protect/contract-cli
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/contract-cli"]
+          end
+
+# Changelog
+# Managed by semantic-release; GoReleaser skips changelog generation
+changelog:
+  disable: "{{ .Env.CHANGELOG_DISABLE }}"
+
+# Release
+release:
+  github:
+    owner: ibm-hyper-protect
+    name: contract-cli
+  # Don't overwrite the release created by semantic-release
+  mode: keep-existing
+  # Include pre-releases
+  prerelease: auto
+  name_template: "{{ .Tag }}"
+  extra_files:
+    - glob: "*.sbom.cdx.json"
