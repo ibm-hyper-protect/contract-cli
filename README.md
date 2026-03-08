@@ -2,6 +2,7 @@
 
 [![contract-cli CI](https://github.com/ibm-hyper-protect/contract-cli/actions/workflows/build.yaml/badge.svg)](https://github.com/ibm-hyper-protect/contract-cli/actions/workflows/build.yaml)
 [![Latest Release](https://img.shields.io/github/v/release/ibm-hyper-protect/contract-cli?include_prereleases)](https://github.com/ibm-hyper-protect/contract-cli/releases/latest)
+[![User Documentation](https://img.shields.io/badge/User%20Documentation-GitHub%20Pages-blue.svg)](https://ibm-hyper-protect.github.io/contract-cli)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ibm-hyper-protect/contract-cli)](https://goreportcard.com/report/ibm-hyper-protect/contract-cli)
 [![GitHub All Releases](https://img.shields.io/github/downloads/ibm-hyper-protect/contract-cli/total.svg)](https://github.com/ibm-hyper-protect/contract-cli/releases/latest)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -268,7 +269,7 @@ This CLI tool is part of the IBM Confidential Computing ecosystem:
 | [contract-go](https://github.com/ibm-hyper-protect/contract-go) | Core Go library for IBM Confidential Computing contracts | When you need programmatic access from Go code |
 | [terraform-provider-hpcr](https://github.com/ibm-hyper-protect/terraform-provider-hpcr) | Terraform provider for IBM Confidential Computing contracts | When managing infrastructure as code with Terraform |
 | [k8s-operator-hpcr](https://github.com/ibm-hyper-protect/k8s-operator-hpcr) | Kubernetes operator for contract management | When managing contracts in Kubernetes clusters |
-| [linuxone-vsi-automation-samples](https://github.com/ibm-hyper-protect/linuxone-vsi-automation-samples) | Terraform examples for IBM Confidential Computing deployments | For deployment automation reference |
+| [linuxone-vsi-automation-samples](https://github.com/ibm-hyper-protect/linuxone-vsi-automation-samples) | Terraform & CLI examples for IBM Confidential Computing deployments | For deployment automation reference |
 | [hyper-protect-virtual-server-samples](https://github.com/ibm-hyper-protect/hyper-protect-virtual-server-samples) | IBM Confidential Computing feature samples and scripts | For feature samples and reference scripts |
 
 ## Contributing
