@@ -171,7 +171,7 @@ homebrew_casks:
       owner: ibm-hyper-protect
       name: contract-cli
       branch: main
-      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+      token: "{{ .Env.GITHUB_TOKEN }}"
     commit_author:
       name: github-actions[bot]
       email: github-actions[bot]@users.noreply.github.com
