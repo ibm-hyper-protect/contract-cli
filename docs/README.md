@@ -19,7 +19,6 @@ Complete command reference and usage guide for the Hyper Protect Contract CLI.
   - [image](#image)
   - [validate-contract](#validate-contract)
   - [validate-network](#validate-network)
-  - [verify-signature-attestation](#verify-signature-attestation)
   - [initdata](#initdata)
 - [Common Workflows](#common-workflows)
 - [Troubleshooting](#troubleshooting)
@@ -669,60 +668,6 @@ contract-cli validate-network --in network-config.yaml
 ```bash
 cat network-config.yaml | contract-cli validate-network --in -
 ```
-
-### verify-signature-attestation
-
-Verify the signature of decrypted attestation records against an IBM attestation certificate. This ensures the attestation records have not been modified and were signed by IBM. The attestation records should be in decrypted form (output from the `decrypt-attestation` command).
-
-#### Usage
-
-```bash
-contract-cli verify-signature-attestation [flags]
-```
-
-#### Flags
-
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--attestation` | string | Yes | Path to decrypted attestation records file (se-checksums.txt, use '-' for standard input) |
-| `--signature` | string | Yes | Path to signature file (se-signature.bin) |
-| `--cert` | string | Yes | Path to IBM attestation certificate file (PEM format) |
-| `-h, --help` | - | No | Display help information |
-
-#### Examples
-
-**Verify attestation signature:**
-```bash
-contract-cli verify-signature-attestation \
-  --attestation se-checksums.txt \
-  --signature se-signature.bin \
-  --cert attestation-cert.pem
-```
-
-**Complete attestation verification workflow:**
-```bash
-# Step 1: Decrypt attestation records
-contract-cli decrypt-attestation \
-  --in se-checksums.txt.enc \
-  --priv private.pem \
-  --out se-checksums.txt
-
-# Step 2: Verify signature
-contract-cli verify-signature-attestation \
-  --attestation se-checksums.txt \
-  --signature se-signature.bin \
-  --cert attestation-cert.pem
-```
-
-**Using standard input for attestation records:**
-```bash
-cat se-checksums.txt | contract-cli verify-signature-attestation \
-  --attestation - \
-  --signature se-signature.bin \
-  --cert attestation-cert.pem
-```
-
----
 
 ---
 
