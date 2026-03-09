@@ -43,7 +43,7 @@ and contain cryptographic hashes for verifying workload integrity.`
 	SignatureFlagName                = "signature"
 	SignatureFlagDescription         = "Path to signature file (se-signature.bin)"
 	AttestationCertFlagName          = "attestation-cert"
-	AttestationCertFlagDescription   = "Path to IBM attestation certificate file (PEM format)"
+	AttestationCertFlagDescription   = "Path to IBM attestation certificate file"
 )
 
 // ValidateInput - function to validate decrypt-attestation inputs
