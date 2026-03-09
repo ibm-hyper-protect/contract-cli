@@ -25,14 +25,14 @@ import (
 const (
 	ParameterName             = "validate-contract"
 	ParameterShortDescription = "Validate contract schema"
-	ParameterLongDescription  = `Validate an unencrypted contract against the Hyper Protect schema.
+	ParameterLongDescription  = `Validate an unencrypted contract against the IBM Confidential Computing schema.
 
 Checks contract structure, required fields, and data types before encryption.
 Helps catch errors early in the development process.`
-	InputFlagDescription     = "Path to unencrypted Hyper Protect contract YAML file (use '-' for standard input)"
+	InputFlagDescription     = "Path to unencrypted IBM Confidential Computing contract YAML file (use '-' for standard input)"
 	InputFlagName            = "in"
 	OsVersionFlagName        = "os"
-	OsVersionFlagDescription = "Target Hyper Protect platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
+	OsVersionFlagDescription = "Target IBM Confidential Computing platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
 )
 
 // ValidateInput - function to validate plain contract

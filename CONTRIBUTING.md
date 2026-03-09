@@ -34,7 +34,7 @@ We use GitHub issue templates to ensure we collect all necessary information. To
    - Expected vs actual behavior
    - CLI command and flags used
    - Environment details (CLI version, OS, OpenSSL version, etc.)
-   - Target platform (HPVS, HPCR-RHVS, HPCC-PeerPod)
+   - Target platform (hpvs, hpcr-rhvs, hpcc-peerpod)
 
 **Important**: For security vulnerabilities, **do NOT create a public issue**. Instead, report them via [GitHub Security Advisories](https://github.com/ibm-hyper-protect/contract-cli/security/advisories/new) or follow our [Security Policy](SECURITY.md).
 
@@ -88,7 +88,7 @@ We actively welcome your pull requests! However, please follow this process:
 
 ### Prerequisites
 
-- **Go 1.24.7 or later**
+- **Go 1.25.6 or later**
 - **OpenSSL** - Required for encryption operations
 - **Make** - For running build commands
 - **Git** - For version control
@@ -219,7 +219,7 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/) specifica
 ### Examples
 
 ```
-feat(encrypt): add support for HPCC peer pod contracts
+feat(encrypt): add support for IBM Confidential Computing peer pod contracts
 
 fix(base64-tgz): handle empty docker-compose files correctly
 

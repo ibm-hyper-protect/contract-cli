@@ -1,2 +1,10 @@
-build
+# Build artifacts
+build/
+dist/
 contract-cli
+
+# OS artifacts
+.DS_Store
+
+# Signing (NEVER commit the private key)
+cosign.key

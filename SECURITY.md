@@ -100,7 +100,14 @@ When using `contract-cli`, we recommend:
 
 6. **Binary Verification**
    - Download CLI binaries only from official GitHub releases
-   - Verify SHA256 checksums of downloaded binaries
+   - Verify SHA256 checksums of downloaded binaries against the published `checksums.txt`
+   - Verify cosign signatures to confirm releases are published by the project maintainers:
+     ```bash
+     cosign verify-blob \
+       --key cosign/cosign.pub \
+       --signature checksums.txt.sig \
+       checksums.txt
+     ```
 
 ### For Contributors
 

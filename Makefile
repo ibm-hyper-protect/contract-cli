@@ -1,17 +1,42 @@
+# Copyright (c) 2025 IBM Corp.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 APP_NAME := contract-cli
 OUTPUT := build
 VERSION ?= 0.0.0
 BUILD_DATE ?= $(shell date -u)
 
-LDFLAGS_COMMON := -s -w -X 'main.version=${VERSION}' -X 'main.buildDate=${BUILD_DATE}'
-LDFLAGS_DEV := -X 'main.version=${VERSION}' -X 'main.buildDate=${BUILD_DATE}'
+# Auto-detect host platform
+HOST_OS := $(shell go env GOOS)
+HOST_ARCH := $(shell go env GOARCH)
+
+# Map GOOS to display name for ldflags
+OS_NAME := $(if $(filter linux,$(HOST_OS)),Linux,$(if $(filter darwin,$(HOST_OS)),Darwin,Windows))
+
+# Map GOARCH to display name for ldflags
+OS_ARCH := $(if $(filter amd64,$(HOST_ARCH)),x86_64,$(if $(filter arm64,$(HOST_ARCH)),ARM64,$(if $(filter s390x,$(HOST_ARCH)),S390x,Ppc64le)))
+
+LDFLAGS_DEV := -X 'main.version=${VERSION}' -X 'main.buildDate=${BUILD_DATE}' -X 'main.osName=${OS_NAME}' -X 'main.osArch=${OS_ARCH}'
 
 default: test
 
 help:
 	@echo "Available targets:"
-	@echo "  make build           - Build binary for local development (Linux amd64)"
-	@echo "  make release         - Build binaries for all supported platforms"
+	@echo "  make build           - Build binary for local development (auto-detects host OS/arch)"
+	@echo "  make snapshot        - Build all artifacts locally via GoReleaser (no publish)"
+	@echo "  make release-local   - Full release dry-run via GoReleaser (no publish)"
 	@echo "  make test            - Run all tests"
 	@echo "  make test-cover      - Run tests with coverage report"
 	@echo "  make fmt             - Format Go code"
@@ -43,16 +68,12 @@ fmt:
 	go fmt ./...
 
 build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ${OUTPUT}/${APP_NAME} -ldflags "${LDFLAGS_DEV} -X 'main.osName=Linux' -X 'main.osArch=x86_64'"
+	CGO_ENABLED=0 go build -o ${OUTPUT}/${APP_NAME} -ldflags "${LDFLAGS_DEV}"
 
-release:
-	CGO_ENABLED=0 GOOS=linux   GOARCH=amd64   go build -ldflags "${LDFLAGS_COMMON} -X 'main.osName=Linux'   -X 'main.osArch=x86_64'"  -o ${OUTPUT}/${APP_NAME}_${VERSION}_linux_amd64
-	CGO_ENABLED=0 GOOS=linux   GOARCH=arm64   go build -ldflags "${LDFLAGS_COMMON} -X 'main.osName=Linux'   -X 'main.osArch=ARM64'"   -o ${OUTPUT}/${APP_NAME}_${VERSION}_linux_arm64
-	CGO_ENABLED=0 GOOS=linux   GOARCH=s390x   go build -ldflags "${LDFLAGS_COMMON} -X 'main.osName=Linux'   -X 'main.osArch=S390x'"   -o ${OUTPUT}/${APP_NAME}_${VERSION}_linux_s390x
-	CGO_ENABLED=0 GOOS=linux   GOARCH=ppc64le go build -ldflags "${LDFLAGS_COMMON} -X 'main.osName=Linux'   -X 'main.osArch=Ppc64le'" -o ${OUTPUT}/${APP_NAME}_${VERSION}_linux_ppc64le
-	CGO_ENABLED=0 GOOS=darwin  GOARCH=amd64   go build -ldflags "${LDFLAGS_COMMON} -X 'main.osName=Darwin'  -X 'main.osArch=x86_64'"  -o ${OUTPUT}/${APP_NAME}_${VERSION}_darwin_amd64
-	CGO_ENABLED=0 GOOS=darwin  GOARCH=arm64   go build -ldflags "${LDFLAGS_COMMON} -X 'main.osName=Darwin'  -X 'main.osArch=ARM64'"   -o ${OUTPUT}/${APP_NAME}_${VERSION}_darwin_arm64
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64   go build -ldflags "${LDFLAGS_COMMON} -X 'main.osName=Windows' -X 'main.osArch=x86_64'"  -o ${OUTPUT}/${APP_NAME}_${VERSION}_windows_amd64.exe
-	CGO_ENABLED=0 GOOS=windows GOARCH=arm64   go build -ldflags "${LDFLAGS_COMMON} -X 'main.osName=Windows' -X 'main.osArch=ARM64'"   -o ${OUTPUT}/${APP_NAME}_${VERSION}_windows_arm64.exe
+snapshot:
+	CHANGELOG_DISABLE=true goreleaser build --snapshot --clean
 
-.PHONY: default help install-deps test build release test-cover update-packages tidy clean fmt
+release-local:
+	CHANGELOG_DISABLE=true goreleaser release --snapshot --clean
+
+.PHONY: default help install-deps test build snapshot release-local test-cover update-packages tidy clean fmt

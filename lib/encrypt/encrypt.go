@@ -26,7 +26,7 @@ import (
 const (
 	ParameterName             = "encrypt"
 	ParameterShortDescription = "Generate signed and encrypted contract"
-	ParameterLongDescription  = `Generate a signed and encrypted contract for Hyper Protect deployment.
+	ParameterLongDescription  = `Generate a signed and encrypted contract for IBM Confidential Computing deployment.
 
 Creates a cryptographically signed contract using your private key and encrypts it
 with the platform's encryption certificate. Supports optional contract expiry for
@@ -49,7 +49,7 @@ enhanced security.`
 	InputFlagName                 = "in"
 	OutputFlagName                = "out"
 	OsVersionFlagName             = "os"
-	OsVersionFlagDescription      = "Target Hyper Protect platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
+	OsVersionFlagDescription      = "Target IBM Confidential Computing platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
 	CertFlagName                  = "cert"
 	CertFlagDescription           = "Path to encryption certificate file"
 	PrivateKeyFlagName            = "priv"

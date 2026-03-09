@@ -25,9 +25,9 @@ import (
 const (
 	ParameterName             = "download-certificate"
 	ParameterShortDescription = "Download encryption certificates"
-	ParameterLongDescription  = `Download encryption certificates from the IBM Hyper Protect Repository.
+	ParameterLongDescription  = `Download encryption certificates from the IBM Confidential Computing repository.
 
-Retrieves the latest or specific versions of HPCR encryption certificates required
+Retrieves the latest or specific versions of encryption certificates required
 for contract encryption and workload deployment.`
 	EncryptionCertVersionDescription  = "Specific certificate versions to download (comma-separated, e.g., 1.0.21,1.0.22)"
 	OutputPathDescription             = "Path to save downloaded encryption certificates"

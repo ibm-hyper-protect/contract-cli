@@ -19,7 +19,7 @@ The Lead Maintainer is responsible for:
 - **Project Direction**
   - Setting the technical direction and roadmap
   - Making final decisions on major architectural changes
-  - Coordinating with IBM Hyper Protect team
+  - Coordinating with IBM Confidential Computing team
 
 - **Release Management**
   - Managing release schedules and versioning
@@ -67,7 +67,7 @@ All maintainers are expected to:
 5. **Stay Informed**
    - Keep up with issues and discussions
    - Monitor security advisories for dependencies
-   - Stay current with Go and IBM Hyper Protect ecosystem changes
+   - Stay current with Go and IBM Confidential Computing ecosystem changes
 
 ## Becoming a Maintainer
 
@@ -175,11 +175,18 @@ Before merging:
 
 ### Release Process
 
-1. Ensure all tests pass
-2. Update `CHANGELOG.md` with release notes
-3. Create release tag following semantic versioning
-4. Publish release on GitHub with binaries
-5. Announce in relevant channels
+Releases are fully automated via the CI/CD pipeline:
+
+1. Push commits to `main` using [conventional commit](https://www.conventionalcommits.org/) messages
+2. `semantic-release` determines the next version and creates a GitHub Release with changelog
+3. `GoReleaser` automatically builds, packages, signs, and publishes all artifacts:
+   - Binary archives (tar.gz/zip) for Linux, macOS, and Windows
+   - DEB and RPM packages for Linux
+   - Docker images to `ghcr.io/ibm-hyper-protect/contract-cli`
+   - Homebrew cask update
+   - SHA256 checksums with cosign signatures
+   - CycloneDX SBOM for each platform
+4. Announce in relevant channels
 
 ## Acknowledgments
 

@@ -1,0 +1,33 @@
+# Copyright (c) 2025 IBM Corp.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.9.0.schema.json
+PackageIdentifier: IBM.ContractCLI
+PackageVersion: "${VERSION}"
+InstallerLocale: en-US
+InstallerType: zip
+NestedInstallerType: portable
+NestedInstallerFiles:
+  - RelativeFilePath: contract-cli.exe
+    PortableCommandAlias: contract-cli
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/ibm-hyper-protect/contract-cli/releases/download/v${VERSION}/contract-cli_${VERSION}_windows_amd64.zip
+    InstallerSha256: "${SHA256_AMD64}"
+  - Architecture: arm64
+    InstallerUrl: https://github.com/ibm-hyper-protect/contract-cli/releases/download/v${VERSION}/contract-cli_${VERSION}_windows_arm64.zip
+    InstallerSha256: "${SHA256_ARM64}"
+ManifestType: installer
+ManifestVersion: 1.9.0

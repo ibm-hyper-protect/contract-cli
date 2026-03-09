@@ -1,3 +1,50 @@
+## [1.19.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.19.1...v1.19.2) (2026-03-08)
+
+### Bug Fixes
+
+* .goreleaser.yaml sbom bug ([e2e729c](https://github.com/ibm-hyper-protect/contract-cli/commit/e2e729c8a498cbdc561163b034c68d50d40c5ab1))
+
+## [1.19.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.19.0...v1.19.1) (2026-03-08)
+
+### Bug Fixes
+
+* goreleaser for cyclonedx error ([2bc7a72](https://github.com/ibm-hyper-protect/contract-cli/commit/2bc7a721eddf5b5ad842a1bd19ce519c69cefc15))
+
+## [1.19.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.18.0...v1.19.0) (2026-03-08)
+
+### Features
+
+* add support for homebrew token ([c5b542d](https://github.com/ibm-hyper-protect/contract-cli/commit/c5b542d0dcdb54ab69682571880ec372e3b2d1de))
+* add support to build packages ([ff1cf7d](https://github.com/ibm-hyper-protect/contract-cli/commit/ff1cf7d5ebc43f03948271ac5bf62841a6cd959f))
+
+### Documentation
+
+* add command to install specific version for brew and winget ([8aefcbf](https://github.com/ibm-hyper-protect/contract-cli/commit/8aefcbf35e4cb95003561ceda9b55aac7f5079f8))
+* cosign changes ([64c8b59](https://github.com/ibm-hyper-protect/contract-cli/commit/64c8b5908508bc0e7d87ecf6d9888feb9ed0508d))
+* update compliance docs ([8891279](https://github.com/ibm-hyper-protect/contract-cli/commit/8891279ed5aa200f034686bbb1cccb76719e12e6))
+* update documentation with the latest changes ([0b1a2d1](https://github.com/ibm-hyper-protect/contract-cli/commit/0b1a2d1dcc9a18ddbf5f53b356f63d6da0eccca9))
+
+### Miscellaneous Chores
+
+* update .gitignore ([2d27eea](https://github.com/ibm-hyper-protect/contract-cli/commit/2d27eea8b44feb0a80d3874136901069d90a7c0c))
+
+## [1.18.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.17.1...v1.18.0) (2026-03-08)
+
+### Features
+
+* update print statements with new product names ([68bd5c0](https://github.com/ibm-hyper-protect/contract-cli/commit/68bd5c0ec4afb6c4cc20411f87e97167b5de4d48))
+
+### Documentation
+
+* add badges and some minor changes ([157be5a](https://github.com/ibm-hyper-protect/contract-cli/commit/157be5a0b5ddb565cc16bda86ea9fbf5760a2ec1))
+* update user documentation & policies ([bf498d3](https://github.com/ibm-hyper-protect/contract-cli/commit/bf498d3ad276861dcb2b1b5390f226b7b0787c41))
+
+## [1.17.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.17.0...v1.17.1) (2026-03-06)
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.14.1 ([#92](https://github.com/ibm-hyper-protect/contract-cli/issues/92)) ([d6fdc84](https://github.com/ibm-hyper-protect/contract-cli/commit/d6fdc84e2449ae311511c949cd07765acb728f38))
+
 ## [1.17.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.16.4...v1.17.0) (2026-03-05)
 
 ### Features
