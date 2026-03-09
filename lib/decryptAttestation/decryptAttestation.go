@@ -99,7 +99,7 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 
 	// Validate that if one of signature/cert is provided, both must be provided
 	if (signaturePath != "" && certPath == "") || (signaturePath == "" && certPath != "") {
-		return "", "", "", "", "", fmt.Errorf("Error: --signature and --attestation-cert flags must be used together. Both are required or both should be omitted")
+		log.Fatal("Error: --signature and --attestation-cert flags must be used together. Both are required or both should be omitted")
 	}
 
 	// Validate stdin input
@@ -117,7 +117,7 @@ func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath s
 	if encryptedAttestationRecordsPath == "-" {
 		encryptedChecksum, err = common.ReadDataFromStdin()
 		if err != nil {
-			return "", fmt.Errorf("unable to read input from standard input: %w", err)
+			log.Fatal("Unable to read input from standard input")
 		}
 	} else {
 		if !common.CheckFileFolderExists(encryptedAttestationRecordsPath) {
@@ -165,7 +165,7 @@ func PrintDecryptAttestation(decryptedAttestationRecords, decryptedAttestationPa
 func VerifySignatureAttestationRecords(attestationRecords, signaturePath, certPath string) error {
 	// Read signature file (binary data)
 	if !common.CheckFileFolderExists(signaturePath) {
-		return fmt.Errorf("the path to signature file doesn't exist: %s", signaturePath)
+		log.Fatal("The path to signature file doesn't exist")
 	}
 	signature, err := common.ReadDataFromFile(signaturePath)
 	if err != nil {
@@ -174,7 +174,7 @@ func VerifySignatureAttestationRecords(attestationRecords, signaturePath, certPa
 
 	// Read certificate file
 	if !common.CheckFileFolderExists(certPath) {
-		return fmt.Errorf("the path to certificate file doesn't exist: %s", certPath)
+		log.Fatal("The path to certificate file doesn't exist")
 	}
 	cert, err := common.ReadDataFromFile(certPath)
 	if err != nil {
@@ -184,7 +184,7 @@ func VerifySignatureAttestationRecords(attestationRecords, signaturePath, certPa
 	// Verify signature using contract-go library
 	err = attestation.HpcrVerifySignatureAttestationRecords(attestationRecords, signature, cert)
 	if err != nil {
-		return fmt.Errorf("signature verification failed: %w", err)
+		log.Fatal("Signature verification failed")
 	}
 
 	return nil
