@@ -17,7 +17,7 @@
 # This image is built by GoReleaser — the binary is pre-compiled and copied in.
 # GoReleaser's dockers_v2 API places binaries in $TARGETPLATFORM/ subdirectories.
 
-FROM alpine:3.21
+FROM alpine:3.23
 
 # Install OpenSSL (required for encryption operations) and ca-certificates
 RUN apk add --no-cache \
