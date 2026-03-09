@@ -38,13 +38,17 @@ func TestValidateInput_Success(t *testing.T) {
 	cmd.Flags().String(InputFlagName, testEncAttestPath, "")
 	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
 	cmd.Flags().String(OutputFlagName, testOutputPath, "")
+	cmd.Flags().String(SignatureFlagName, "", "")
+	cmd.Flags().String(AttestationCertFlagName, "", "")
 
-	encAttestPath, privateKeyPath, decryptedAttestPath, err := ValidateInput(cmd)
+	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testEncAttestPath, encAttestPath)
 	assert.Equal(t, testPrivateKeyPath, privateKeyPath)
 	assert.Equal(t, testOutputPath, decryptedAttestPath)
+	assert.Equal(t, "", signaturePath)
+	assert.Equal(t, "", certPath)
 }
 
 // TestValidateInput_WithoutOutputPath tests ValidateInput without output path
@@ -53,20 +57,69 @@ func TestValidateInput_WithoutOutputPath(t *testing.T) {
 	cmd.Flags().String(InputFlagName, testEncAttestPath, "")
 	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
 	cmd.Flags().String(OutputFlagName, "", "")
+	cmd.Flags().String(SignatureFlagName, "", "")
+	cmd.Flags().String(AttestationCertFlagName, "", "")
 
-	encAttestPath, privateKeyPath, decryptedAttestPath, err := ValidateInput(cmd)
+	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testEncAttestPath, encAttestPath)
 	assert.Equal(t, testPrivateKeyPath, privateKeyPath)
 	assert.Equal(t, "", decryptedAttestPath)
+	assert.Equal(t, "", signaturePath)
+	assert.Equal(t, "", certPath)
 }
 
 // TestValidateInput_WithoutFlags tests ValidateInput when flags are not set
 func TestValidateInput_WithoutFlags(t *testing.T) {
 	cmd := &cobra.Command{}
-	_, _, _, err := ValidateInput(cmd)
+	_, _, _, _, _, err := ValidateInput(cmd)
 	assert.Error(t, err)
+}
+
+// TestValidateInput_WithOnlySignature tests ValidateInput with only signature flag
+func TestValidateInput_WithOnlySignature(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().String(InputFlagName, testEncAttestPath, "")
+	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
+	cmd.Flags().String(OutputFlagName, "", "")
+	cmd.Flags().String(SignatureFlagName, "signature.bin", "")
+	cmd.Flags().String(AttestationCertFlagName, "", "")
+
+	_, _, _, _, _, err := ValidateInput(cmd)
+	assert.Error(t, err)
+}
+
+// TestValidateInput_WithOnlyCert tests ValidateInput with only cert flag
+func TestValidateInput_WithOnlyCert(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().String(InputFlagName, testEncAttestPath, "")
+	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
+	cmd.Flags().String(OutputFlagName, "", "")
+	cmd.Flags().String(SignatureFlagName, "", "")
+	cmd.Flags().String(AttestationCertFlagName, "cert.pem", "")
+
+	_, _, _, _, _, err := ValidateInput(cmd)
+	assert.Error(t, err)
+}
+
+// TestValidateInput_WithBothSignatureAndCert tests ValidateInput with both signature and cert flags
+func TestValidateInput_WithBothSignatureAndCert(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().String(InputFlagName, testEncAttestPath, "")
+	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
+	cmd.Flags().String(OutputFlagName, "", "")
+	cmd.Flags().String(SignatureFlagName, "signature.bin", "")
+	cmd.Flags().String(AttestationCertFlagName, "cert.pem", "")
+
+	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, err := ValidateInput(cmd)
+
+	assert.NoError(t, err)
+	assert.Equal(t, testEncAttestPath, encAttestPath)
+	assert.Equal(t, testPrivateKeyPath, privateKeyPath)
+	assert.Equal(t, "", decryptedAttestPath)
+	assert.Equal(t, "signature.bin", signaturePath)
+	assert.Equal(t, "cert.pem", certPath)
 }
 
 // TestDecryptAttestationRecords_Success tests successful decryption
@@ -156,5 +209,51 @@ func TestPrintDecryptAttestation_ToStdout(t *testing.T) {
 func TestPrintDecryptAttestation_InvalidPath(t *testing.T) {
 	testData := "decrypted attestation data"
 	err := PrintDecryptAttestation(testData, testInvalidPath)
+	assert.Error(t, err)
+}
+
+// TestVerifySignatureAttestationRecords_InvalidSignaturePath tests with non-existent signature file
+func TestVerifySignatureAttestationRecords_InvalidSignaturePath(t *testing.T) {
+	testData := "test attestation records"
+	err := VerifySignatureAttestationRecords(testData, testInvalidPath, "../../hpse-pipeline-dev-vm-26.2.0-attestation.crt")
+	assert.Error(t, err)
+}
+
+// TestVerifySignatureAttestationRecords_InvalidCertPath tests with non-existent certificate file
+func TestVerifySignatureAttestationRecords_InvalidCertPath(t *testing.T) {
+	testData := "test attestation records"
+	err := VerifySignatureAttestationRecords(testData, "../../se-signature.bin", testInvalidPath)
+	assert.Error(t, err)
+}
+
+// TestVerifySignatureAttestationRecords_InvalidSignature tests with invalid signature data
+func TestVerifySignatureAttestationRecords_InvalidSignature(t *testing.T) {
+	// Create a temporary file with invalid signature
+	invalidSigFile := "../../build/invalid_signature.bin"
+	err := os.WriteFile(invalidSigFile, []byte("invalid signature data"), 0644)
+	assert.NoError(t, err)
+	defer os.Remove(invalidSigFile)
+
+	testData := "test attestation records"
+	err = VerifySignatureAttestationRecords(testData, invalidSigFile, "../../hpse-pipeline-dev-vm-26.2.0-attestation.crt")
+	assert.Error(t, err)
+}
+
+// TestVerifySignatureAttestationRecords_InvalidCertificate tests with invalid certificate data
+func TestVerifySignatureAttestationRecords_InvalidCertificate(t *testing.T) {
+	// Create a temporary file with invalid certificate
+	invalidCertFile := "../../build/invalid_cert.pem"
+	err := os.WriteFile(invalidCertFile, []byte("invalid certificate data"), 0644)
+	assert.NoError(t, err)
+	defer os.Remove(invalidCertFile)
+
+	testData := "test attestation records"
+	err = VerifySignatureAttestationRecords(testData, "../../se-signature.bin", invalidCertFile)
+	assert.Error(t, err)
+}
+
+// TestVerifySignatureAttestationRecords_EmptyAttestationRecords tests with empty attestation records
+func TestVerifySignatureAttestationRecords_EmptyAttestationRecords(t *testing.T) {
+	err := VerifySignatureAttestationRecords("", "../../se-signature.bin", "../../hpse-pipeline-dev-vm-26.2.0-attestation.crt")
 	assert.Error(t, err)
 }

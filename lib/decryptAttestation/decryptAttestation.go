@@ -40,23 +40,37 @@ and contain cryptographic hashes for verifying workload integrity.`
 	OutputFlagName                   = "out"
 	PrivateKeyFlagName               = "priv"
 	PrivateKeyFlagDescription        = "Path to private key file for signing"
+	SignatureFlagName                = "signature"
+	SignatureFlagDescription         = "Path to signature file (se-signature.bin)"
+	AttestationCertFlagName          = "attestation-cert"
+	AttestationCertFlagDescription   = "Path to IBM attestation certificate file (PEM format)"
 )
 
 // ValidateInput - function to validate decrypt-attestation inputs
-func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
+func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, error) {
 	encAttestPath, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", "", err
 	}
 
 	privateKeyPath, err := cmd.Flags().GetString(PrivateKeyFlagName)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", "", err
 	}
 
 	decryptedAttestPath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", "", err
+	}
+
+	signaturePath, err := cmd.Flags().GetString(SignatureFlagName)
+	if err != nil {
+		return "", "", "", "", "", err
+	}
+
+	certPath, err := cmd.Flags().GetString(AttestationCertFlagName)
+	if err != nil {
+		return "", "", "", "", "", err
 	}
 
 	requiredFlags := map[string]string{
@@ -77,16 +91,21 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 				strings.Join(missing, ", "))
 			common.SetMandatoryFlagError(cmd, err)
 		} else {
-			err := fmt.Errorf("Error: required flag %s are missing.",
+			err := fmt.Errorf("Error: required flags %s are missing.",
 				strings.Join(missing, ", "))
 			common.SetMandatoryFlagError(cmd, err)
 		}
 	}
 
+	// Validate that if one of signature/cert is provided, both must be provided
+	if (signaturePath != "" && certPath == "") || (signaturePath == "" && certPath != "") {
+		return "", "", "", "", "", fmt.Errorf("Error: --signature and --attestation-cert flags must be used together. Both are required or both should be omitted")
+	}
+
 	// Validate stdin input
 	common.ValidateStdinInput(cmd, encAttestPath)
 
-	return encAttestPath, privateKeyPath, decryptedAttestPath, nil
+	return encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, nil
 }
 
 // DecryptAttestationRecords - function to decrypt attestation records
@@ -137,6 +156,35 @@ func PrintDecryptAttestation(decryptedAttestationRecords, decryptedAttestationPa
 		fmt.Println(successMessageDecryptAttestation)
 	} else {
 		fmt.Println(decryptedAttestationRecords)
+	}
+
+	return nil
+}
+
+// VerifySignatureAttestationRecords - function to verify signature of attestation records
+func VerifySignatureAttestationRecords(attestationRecords, signaturePath, certPath string) error {
+	// Read signature file (binary data)
+	if !common.CheckFileFolderExists(signaturePath) {
+		return fmt.Errorf("the path to signature file doesn't exist: %s", signaturePath)
+	}
+	signature, err := common.ReadDataFromFile(signaturePath)
+	if err != nil {
+		return err
+	}
+
+	// Read certificate file
+	if !common.CheckFileFolderExists(certPath) {
+		return fmt.Errorf("the path to certificate file doesn't exist: %s", certPath)
+	}
+	cert, err := common.ReadDataFromFile(certPath)
+	if err != nil {
+		return err
+	}
+
+	// Verify signature using contract-go library
+	err = attestation.HpcrVerifySignatureAttestationRecords(attestationRecords, signature, cert)
+	if err != nil {
+		return fmt.Errorf("signature verification failed: %w", err)
 	}
 
 	return nil
