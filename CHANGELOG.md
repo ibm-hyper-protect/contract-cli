@@ -1,3 +1,21 @@
+## [1.20.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.19.2...v1.20.0) (2026-03-10)
+
+### Features
+
+* Add support of signature verification for attestation records in decryptAttestation record command ([476dd78](https://github.com/ibm-hyper-protect/contract-cli/commit/476dd787f6363690676b5a41a38064a414af805d))
+* Add support to signature verification for attestation records ([6e5c8e8](https://github.com/ibm-hyper-protect/contract-cli/commit/6e5c8e86bb72fa0402dbe7125d2b3869dfeea0ac))
+* dummy commit ([648e572](https://github.com/ibm-hyper-protect/contract-cli/commit/648e5729763b8dfce7b7205118650f18cbca8c5b))
+* removing doc reference ([abaa482](https://github.com/ibm-hyper-protect/contract-cli/commit/abaa482ff5900899c979cb67070c61253c8d10b5))
+* removing previous imlementation ([110dbf0](https://github.com/ibm-hyper-protect/contract-cli/commit/110dbf0b6a0b8bd6e581a90f4623eb22db75e2c4))
+* updated doc with examples ([17982c0](https://github.com/ibm-hyper-protect/contract-cli/commit/17982c00fc3166b7aea8638320cbc038bcdc1399))
+* updated error statement with log.fatal ([464a3dd](https://github.com/ibm-hyper-protect/contract-cli/commit/464a3dd84816d8a4db44cdf4116fdf0687fadcc4))
+
+### Miscellaneous Chores
+
+* **deps:** update alpine docker tag to v3.23 ([#96](https://github.com/ibm-hyper-protect/contract-cli/issues/96)) ([cdb830d](https://github.com/ibm-hyper-protect/contract-cli/commit/cdb830d9213525e8624057fdd65134415402e553))
+* **deps:** update go dependencies ([#97](https://github.com/ibm-hyper-protect/contract-cli/issues/97)) ([ad50b36](https://github.com/ibm-hyper-protect/contract-cli/commit/ad50b36beff3ee9e912a55cf0215200a487fd0a4))
+* **homebrew:** update cask for contract-cli v1.19.2 ([e7b1846](https://github.com/ibm-hyper-protect/contract-cli/commit/e7b18469440b1e5f91a288b76beed601e178b1dd))
+
 ## [1.19.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.19.1...v1.19.2) (2026-03-08)
 
 ### Bug Fixes
