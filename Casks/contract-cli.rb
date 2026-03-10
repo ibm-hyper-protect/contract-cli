@@ -3,7 +3,7 @@ cask "contract-cli" do
   name "contract-cli"
   desc "CLI tool for managing IBM Confidential Computing contracts and configurations"
   homepage "https://github.com/ibm-hyper-protect/contract-cli"
-  version "1.19.2"
+  version "1.20.0"
 
   livecheck do
     skip "Auto-generated on release."
@@ -18,12 +18,12 @@ cask "contract-cli" do
     on_intel do
       url "https://github.com/ibm-hyper-protect/contract-cli/releases/download/v#{version}/contract-cli_#{version}_darwin_amd64.tar.gz",
         verified: "github.com/ibm-hyper-protect/contract-cli"
-      sha256 "365c04cb78f8d6b1a2fbd06652ed32a64f813666f3475a6a3198f9d98a0e92c2"
+      sha256 "fb4a9044c3041d3d6ad2a633750901f8b6d3da863d541fba991000fcdfada91e"
     end
     on_arm do
       url "https://github.com/ibm-hyper-protect/contract-cli/releases/download/v#{version}/contract-cli_#{version}_darwin_arm64.tar.gz",
         verified: "github.com/ibm-hyper-protect/contract-cli"
-      sha256 "02b6f980524f4815b8632b7257bbe344691ad52e239f05492fad6904524708a0"
+      sha256 "5a4f5951cbd0ecee187f00214f71e7e6537b0ace503d6b73ac0422e97d0cb05f"
     end
   end
 
@@ -31,12 +31,12 @@ cask "contract-cli" do
     on_intel do
       url "https://github.com/ibm-hyper-protect/contract-cli/releases/download/v#{version}/contract-cli_#{version}_linux_amd64.tar.gz",
         verified: "github.com/ibm-hyper-protect/contract-cli"
-      sha256 "a1e07527420b3c226895332c4650aa6bd86f0ad93109c2e9ea3489d9b4ec5070"
+      sha256 "111d75e9f4a245caea889d91936ce290229d7838777ec044741d9b59651957f2"
     end
     on_arm do
       url "https://github.com/ibm-hyper-protect/contract-cli/releases/download/v#{version}/contract-cli_#{version}_linux_arm64.tar.gz",
         verified: "github.com/ibm-hyper-protect/contract-cli"
-      sha256 "91881c0e7bd5a64108bf6cb2925d84e1a5b424fcbd98e5e5cadfac2552b04695"
+      sha256 "b40e8f95d08897ef18d2cf573604fd6118979019e8ac2c7530b1320882e43c54"
     end
   end
 
