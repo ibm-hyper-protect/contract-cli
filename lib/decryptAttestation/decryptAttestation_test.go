@@ -38,13 +38,17 @@ func TestValidateInput_Success(t *testing.T) {
 	cmd.Flags().String(InputFlagName, testEncAttestPath, "")
 	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
 	cmd.Flags().String(OutputFlagName, testOutputPath, "")
+	cmd.Flags().String(SignatureFlagName, "", "")
+	cmd.Flags().String(AttestationCertFlagName, "", "")
 
-	encAttestPath, privateKeyPath, decryptedAttestPath, err := ValidateInput(cmd)
+	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testEncAttestPath, encAttestPath)
 	assert.Equal(t, testPrivateKeyPath, privateKeyPath)
 	assert.Equal(t, testOutputPath, decryptedAttestPath)
+	assert.Equal(t, "", signaturePath)
+	assert.Equal(t, "", certPath)
 }
 
 // TestValidateInput_WithoutOutputPath tests ValidateInput without output path
@@ -53,20 +57,36 @@ func TestValidateInput_WithoutOutputPath(t *testing.T) {
 	cmd.Flags().String(InputFlagName, testEncAttestPath, "")
 	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
 	cmd.Flags().String(OutputFlagName, "", "")
+	cmd.Flags().String(SignatureFlagName, "", "")
+	cmd.Flags().String(AttestationCertFlagName, "", "")
 
-	encAttestPath, privateKeyPath, decryptedAttestPath, err := ValidateInput(cmd)
+	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testEncAttestPath, encAttestPath)
 	assert.Equal(t, testPrivateKeyPath, privateKeyPath)
 	assert.Equal(t, "", decryptedAttestPath)
+	assert.Equal(t, "", signaturePath)
+	assert.Equal(t, "", certPath)
 }
 
-// TestValidateInput_WithoutFlags tests ValidateInput when flags are not set
-func TestValidateInput_WithoutFlags(t *testing.T) {
+// TestValidateInput_WithBothSignatureAndCert tests ValidateInput with both signature and cert flags
+func TestValidateInput_WithBothSignatureAndCert(t *testing.T) {
 	cmd := &cobra.Command{}
-	_, _, _, err := ValidateInput(cmd)
-	assert.Error(t, err)
+	cmd.Flags().String(InputFlagName, testEncAttestPath, "")
+	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
+	cmd.Flags().String(OutputFlagName, "", "")
+	cmd.Flags().String(SignatureFlagName, "signature.bin", "")
+	cmd.Flags().String(AttestationCertFlagName, "cert.pem", "")
+
+	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, err := ValidateInput(cmd)
+
+	assert.NoError(t, err)
+	assert.Equal(t, testEncAttestPath, encAttestPath)
+	assert.Equal(t, testPrivateKeyPath, privateKeyPath)
+	assert.Equal(t, "", decryptedAttestPath)
+	assert.Equal(t, "signature.bin", signaturePath)
+	assert.Equal(t, "cert.pem", certPath)
 }
 
 // TestDecryptAttestationRecords_Success tests successful decryption

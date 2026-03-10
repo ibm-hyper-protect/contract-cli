@@ -60,6 +60,7 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
 
 - **Attestation Management**
   - Decrypt encrypted attestation records
+  - Verify signature of decrypted attestation records against IBM attestation certificate
 
 - **Certificate Operations**
   - Download encryption certificates from IBM Cloud
