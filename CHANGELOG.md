@@ -1,3 +1,14 @@
+## [1.20.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.20.0...v1.20.1) (2026-03-23)
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.15.0 ([#100](https://github.com/ibm-hyper-protect/contract-cli/issues/100)) ([664b466](https://github.com/ibm-hyper-protect/contract-cli/commit/664b466595753b33de9790ce54a9c9b66d4865b1))
+
+### Miscellaneous Chores
+
+* **deps:** update docker.io/library/hello-world docker digest to 85404b3 ([e65f541](https://github.com/ibm-hyper-protect/contract-cli/commit/e65f54106adb4c277f5dc2ee80403156c384e515))
+* **homebrew:** update cask for contract-cli v1.20.0 ([dc74ad3](https://github.com/ibm-hyper-protect/contract-cli/commit/dc74ad3566b676428b8e8192d6e98c4d32721f07))
+
 ## [1.20.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.19.2...v1.20.0) (2026-03-10)
 
 ### Features
