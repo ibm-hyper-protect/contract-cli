@@ -17,7 +17,7 @@ const (
 	PrivateKeyFlagName        = "priv"
 	PrivateKeyFlagDescription = "Path to private key file for signing"
 	PasswordFlagName          = "password"
-	PasswordFlagDescription   = "Password for encrypted private key (optional)"
+	PasswordFlagDescription   = "Password for encrypted private key"
 	OutputFlagName            = "out"
 	OutputFlagDescription     = "Path to save encrypted output"
 )

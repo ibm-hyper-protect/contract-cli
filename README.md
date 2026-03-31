@@ -61,6 +61,7 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
 - **Attestation Management**
   - Decrypt encrypted attestation records
   - Verify signature of decrypted attestation records against IBM attestation certificate
+  - Support for password-protected private keys
 
 - **Certificate Operations**
   - Download encryption certificates from IBM Cloud
@@ -71,6 +72,7 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - Generate Base64-encoded data from text, JSON, and docker compose / podman play archives
   - Create signed and signed & encrypted contracts
   - Support contract expiry with CA certificates
+  - Support for password-protected private keys in signing and encryption operations
   - Validate contract schemas
   - Create Gzipped & Encoded initdata for IBM Confidential Computing Containers Peer Pod
 
@@ -240,6 +242,14 @@ contract-cli encrypt \
   --in contract.yaml \
   --priv private.pem \
   --out encrypted-contract.yaml
+
+# Or with a password-protected private key
+openssl genrsa -aes256 -out private-encrypted.pem 4096
+contract-cli encrypt \
+  --in contract.yaml \
+  --priv private-encrypted.pem \
+  --password "your-secure-password" \
+  --out encrypted-contract.yaml
 ```
 
 ### Download and Use Encryption Certificates
@@ -279,6 +289,55 @@ contract-cli validate-contract \
 # Create initdata annotation
 contract-cli initdata \
   --in signed_encrypted_contract.yaml
+```
+
+### Using Password-Protected Private Keys
+
+The CLI supports password-protected private keys for enhanced security:
+
+```bash
+# Create a password-protected private key
+openssl genrsa -aes256 -out private-encrypted.pem 4096
+
+# Decrypt attestation with password-protected key
+contract-cli decrypt-attestation \
+  --in encrypted-attestation.txt \
+  --priv private-encrypted.pem \
+  --password "your-secure-password" \
+  --out decrypted-attestation.txt
+
+# Sign contract with password-protected key
+contract-cli sign-contract \
+  --in contract.yaml \
+  --priv private-encrypted.pem \
+  --password "your-secure-password" \
+  --out signed-contract.yaml
+
+# Encrypt contract with password-protected key
+contract-cli encrypt \
+  --in contract.yaml \
+  --priv private-encrypted.pem \
+  --password "your-secure-password" \
+  --out encrypted-contract.yaml
+```
+
+**Security Note**: For production use, consider using environment variables or secure secret management systems instead of passing passwords directly on the command line:
+
+```bash
+# Using environment variable
+export PRIVATE_KEY_PASSWORD="your-secure-password"
+contract-cli encrypt \
+  --in contract.yaml \
+  --priv private-encrypted.pem \
+  --password "$PRIVATE_KEY_PASSWORD" \
+  --out encrypted-contract.yaml
+
+# Or read from a secure file
+contract-cli encrypt \
+  --in contract.yaml \
+  --priv private-encrypted.pem \
+  --password "$(cat /secure/path/password.txt)" \
+  --out encrypted-contract.yaml
 ```
 
 ## Usage

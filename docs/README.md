@@ -246,6 +246,7 @@ contract-cli decrypt-attestation [flags]
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to encrypted attestation file (use '-' for standard input) |
 | `--priv` | string | Yes | Path to private key used for decryption |
+| `--password` | string | No | Password for encrypted private key |
 | `--out` | string | No | Path to save decrypted attestation records |
 | `--signature` | string | No* | Path to signature file (se-signature.bin) |
 | `--attestation-cert` | string | No* | Path to IBM attestation certificate file (PEM format) |
@@ -294,6 +295,25 @@ contract-cli decrypt-attestation \
 cat se-checksums.txt.enc | contract-cli decrypt-attestation \
   --in - \
   --priv private.pem
+```
+
+**Using password-protected private key:**
+```bash
+contract-cli decrypt-attestation \
+  --in se-checksums.txt.enc \
+  --priv private-encrypted.pem \
+  --password "your-secure-password" \
+  --out decrypted-attestation.txt
+```
+
+**Using password from environment variable:**
+```bash
+export PRIVATE_KEY_PASSWORD="your-secure-password"
+contract-cli decrypt-attestation \
+  --in se-checksums.txt.enc \
+  --priv private-encrypted.pem \
+  --password "$PRIVATE_KEY_PASSWORD" \
+  --out decrypted-attestation.txt
 ```
 
 ---
@@ -360,6 +380,7 @@ contract-cli sign-contract [flags]
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to encrypted IBM Confidential Computing contract YAML file (use '-' for standard input) |
 | `--priv` | string | Yes | Path to private key for signing |
+| `--password` | string | No | Password for encrypted private key |
 | `--out` | string | No | Path to save signed and encrypted contract |
 | `-h, --help` | - | No | Display help information |
 
@@ -380,6 +401,15 @@ contract-cli sign-contract --in contract.yaml --priv private.pem --out signed-co
 cat contract.yaml | contract-cli sign-contract --in - --priv private.pem
 ```
 
+**Using password-protected private key:**
+```bash
+contract-cli sign-contract \
+  --in contract.yaml \
+  --priv private-encrypted.pem \
+  --password "your-secure-password" \
+  --out signed-contract.yaml
+```
+
 ---
 
 ### encrypt
@@ -398,6 +428,7 @@ contract-cli encrypt [flags]
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to unencrypted IBM Confidential Computing contract YAML file (use '-' for standard input) |
 | `--priv` | string | No* | Path to private key for signing |
+| `--password` | string | No | Password for encrypted private key |
 | `--cert` | string | No | Path to encryption certificate (uses latest if not specified) |
 | `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
 | `--out` | string | No | Path to save signed and encrypted contract |
@@ -453,6 +484,15 @@ contract-cli encrypt \
   --in contract.yaml \
   --priv private.pem \
   --os hpcr-rhvs
+```
+
+**Using password-protected private key:**
+```bash
+contract-cli encrypt \
+  --in contract.yaml \
+  --priv private-encrypted.pem \
+  --password "your-secure-password" \
+  --out encrypted-contract.yaml
 ```
 
 **For HPCC Peer Pods:**
@@ -1004,3 +1044,4 @@ The [`samples/`](../samples/) directory contains working examples:
 - [Open an issue](https://github.com/ibm-hyper-protect/contract-cli/issues/new/choose)
 - [Ask a question](https://github.com/ibm-hyper-protect/contract-cli/discussions)
 - Check the [troubleshooting](#troubleshooting) section above
+
