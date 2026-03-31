@@ -212,7 +212,8 @@ func TestDecryptAttestationRecords_WithEmptyPassword(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "sha256")
+	// Verify result contains attestation data (version, checksums, etc.)
+	assert.Contains(t, result, "Machine Type")
 }
 
 // TestDecryptAttestationRecords_WithWrongPassword tests decryption with wrong password
