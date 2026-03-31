@@ -29,7 +29,7 @@ var encryptCmd = &cobra.Command{
 	Short: encrypt.ParameterShortDescription,
 	Long:  encrypt.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputDataPath, osVersion, certPath, privateKeyPath, outputPath, err := encrypt.ValidateInput(cmd)
+		inputDataPath, osVersion, certPath, privateKeyPath, outputPath, password, err := encrypt.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -41,12 +41,12 @@ var encryptCmd = &cobra.Command{
 
 		var signedEncryptContract string
 		if !contractExpiryFlag {
-			signedEncryptContract, err = encrypt.GenerateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKeyPath)
+			signedEncryptContract, err = encrypt.GenerateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKeyPath, password)
 			if err != nil {
 				log.Fatal(err)
 			}
 		} else {
-			signedEncryptContract, err = encrypt.GenerateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, privateKeyPath, caCert, caKey, csrParam, csr, expiryDays)
+			signedEncryptContract, err = encrypt.GenerateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, privateKeyPath, password, caCert, caKey, csrParam, csr, expiryDays)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -70,6 +70,7 @@ func init() {
 	encryptCmd.PersistentFlags().String(encrypt.OsVersionFlagName, "", encrypt.OsVersionFlagDescription)
 	encryptCmd.PersistentFlags().String(encrypt.CertFlagName, "", encrypt.CertFlagDescription)
 	encryptCmd.PersistentFlags().String(encrypt.PrivateKeyFlagName, "", encrypt.PrivateKeyFlagDescription)
+	encryptCmd.PersistentFlags().String(encrypt.PasswordFlagName, "", encrypt.PasswordFlagDescription)
 	encryptCmd.PersistentFlags().String(encrypt.OutputFlagName, "", encrypt.OutputFlagDescription)
 	encryptCmd.PersistentFlags().Bool(encrypt.ContractExpiryFlag, encrypt.DefaultContractExpiryFlag, encrypt.ContractExpiryFlagDescription)
 	encryptCmd.PersistentFlags().String(encrypt.CaCertFlag, "", encrypt.CaCertFlagDescription)

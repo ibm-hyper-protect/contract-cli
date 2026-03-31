@@ -54,13 +54,15 @@ enhanced security.`
 	CertFlagDescription           = "Path to encryption certificate file"
 	PrivateKeyFlagName            = "priv"
 	PrivateKeyFlagDescription     = "Path to private key file for signing"
+	PasswordFlagName              = "password"
+	PasswordFlagDescription       = "Password for encrypted private key (optional)"
 )
 
 // ValidateInput - function to validate inputs of encrypt
-func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, error) {
+func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, string, error) {
 	inputData, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	if inputData == "" {
@@ -73,25 +75,30 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 
 	osVersion, err := cmd.Flags().GetString(OsVersionFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	certPath, err := cmd.Flags().GetString(CertFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	privateKeyPath, err := cmd.Flags().GetString(PrivateKeyFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	outputPath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
-	return inputData, osVersion, certPath, privateKeyPath, outputPath, nil
+	password, err := cmd.Flags().GetString(PasswordFlagName)
+	if err != nil {
+		return "", "", "", "", "", "", err
+	}
+
+	return inputData, osVersion, certPath, privateKeyPath, outputPath, password, nil
 }
 
 // ValidateInputEncryptContractExpiry - function to validate input of contract expiry input
@@ -130,13 +137,13 @@ func ValidateInputEncryptContractExpiry(cmd *cobra.Command) (bool, string, strin
 }
 
 // GenerateSignedEncryptContract - function to generate signed and encrypted contract
-func GenerateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKeyPath string) (string, error) {
+func GenerateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKeyPath, password string) (string, error) {
 	inputData, cert, privateKey, err := commonParameters(inputDataPath, certPath, privateKeyPath)
 	if err != nil {
 		return "", err
 	}
 
-	signedEncryptContract, _, _, err := contract.HpcrContractSignedEncrypted(inputData, osVersion, cert, privateKey)
+	signedEncryptContract, _, _, err := contract.HpcrContractSignedEncrypted(inputData, osVersion, cert, privateKey, password)
 	if err != nil {
 		return "", err
 	}
@@ -145,7 +152,7 @@ func GenerateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKe
 }
 
 // GenerateSignedEncryptContractExpiry - function to generated signed and encrypted contract with contract expiry
-func GenerateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, privateKeyPath, caCertPath, caKeyPath, csrParamPath, csrPath string, expiryDays int) (string, error) {
+func GenerateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, privateKeyPath, password, caCertPath, caKeyPath, csrParamPath, csrPath string, expiryDays int) (string, error) {
 
 	inputData, cert, privateKey, err := commonParameters(inputDataPath, certPath, privateKeyPath)
 	if err != nil {
@@ -172,7 +179,7 @@ func GenerateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, pri
 		return "", err
 	}
 
-	signedEncryptContract, _, _, err := contract.HpcrContractSignedEncryptedContractExpiry(inputData, osVersion, cert, privateKey, caCert, caKey, csrParam, csr, expiryDays)
+	signedEncryptContract, _, _, err := contract.HpcrContractSignedEncryptedContractExpiry(inputData, osVersion, cert, privateKey, password, caCert, caKey, csrParam, csr, expiryDays)
 	if err != nil {
 		return "", err
 	}

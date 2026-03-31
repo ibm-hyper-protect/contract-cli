@@ -40,6 +40,8 @@ and contain cryptographic hashes for verifying workload integrity.`
 	OutputFlagName                   = "out"
 	PrivateKeyFlagName               = "priv"
 	PrivateKeyFlagDescription        = "Path to private key file for signing"
+	PasswordFlagName                 = "password"
+	PasswordFlagDescription          = "Password for encrypted private key (optional)"
 	SignatureFlagName                = "signature"
 	SignatureFlagDescription         = "Path to signature file (se-signature.bin)"
 	AttestationCertFlagName          = "attestation-cert"
@@ -47,30 +49,35 @@ and contain cryptographic hashes for verifying workload integrity.`
 )
 
 // ValidateInput - function to validate decrypt-attestation inputs
-func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, error) {
+func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, string, error) {
 	encAttestPath, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	privateKeyPath, err := cmd.Flags().GetString(PrivateKeyFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	decryptedAttestPath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	signaturePath, err := cmd.Flags().GetString(SignatureFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	certPath, err := cmd.Flags().GetString(AttestationCertFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
+	}
+
+	password, err := cmd.Flags().GetString(PasswordFlagName)
+	if err != nil {
+		return "", "", "", "", "", "", err
 	}
 
 	requiredFlags := map[string]string{
@@ -105,11 +112,11 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 	// Validate stdin input
 	common.ValidateStdinInput(cmd, encAttestPath)
 
-	return encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, nil
+	return encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, password, nil
 }
 
 // DecryptAttestationRecords - function to decrypt attestation records
-func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath string) (string, error) {
+func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath, password string) (string, error) {
 	var encryptedChecksum string
 	var err error
 
@@ -138,7 +145,7 @@ func DecryptAttestationRecords(encryptedAttestationRecordsPath, privateKeyPath s
 		return "", err
 	}
 
-	decryptedAttestationRecords, err := attestation.HpcrGetAttestationRecords(encryptedChecksum, privateKey)
+	decryptedAttestationRecords, err := attestation.HpcrGetAttestationRecords(encryptedChecksum, privateKey, password)
 	if err != nil {
 		return "", err
 	}
