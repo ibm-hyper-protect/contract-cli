@@ -1,3 +1,22 @@
+## [1.21.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.20.1...v1.21.0) (2026-03-31)
+
+### Features
+
+* add support for encrypted private key ([3333cc9](https://github.com/ibm-hyper-protect/contract-cli/commit/3333cc988a5152ca7c5d8965fde99959e48344e0))
+* add testcases for the feature ([11a4437](https://github.com/ibm-hyper-protect/contract-cli/commit/11a44374dd7f422bdd98e617be99ee64eefa50ef))
+* update GO version to 1.26.1 ([48fcd29](https://github.com/ibm-hyper-protect/contract-cli/commit/48fcd29f11d91a6ea03f861b0e1fa5f46d8842cd))
+
+### Bug Fixes
+
+* CI/CD error with GO version ([8866a3c](https://github.com/ibm-hyper-protect/contract-cli/commit/8866a3c9de7a66186bf6ac50dfd96afc84a1b77b))
+* testcases ([4e892c8](https://github.com/ibm-hyper-protect/contract-cli/commit/4e892c85bffcee8d6e5be42bd17a899575c94e4f))
+
+### Miscellaneous Chores
+
+* **deps:** update docker.io/library/hello-world docker digest to 452a468 ([#101](https://github.com/ibm-hyper-protect/contract-cli/issues/101)) ([15968af](https://github.com/ibm-hyper-protect/contract-cli/commit/15968af8b53f13860172d3c738b6343be2fcfe0c))
+* **homebrew:** update cask for contract-cli v1.20.1 ([803f389](https://github.com/ibm-hyper-protect/contract-cli/commit/803f3895a32b7eb5f4c035e9d6ffe64118d55196))
+* more testcases ([9fda526](https://github.com/ibm-hyper-protect/contract-cli/commit/9fda5266b67aa1b43b2c0c7710b11a2a79ada273))
+
 ## [1.20.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.20.0...v1.20.1) (2026-03-23)
 
 ### Bug Fixes
