@@ -40,8 +40,9 @@ func TestValidateInput_Success(t *testing.T) {
 	cmd.Flags().String(OutputFlagName, testOutputPath, "")
 	cmd.Flags().String(SignatureFlagName, "", "")
 	cmd.Flags().String(AttestationCertFlagName, "", "")
+	cmd.Flags().String(PasswordFlagName, "", "")
 
-	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, err := ValidateInput(cmd)
+	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, password, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testEncAttestPath, encAttestPath)
@@ -49,6 +50,7 @@ func TestValidateInput_Success(t *testing.T) {
 	assert.Equal(t, testOutputPath, decryptedAttestPath)
 	assert.Equal(t, "", signaturePath)
 	assert.Equal(t, "", certPath)
+	assert.Equal(t, "", password)
 }
 
 // TestValidateInput_WithoutOutputPath tests ValidateInput without output path
@@ -59,8 +61,9 @@ func TestValidateInput_WithoutOutputPath(t *testing.T) {
 	cmd.Flags().String(OutputFlagName, "", "")
 	cmd.Flags().String(SignatureFlagName, "", "")
 	cmd.Flags().String(AttestationCertFlagName, "", "")
+	cmd.Flags().String(PasswordFlagName, "", "")
 
-	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, err := ValidateInput(cmd)
+	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, password, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testEncAttestPath, encAttestPath)
@@ -68,6 +71,7 @@ func TestValidateInput_WithoutOutputPath(t *testing.T) {
 	assert.Equal(t, "", decryptedAttestPath)
 	assert.Equal(t, "", signaturePath)
 	assert.Equal(t, "", certPath)
+	assert.Equal(t, "", password)
 }
 
 // TestValidateInput_WithBothSignatureAndCert tests ValidateInput with both signature and cert flags
@@ -78,8 +82,9 @@ func TestValidateInput_WithBothSignatureAndCert(t *testing.T) {
 	cmd.Flags().String(OutputFlagName, "", "")
 	cmd.Flags().String(SignatureFlagName, "signature.bin", "")
 	cmd.Flags().String(AttestationCertFlagName, "cert.pem", "")
+	cmd.Flags().String(PasswordFlagName, "", "")
 
-	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, err := ValidateInput(cmd)
+	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, password, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testEncAttestPath, encAttestPath)
@@ -87,11 +92,12 @@ func TestValidateInput_WithBothSignatureAndCert(t *testing.T) {
 	assert.Equal(t, "", decryptedAttestPath)
 	assert.Equal(t, "signature.bin", signaturePath)
 	assert.Equal(t, "cert.pem", certPath)
+	assert.Equal(t, "", password)
 }
 
 // TestDecryptAttestationRecords_Success tests successful decryption
 func TestDecryptAttestationRecords_Success(t *testing.T) {
-	result, err := DecryptAttestationRecords(testEncAttestPath, testPrivateKeyPath)
+	result, err := DecryptAttestationRecords(testEncAttestPath, testPrivateKeyPath, "")
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -105,7 +111,7 @@ func TestDecryptAttestationRecords_CorruptedEncryptedData(t *testing.T) {
 	assert.NoError(t, err)
 	defer os.Remove(corruptedFile)
 
-	result, err := DecryptAttestationRecords(corruptedFile, testPrivateKeyPath)
+	result, err := DecryptAttestationRecords(corruptedFile, testPrivateKeyPath, "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -114,7 +120,7 @@ func TestDecryptAttestationRecords_CorruptedEncryptedData(t *testing.T) {
 // TestDecryptAttestationRecords_WrongPrivateKey tests with wrong private key
 func TestDecryptAttestationRecords_WrongPrivateKey(t *testing.T) {
 	// Using public key instead of private key should fail
-	result, err := DecryptAttestationRecords(testEncAttestPath, testPublicKeyPath)
+	result, err := DecryptAttestationRecords(testEncAttestPath, testPublicKeyPath, "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -128,7 +134,7 @@ func TestDecryptAttestationRecords_EmptyEncryptedFile(t *testing.T) {
 	assert.NoError(t, err)
 	defer os.Remove(emptyFile)
 
-	result, err := DecryptAttestationRecords(emptyFile, testPrivateKeyPath)
+	result, err := DecryptAttestationRecords(emptyFile, testPrivateKeyPath, "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -142,7 +148,7 @@ func TestDecryptAttestationRecords_InvalidKeyFormat(t *testing.T) {
 	assert.NoError(t, err)
 	defer os.Remove(invalidKeyFile)
 
-	result, err := DecryptAttestationRecords(testEncAttestPath, invalidKeyFile)
+	result, err := DecryptAttestationRecords(testEncAttestPath, invalidKeyFile, "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -177,4 +183,46 @@ func TestPrintDecryptAttestation_InvalidPath(t *testing.T) {
 	testData := "decrypted attestation data"
 	err := PrintDecryptAttestation(testData, testInvalidPath)
 	assert.Error(t, err)
+}
+
+// TestValidateInput_WithPassword tests ValidateInput with password flag
+func TestValidateInput_WithPassword(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().String(InputFlagName, testEncAttestPath, "")
+	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
+	cmd.Flags().String(OutputFlagName, testOutputPath, "")
+	cmd.Flags().String(SignatureFlagName, "", "")
+	cmd.Flags().String(AttestationCertFlagName, "", "")
+	cmd.Flags().String(PasswordFlagName, "testPassword123", "")
+
+	encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, password, err := ValidateInput(cmd)
+
+	assert.NoError(t, err)
+	assert.Equal(t, testEncAttestPath, encAttestPath)
+	assert.Equal(t, testPrivateKeyPath, privateKeyPath)
+	assert.Equal(t, testOutputPath, decryptedAttestPath)
+	assert.Equal(t, "", signaturePath)
+	assert.Equal(t, "", certPath)
+	assert.Equal(t, "testPassword123", password)
+}
+
+// TestDecryptAttestationRecords_WithEmptyPassword tests decryption with empty password (unencrypted key)
+func TestDecryptAttestationRecords_WithEmptyPassword(t *testing.T) {
+	result, err := DecryptAttestationRecords(testEncAttestPath, testPrivateKeyPath, "")
+
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "sha256")
+}
+
+// TestDecryptAttestationRecords_WithWrongPassword tests decryption with wrong password
+// Note: This test expects an unencrypted key, so providing a password should still work
+// For a truly encrypted key with wrong password, contract-go would return an error
+func TestDecryptAttestationRecords_PasswordHandling(t *testing.T) {
+	// Using unencrypted key with password parameter should work (password ignored)
+	result, err := DecryptAttestationRecords(testEncAttestPath, testPrivateKeyPath, "anyPassword")
+
+	// Should succeed because the key is not encrypted
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
 }

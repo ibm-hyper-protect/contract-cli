@@ -44,8 +44,9 @@ func TestValidateInput_Success(t *testing.T) {
 	cmd.Flags().String(CertFlagName, testCertPath, "")
 	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
 	cmd.Flags().String(OutputFlagName, testOutputPath, "")
+	cmd.Flags().String(PasswordFlagName, "", "")
 
-	inputData, osVersion, certPath, privateKeyPath, outputPath, err := ValidateInput(cmd)
+	inputData, osVersion, certPath, privateKeyPath, outputPath, password, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testContractPath, inputData)
@@ -53,12 +54,13 @@ func TestValidateInput_Success(t *testing.T) {
 	assert.Equal(t, testCertPath, certPath)
 	assert.Equal(t, testPrivateKeyPath, privateKeyPath)
 	assert.Equal(t, testOutputPath, outputPath)
+	assert.Equal(t, "", password)
 }
 
 // TestValidateInput_WithoutFlags tests ValidateInput when flags are not set
 func TestValidateInput_WithoutFlags(t *testing.T) {
 	cmd := &cobra.Command{}
-	_, _, _, _, _, err := ValidateInput(cmd)
+	_, _, _, _, _, _, err := ValidateInput(cmd)
 	assert.Error(t, err)
 }
 
@@ -113,7 +115,7 @@ func TestValidateInputEncryptContractExpiry_WithoutFlags(t *testing.T) {
 
 // TestGenerateSignedEncryptContract_Success tests successful contract generation
 func TestGenerateSignedEncryptContract_Success(t *testing.T) {
-	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, testPrivateKeyPath)
+	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, testPrivateKeyPath, "")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 	assert.Contains(t, result, "hyper-protect-basic")
@@ -121,7 +123,7 @@ func TestGenerateSignedEncryptContract_Success(t *testing.T) {
 
 // TestGenerateSignedEncryptContract_InvalidContractPath tests with invalid contract path
 func TestGenerateSignedEncryptContract_InvalidContractPath(t *testing.T) {
-	result, err := GenerateSignedEncryptContract(testInvalidPath, testOsVersion, testCertPath, testPrivateKeyPath)
+	result, err := GenerateSignedEncryptContract(testInvalidPath, testOsVersion, testCertPath, testPrivateKeyPath, "")
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 	assert.Contains(t, err.Error(), "doesn't exist")
@@ -129,28 +131,28 @@ func TestGenerateSignedEncryptContract_InvalidContractPath(t *testing.T) {
 
 // TestGenerateSignedEncryptContract_InvalidCertPath tests with invalid cert path
 func TestGenerateSignedEncryptContract_InvalidCertPath(t *testing.T) {
-	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testInvalidPath, testPrivateKeyPath)
+	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testInvalidPath, testPrivateKeyPath, "")
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 }
 
 // TestGenerateSignedEncryptContract_InvalidPrivateKeyPath tests with invalid private key path
 func TestGenerateSignedEncryptContract_InvalidPrivateKeyPath(t *testing.T) {
-	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, testInvalidPath)
+	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, testInvalidPath, "")
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 }
 
 // TestGenerateSignedEncryptContract_InvalidOsVersion tests with invalid OS version
 func TestGenerateSignedEncryptContract_InvalidOsVersion(t *testing.T) {
-	result, err := GenerateSignedEncryptContract(testContractPath, "invalid_os", testCertPath, testPrivateKeyPath)
+	result, err := GenerateSignedEncryptContract(testContractPath, "invalid_os", testCertPath, testPrivateKeyPath, "")
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 }
 
 // TestGenerateSignedEncryptContract_EmptyOsVersion tests with empty OS version
 func TestGenerateSignedEncryptContract_EmptyOsVersion(t *testing.T) {
-	result, err := GenerateSignedEncryptContract(testContractPath, "", testCertPath, testPrivateKeyPath)
+	result, err := GenerateSignedEncryptContract(testContractPath, "", testCertPath, testPrivateKeyPath, "")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 }
@@ -162,6 +164,7 @@ func TestGenerateSignedEncryptContractExpiry_InvalidContractPath(t *testing.T) {
 		testOsVersion,
 		testCertPath,
 		testPrivateKeyPath,
+		"",
 		testCaCertPath,
 		testCaKeyPath,
 		testCsrParamPath,
@@ -180,6 +183,7 @@ func TestGenerateSignedEncryptContractExpiry_InvalidCaCertPath(t *testing.T) {
 		testOsVersion,
 		testCertPath,
 		testPrivateKeyPath,
+		"",
 		testInvalidPath,
 		testCaKeyPath,
 		testCsrParamPath,
@@ -197,6 +201,7 @@ func TestGenerateSignedEncryptContractExpiry_InvalidCaKeyPath(t *testing.T) {
 		testOsVersion,
 		testCertPath,
 		testPrivateKeyPath,
+		"",
 		testCaCertPath,
 		testInvalidPath,
 		testCsrParamPath,
@@ -214,6 +219,7 @@ func TestGenerateSignedEncryptContractExpiry_InvalidCsrParamPath(t *testing.T) {
 		testOsVersion,
 		testCertPath,
 		testPrivateKeyPath,
+		"",
 		testCaCertPath,
 		testCaKeyPath,
 		testInvalidPath,
@@ -231,6 +237,7 @@ func TestGenerateSignedEncryptContractExpiry_InvalidCsrPath(t *testing.T) {
 		testOsVersion,
 		testCertPath,
 		testPrivateKeyPath,
+		"",
 		testCaCertPath,
 		testCaKeyPath,
 		testCsrParamPath,
@@ -279,7 +286,7 @@ func TestGenerateSignedEncryptContract_CorruptedContract(t *testing.T) {
 	assert.NoError(t, err)
 	defer os.Remove(corruptedFile)
 
-	result, err := GenerateSignedEncryptContract(corruptedFile, testOsVersion, testCertPath, testPrivateKeyPath)
+	result, err := GenerateSignedEncryptContract(corruptedFile, testOsVersion, testCertPath, testPrivateKeyPath, "")
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 }
@@ -291,7 +298,7 @@ func TestGenerateSignedEncryptContract_EmptyContract(t *testing.T) {
 	assert.NoError(t, err)
 	defer os.Remove(emptyFile)
 
-	result, err := GenerateSignedEncryptContract(emptyFile, testOsVersion, testCertPath, testPrivateKeyPath)
+	result, err := GenerateSignedEncryptContract(emptyFile, testOsVersion, testCertPath, testPrivateKeyPath, "")
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 }
@@ -303,7 +310,7 @@ func TestGenerateSignedEncryptContract_CorruptedCert(t *testing.T) {
 	assert.NoError(t, err)
 	defer os.Remove(corruptedCert)
 
-	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, corruptedCert, testPrivateKeyPath)
+	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, corruptedCert, testPrivateKeyPath, "")
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 }
@@ -315,7 +322,7 @@ func TestGenerateSignedEncryptContract_CorruptedPrivateKey(t *testing.T) {
 	assert.NoError(t, err)
 	defer os.Remove(corruptedKey)
 
-	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, corruptedKey)
+	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, corruptedKey, "")
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 }
@@ -327,6 +334,7 @@ func TestGenerateSignedEncryptContractExpiry_ZeroExpiryDays(t *testing.T) {
 		testOsVersion,
 		testCertPath,
 		testPrivateKeyPath,
+		"",
 		testCaCertPath,
 		testCaKeyPath,
 		testCsrParamPath,
@@ -344,6 +352,7 @@ func TestGenerateSignedEncryptContractExpiry_NegativeExpiryDays(t *testing.T) {
 		testOsVersion,
 		testCertPath,
 		testPrivateKeyPath,
+		"",
 		testCaCertPath,
 		testCaKeyPath,
 		testCsrParamPath,
@@ -352,4 +361,85 @@ func TestGenerateSignedEncryptContractExpiry_NegativeExpiryDays(t *testing.T) {
 	)
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
+}
+
+// TestValidateInput_WithPassword tests ValidateInput with password flag
+func TestValidateInput_WithPassword(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().String(InputFlagName, testContractPath, "")
+	cmd.Flags().String(OsVersionFlagName, testOsVersion, "")
+	cmd.Flags().String(CertFlagName, testCertPath, "")
+	cmd.Flags().String(PrivateKeyFlagName, testPrivateKeyPath, "")
+	cmd.Flags().String(OutputFlagName, testOutputPath, "")
+	cmd.Flags().String(PasswordFlagName, "securePassword456", "")
+
+	inputData, osVersion, certPath, privateKeyPath, outputPath, password, err := ValidateInput(cmd)
+
+	assert.NoError(t, err)
+	assert.Equal(t, testContractPath, inputData)
+	assert.Equal(t, testOsVersion, osVersion)
+	assert.Equal(t, testCertPath, certPath)
+	assert.Equal(t, testPrivateKeyPath, privateKeyPath)
+	assert.Equal(t, testOutputPath, outputPath)
+	assert.Equal(t, "securePassword456", password)
+}
+
+// TestGenerateSignedEncryptContract_WithEmptyPassword tests with empty password (unencrypted key)
+func TestGenerateSignedEncryptContract_WithEmptyPassword(t *testing.T) {
+	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, testPrivateKeyPath, "")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+}
+
+// TestGenerateSignedEncryptContract_PasswordHandling tests password parameter handling
+// Note: Using unencrypted key with password parameter should work (password ignored by contract-go)
+func TestGenerateSignedEncryptContract_PasswordHandling(t *testing.T) {
+	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, testPrivateKeyPath, "anyPassword")
+
+	// Should succeed because the key is not encrypted
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+}
+
+// TestGenerateSignedEncryptContractExpiry_WithPassword tests contract expiry with password
+func TestGenerateSignedEncryptContractExpiry_WithPassword(t *testing.T) {
+	result, err := GenerateSignedEncryptContractExpiry(
+		testContractPath,
+		testOsVersion,
+		testCertPath,
+		testPrivateKeyPath,
+		"testPassword",
+		testCaCertPath,
+		testCaKeyPath,
+		testCsrParamPath,
+		testCsrPath,
+		365,
+	)
+
+	// Should succeed with unencrypted key (password parameter ignored)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+}
+
+// TestGenerateSignedEncryptContractExpiry_WithEmptyPassword tests contract expiry with empty password
+func TestGenerateSignedEncryptContractExpiry_WithEmptyPassword(t *testing.T) {
+	result, err := GenerateSignedEncryptContractExpiry(
+		testContractPath,
+		testOsVersion,
+		testCertPath,
+		testPrivateKeyPath,
+		"",
+		testCaCertPath,
+		testCaKeyPath,
+		testCsrParamPath,
+		testCsrPath,
+		365,
+	)
+
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
 }
