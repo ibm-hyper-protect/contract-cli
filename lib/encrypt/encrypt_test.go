@@ -24,16 +24,20 @@ import (
 )
 
 const (
-	testContractPath   = "../../samples/contract.yaml"
-	testCertPath       = "../../samples/certificate/active.crt"
-	testPrivateKeyPath = "../../samples/sign/private.pem"
-	testCaCertPath     = "../../samples/contract-expiry/personal_ca.crt"
-	testCaKeyPath      = "../../samples/contract-expiry/personal_ca.pem"
-	testCsrPath        = "../../samples/contract-expiry/csr.pem"
-	testCsrParamPath   = "" // Empty - using CSR PEM file only
-	testOutputPath     = "../../build/test_encrypt_output.txt"
-	testInvalidPath    = "../../build/file/file_not_exists.txt"
-	testOsVersion      = "hpvs"
+	testContractPath      = "../../samples/contract.yaml"
+	testCertPath          = "../../samples/certificate/active.crt"
+	testPrivateKeyPath    = "../../samples/sign/private.pem"
+	testCaCertPath        = "../../samples/contract-expiry/personal_ca.crt"
+	testCaKeyPath         = "../../samples/contract-expiry/personal_ca.pem"
+	testCsrPath           = "../../samples/contract-expiry/csr.pem"
+	testCsrParamPath      = "" // Empty - using CSR PEM file only
+	testOutputPath        = "../../build/test_encrypt_output.txt"
+	testInvalidPath       = "../../build/file/file_not_exists.txt"
+	testOsVersion         = "hpvs"
+	testCorruptedContract = "../../build/corrupted_contract.yaml"
+	testEmptyContract     = "../../build/empty_contract.yaml"
+	testCorruptedCert     = "../../build/corrupted_cert.crt"
+	testCorruptedKey      = "../../build/corrupted_key.pem"
 )
 
 // TestValidateInput_Success tests ValidateInput with all required flags
@@ -305,24 +309,22 @@ func TestGenerateSignedEncryptContract_EmptyContract(t *testing.T) {
 
 // TestGenerateSignedEncryptContract_CorruptedCert tests with corrupted certificate
 func TestGenerateSignedEncryptContract_CorruptedCert(t *testing.T) {
-	corruptedCert := "../../build/corrupted_cert.crt"
-	err := os.WriteFile(corruptedCert, []byte("not a valid certificate"), 0644)
+	err := os.WriteFile(testCorruptedCert, []byte("not a valid certificate"), 0644)
 	assert.NoError(t, err)
-	defer os.Remove(corruptedCert)
+	defer os.Remove(testCorruptedCert)
 
-	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, corruptedCert, testPrivateKeyPath, "")
+	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCorruptedCert, testPrivateKeyPath, "")
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 }
 
 // TestGenerateSignedEncryptContract_CorruptedPrivateKey tests with corrupted private key
 func TestGenerateSignedEncryptContract_CorruptedPrivateKey(t *testing.T) {
-	corruptedKey := "../../build/corrupted_key.pem"
-	err := os.WriteFile(corruptedKey, []byte("not a valid private key"), 0644)
+	err := os.WriteFile(testCorruptedKey, []byte("not a valid private key"), 0644)
 	assert.NoError(t, err)
-	defer os.Remove(corruptedKey)
+	defer os.Remove(testCorruptedKey)
 
-	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, corruptedKey, "")
+	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, testCorruptedKey, "")
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 }

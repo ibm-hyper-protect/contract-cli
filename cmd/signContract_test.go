@@ -25,10 +25,12 @@ import (
 )
 
 const (
-	testSignContractPath   = "../samples/contract.yaml"
-	testSignPrivateKeyPath = "../samples/sign/private.pem"
-	testSignOutputPath     = "../build/test_cmd_sign_contract_output.txt"
-	testSignInvalidPath    = "../build/file/file_not_exists.txt"
+	testSignContractPath      = "../samples/contract.yaml"
+	testSignPrivateKeyPath    = "../samples/sign/private.pem"
+	testSignOutputPath        = "../build/test_cmd_sign_contract_output.txt"
+	testSignInvalidPath       = "../build/file/file_not_exists.txt"
+	testSignCorruptedContract = "../build/corrupted_contract_cmd.yaml"
+	testSignCorruptedKey      = "../build/corrupted_key_cmd.pem"
 )
 
 // getSignContractCmd returns a fresh instance of the sign-contract command for testing
@@ -162,14 +164,13 @@ func TestSignContractCmd_WithoutOutputPath(t *testing.T) {
 
 // TestSignContractCmd_CorruptedContract tests error with corrupted contract
 func TestSignContractCmd_CorruptedContract(t *testing.T) {
-	corruptedFile := "../build/corrupted_contract_cmd.yaml"
-	err := os.WriteFile(corruptedFile, []byte("invalid: yaml: content: ["), 0644)
+	err := os.WriteFile(testSignCorruptedContract, []byte("invalid: yaml: content: ["), 0644)
 	assert.NoError(t, err)
-	defer os.Remove(corruptedFile)
+	defer os.Remove(testSignCorruptedContract)
 
 	cmd := getSignContractCmd()
 	cmd.SetArgs([]string{
-		"--" + signContract.InputFlagName, corruptedFile,
+		"--" + signContract.InputFlagName, testSignCorruptedContract,
 		"--" + signContract.PrivateKeyFlagName, testSignPrivateKeyPath,
 	})
 
@@ -180,15 +181,14 @@ func TestSignContractCmd_CorruptedContract(t *testing.T) {
 
 // TestSignContractCmd_CorruptedPrivateKey tests error with corrupted private key
 func TestSignContractCmd_CorruptedPrivateKey(t *testing.T) {
-	corruptedKey := "../build/corrupted_key_cmd.pem"
-	err := os.WriteFile(corruptedKey, []byte("not a valid private key"), 0644)
+	err := os.WriteFile(testSignCorruptedKey, []byte("not a valid private key"), 0644)
 	assert.NoError(t, err)
-	defer os.Remove(corruptedKey)
+	defer os.Remove(testSignCorruptedKey)
 
 	cmd := getSignContractCmd()
 	cmd.SetArgs([]string{
 		"--" + signContract.InputFlagName, testSignContractPath,
-		"--" + signContract.PrivateKeyFlagName, corruptedKey,
+		"--" + signContract.PrivateKeyFlagName, testSignCorruptedKey,
 	})
 
 	err = cmd.Execute()

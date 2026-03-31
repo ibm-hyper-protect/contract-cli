@@ -24,10 +24,12 @@ import (
 )
 
 const (
-	testContractPath   = "../../samples/contract.yaml"
-	testPrivateKeyPath = "../../samples/sign/private.pem"
-	testOutputPath     = "../../build/test_sign_contract_output.txt"
-	testInvalidPath    = "../../build/file/file_not_exists.txt"
+	testContractPath      = "../../samples/contract.yaml"
+	testPrivateKeyPath    = "../../samples/sign/private.pem"
+	testOutputPath        = "../../build/test_sign_contract_output.txt"
+	testInvalidPath       = "../../build/file/file_not_exists.txt"
+	testCorruptedContract = "../../build/corrupted_contract_sign.yaml"
+	testCorruptedKey      = "../../build/corrupted_key_sign.pem"
 )
 
 // TestValidateInput_Success tests ValidateInput with all required flags
@@ -121,12 +123,11 @@ func TestGenerateSignContract_InvalidPrivateKeyPath(t *testing.T) {
 
 // TestGenerateSignContract_CorruptedContract tests with corrupted contract file
 func TestGenerateSignContract_CorruptedContract(t *testing.T) {
-	corruptedFile := "../../build/corrupted_contract_sign.yaml"
-	err := os.WriteFile(corruptedFile, []byte("invalid: yaml: content: ["), 0644)
+	err := os.WriteFile(testCorruptedContract, []byte("invalid: yaml: content: ["), 0644)
 	assert.NoError(t, err)
-	defer os.Remove(corruptedFile)
+	defer os.Remove(testCorruptedContract)
 
-	result, err := GenerateSignContract(corruptedFile, testPrivateKeyPath, "")
+	result, err := GenerateSignContract(testCorruptedContract, testPrivateKeyPath, "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -139,12 +140,11 @@ func TestGenerateSignContract_CorruptedContract(t *testing.T) {
 
 // TestGenerateSignContract_CorruptedPrivateKey tests with corrupted private key
 func TestGenerateSignContract_CorruptedPrivateKey(t *testing.T) {
-	corruptedKey := "../../build/corrupted_key_sign.pem"
-	err := os.WriteFile(corruptedKey, []byte("not a valid private key"), 0644)
+	err := os.WriteFile(testCorruptedKey, []byte("not a valid private key"), 0644)
 	assert.NoError(t, err)
-	defer os.Remove(corruptedKey)
+	defer os.Remove(testCorruptedKey)
 
-	result, err := GenerateSignContract(testContractPath, corruptedKey, "")
+	result, err := GenerateSignContract(testContractPath, testCorruptedKey, "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)

@@ -24,12 +24,15 @@ import (
 )
 
 const (
-	testEncAttestPath  = "../../samples/attestation/se-checksums.txt.enc"
-	testPrivateKeyPath = "../../samples/attestation/private.pem"
-	testPublicKeyPath  = "../../samples/attestation/public.pem"
-	testOutputPath     = "../../build/test_decrypt_attestation_output.txt"
-	testInvalidPath    = "../../build/file/file_not_exists.txt"
-	testInvalidKeyPath = "../../build/key_not_exists.pem"
+	testEncAttestPath   = "../../samples/attestation/se-checksums.txt.enc"
+	testPrivateKeyPath  = "../../samples/attestation/private.pem"
+	testPublicKeyPath   = "../../samples/attestation/public.pem"
+	testOutputPath      = "../../build/test_decrypt_attestation_output.txt"
+	testInvalidPath     = "../../build/file/file_not_exists.txt"
+	testInvalidKeyPath  = "../../build/key_not_exists.pem"
+	testCorruptedAttest = "../../build/corrupted_attest.enc"
+	testEmptyAttest     = "../../build/empty_attest.enc"
+	testInvalidKeyFile  = "../../build/invalid_key.pem"
 )
 
 // TestValidateInput_Success tests ValidateInput with all required flags
