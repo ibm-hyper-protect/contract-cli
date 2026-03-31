@@ -29,12 +29,12 @@ var signContractCmd = &cobra.Command{
 	Short: signContract.ParameterShortDescription,
 	Long:  signContract.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		contract, privateKey, output, err := signContract.ValidateInput(cmd)
+		contract, privateKey, output, password, err := signContract.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		contractSign, err := signContract.GenerateSignContract(contract, privateKey)
+		contractSign, err := signContract.GenerateSignContract(contract, privateKey, password)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -55,6 +55,7 @@ func init() {
 
 	signContractCmd.PersistentFlags().String(signContract.InputFlagName, "", signContract.InputFlagDescription)
 	signContractCmd.PersistentFlags().String(signContract.PrivateKeyFlagName, "", signContract.PrivateKeyFlagDescription)
+	signContractCmd.PersistentFlags().String(signContract.PasswordFlagName, "", signContract.PasswordFlagDescription)
 	signContractCmd.PersistentFlags().String(signContract.OutputFlagName, "", signContract.OutputFlagDescription)
 
 	common.SetCustomHelpTemplate(signContractCmd, requiredFlags)

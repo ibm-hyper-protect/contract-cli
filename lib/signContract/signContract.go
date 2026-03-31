@@ -16,20 +16,22 @@ const (
 	InputFlagDescription      = "Path to encrypted contract"
 	PrivateKeyFlagName        = "priv"
 	PrivateKeyFlagDescription = "Path to private key file for signing"
+	PasswordFlagName          = "password"
+	PasswordFlagDescription   = "Password for encrypted private key (optional)"
 	OutputFlagName            = "out"
 	OutputFlagDescription     = "Path to save encrypted output"
 )
 
 // ValidateInput - function to validate inputs of sign-contract
-func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
+func ValidateInput(cmd *cobra.Command) (string, string, string, string, error) {
 	inputData, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	privateKeyPath, err := cmd.Flags().GetString(PrivateKeyFlagName)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	if inputData == "" || privateKeyPath == "" {
@@ -42,13 +44,18 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 
 	outputPath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
-	return inputData, privateKeyPath, outputPath, nil
+	password, err := cmd.Flags().GetString(PasswordFlagName)
+	if err != nil {
+		return "", "", "", "", err
+	}
+
+	return inputData, privateKeyPath, outputPath, password, nil
 }
 
-func GenerateSignContract(inputDataPath, privateKeyPath string) (string, error) {
+func GenerateSignContract(inputDataPath, privateKeyPath, password string) (string, error) {
 	var inputData string
 	var err error
 
@@ -73,7 +80,7 @@ func GenerateSignContract(inputDataPath, privateKeyPath string) (string, error) 
 		return "", err
 	}
 
-	signedContract, _, _, err := contract.HpcrContractSign(inputData, privateKey)
+	signedContract, _, _, err := contract.HpcrContractSign(inputData, privateKey, password)
 	if err != nil {
 		return "", err
 	}

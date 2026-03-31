@@ -30,12 +30,12 @@ var decryptAttestationCmd = &cobra.Command{
 	Short: decryptAttestation.ParameterShortDescription,
 	Long:  decryptAttestation.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, err := decryptAttestation.ValidateInput(cmd)
+		encAttestPath, privateKeyPath, decryptedAttestPath, signaturePath, certPath, password, err := decryptAttestation.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		decryptedAttestationRecords, err := decryptAttestation.DecryptAttestationRecords(encAttestPath, privateKeyPath)
+		decryptedAttestationRecords, err := decryptAttestation.DecryptAttestationRecords(encAttestPath, privateKeyPath, password)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -67,6 +67,7 @@ func init() {
 	}
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.InputFlagName, "", decryptAttestation.DecryptAttestFileInDescription)
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.PrivateKeyFlagName, "", decryptAttestation.PrivateKeyFlagDescription)
+	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.PasswordFlagName, "", decryptAttestation.PasswordFlagDescription)
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.OutputFlagName, "", decryptAttestation.DecryptAttestFlagDescription)
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.SignatureFlagName, "", decryptAttestation.SignatureFlagDescription)
 	decryptAttestationCmd.PersistentFlags().String(decryptAttestation.AttestationCertFlagName, "", decryptAttestation.AttestationCertFlagDescription)
