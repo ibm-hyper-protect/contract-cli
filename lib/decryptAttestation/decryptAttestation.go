@@ -41,7 +41,7 @@ and contain cryptographic hashes for verifying workload integrity.`
 	PrivateKeyFlagName               = "priv"
 	PrivateKeyFlagDescription        = "Path to private key file for signing"
 	PasswordFlagName                 = "password"
-	PasswordFlagDescription          = "Password for encrypted private key (optional)"
+	PasswordFlagDescription          = "Password for encrypted private key"
 	SignatureFlagName                = "signature"
 	SignatureFlagDescription         = "Path to signature file (se-signature.bin)"
 	AttestationCertFlagName          = "attestation-cert"

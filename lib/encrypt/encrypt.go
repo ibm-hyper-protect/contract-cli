@@ -55,7 +55,7 @@ enhanced security.`
 	PrivateKeyFlagName            = "priv"
 	PrivateKeyFlagDescription     = "Path to private key file for signing"
 	PasswordFlagName              = "password"
-	PasswordFlagDescription       = "Password for encrypted private key (optional)"
+	PasswordFlagDescription       = "Password for encrypted private key"
 )
 
 // ValidateInput - function to validate inputs of encrypt
