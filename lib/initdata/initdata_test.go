@@ -257,5 +257,3 @@ func TestGenerateInitdata_AbsolutePath(t *testing.T) {
 		assert.NotEmpty(t, result)
 	}
 }
-
-// Made with Bob

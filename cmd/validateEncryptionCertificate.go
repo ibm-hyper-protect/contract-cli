@@ -37,7 +37,10 @@ var (
 				log.Fatal(err)
 			}
 
-			encryptionCert, _ := validateEncryptionCertificate.GetEncryptionCertfile(encryptionCertsPath)
+			encryptionCert, err := validateEncryptionCertificate.GetEncryptionCertfile(encryptionCertsPath)
+			if err != nil {
+				log.Fatal(err)
+			}
 
 			msg, err := certificate.HpcrValidateEncryptionCertificate(encryptionCert)
 			if err != nil {
