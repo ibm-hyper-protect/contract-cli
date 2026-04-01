@@ -11,13 +11,16 @@ Complete command reference and usage guide for the IBM Confidential Computing Co
 - [Command Reference](#command-reference)
   - [base64](#base64)
   - [base64-tgz](#base64-tgz)
+  - [check-crl](#check-crl)
   - [decrypt-attestation](#decrypt-attestation)
   - [download-certificate](#download-certificate)
+  - [download-crl](#download-crl)
   - [sign-contract](#sign-contract)
   - [encrypt](#encrypt)
   - [encrypt-string](#encrypt-string)
   - [get-certificate](#get-certificate)
   - [image](#image)
+  - [validate-cert-chain](#validate-cert-chain)
   - [validate-contract](#validate-contract)
   - [validate-network](#validate-network)
   - [validate-encryption-certificate](#validate-encryption-certificate)
@@ -772,6 +775,123 @@ contract-cli validate-encryption-certificate --in encryption-cert.crt
 **Using standard input:**
 ```bash
 cat encryption-cert.crt | contract-cli validate-encryption-certificate --in -
+```
+
+---
+
+### validate-cert-chain
+
+Validates the complete certificate chain of trust for an encryption certificate. This command verifies that the leaf certificate, intermediate CA certificate, and root CA certificate form a valid chain, ensuring the certificate is properly signed and trusted before using it for encryption operations.
+
+#### Usage
+
+```bash
+contract-cli validate-cert-chain [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--cert` | string | Yes | Path to leaf encryption certificate file (use '-' for standard input) |
+| `--intermediate` | string | Yes | Path to intermediate CA certificate file |
+| `--root` | string | Yes | Path to root CA certificate file |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Validate certificate chain:**
+```bash
+contract-cli validate-cert-chain \
+  --cert leaf-certificate.crt \
+  --intermediate intermediate-ca.crt \
+  --root root-ca.crt
+```
+
+**Using standard input for leaf certificate:**
+```bash
+cat leaf-certificate.crt | contract-cli validate-cert-chain \
+  --cert - \
+  --intermediate intermediate-ca.crt \
+  --root root-ca.crt
+```
+
+---
+
+### check-crl
+
+Checks if an encryption certificate has been revoked using a Certificate Revocation List (CRL). This is a critical security check that should be performed before using certificates for encryption operations to ensure the certificate has not been revoked by the issuing Certificate Authority.
+
+#### Usage
+
+```bash
+contract-cli check-crl [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--cert` | string | Yes | Path to encryption certificate file (use '-' for standard input) |
+| `--crl` | string | Yes | Path to Certificate Revocation List (CRL) file |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Check certificate revocation status:**
+```bash
+contract-cli check-crl \
+  --cert certificate.crt \
+  --crl crl.pem
+```
+
+**Using standard input for certificate:**
+```bash
+cat certificate.crt | contract-cli check-crl \
+  --cert - \
+  --crl crl.pem
+```
+
+---
+
+### download-crl
+
+Downloads a Certificate Revocation List (CRL) from a URL. CRLs are used to verify that certificates have not been revoked by the issuing Certificate Authority. The downloaded CRL can then be used with the `check-crl` command to validate certificate revocation status.
+
+#### Usage
+
+```bash
+contract-cli download-crl [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--url` | string | Yes | URL of the CRL to download |
+| `--out` | string | No | Path to save downloaded CRL (outputs to stdout if not specified) |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Download CRL to file:**
+```bash
+contract-cli download-crl \
+  --url "http://example.com/crl.pem" \
+  --out crl.pem
+```
+
+**Download CRL to stdout:**
+```bash
+contract-cli download-crl \
+  --url "http://example.com/crl.pem"
+```
+
+**Download and pipe to another command:**
+```bash
+contract-cli download-crl \
+  --url "http://example.com/crl.pem" | \
+  contract-cli check-crl --cert certificate.crt --crl -
 ```
 
 ---

@@ -67,6 +67,9 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - Download encryption certificates from IBM Cloud
   - Extract specific encryption certificates by version
   - Validate expiry of encryption certificate
+  - Validate certificate chain of trust
+  - Check certificate revocation status using CRL
+  - Download Certificate Revocation Lists (CRL)
 
 - **Contract Generation**
   - Generate Base64-encoded data from text, JSON, and docker compose / podman play archives
@@ -269,9 +272,52 @@ contract-cli get-certificate \
 ### Validate Encryption Certificate
 
 ```bash
-# validate downloaded encryption certificate
+# Validate downloaded encryption certificate
 contract-cli validate-encryption-certificate \
   --in encryption-cert.crt
+```
+
+### Validate Certificate Chain
+
+```bash
+# Validate complete certificate chain of trust
+contract-cli validate-cert-chain \
+  --cert leaf-certificate.crt \
+  --intermediate intermediate-ca.crt \
+  --root root-ca.crt
+
+# Or with stdin for the leaf certificate
+cat leaf-certificate.crt | contract-cli validate-cert-chain \
+  --cert - \
+  --intermediate intermediate-ca.crt \
+  --root root-ca.crt
+```
+
+### Download Certificate Revocation List (CRL)
+
+```bash
+# Download CRL from a distribution point
+contract-cli download-crl \
+  --url "http://example.com/crl.pem" \
+  --out crl.pem
+
+# Or output to stdout
+contract-cli download-crl \
+  --url "http://example.com/crl.pem"
+```
+
+### Check Certificate Revocation Status
+
+```bash
+# Check if a certificate has been revoked
+contract-cli check-crl \
+  --cert certificate.crt \
+  --crl crl.pem
+
+# Or with stdin for the certificate
+cat certificate.crt | contract-cli check-crl \
+  --cert - \
+  --crl crl.pem
 ```
 
 ### Validate a Contract Before Encryption
@@ -360,8 +406,10 @@ Usage:
 Available Commands:
   base64                          Encode input as Base64
   base64-tgz                      Create Base64 tar archive of container configurations
+  check-crl                       Check if certificate has been revoked using CRL
   decrypt-attestation             Decrypt encrypted attestation records
   download-certificate            Download encryption certificates
+  download-crl                    Download Certificate Revocation List
   encrypt                         Generate signed and encrypted contract
   encrypt-string                  Encrypt string in IBM Confidential Computing format
   get-certificate                 Extract specific certificate version from download output
@@ -369,6 +417,7 @@ Available Commands:
   image                           Get IBM Confidential Computing Container Runtime image details from IBM Cloud
   initdata                        Gzip and Encoded initdata annotation
   sign-contract                   Sign an encrypted contract
+  validate-cert-chain             Validate certificate chain of trust
   validate-contract               Validate contract schema
   validate-encryption-certificate Validate encryption certificate
   validate-network                Validate network configuration schema
