@@ -255,7 +255,7 @@ jobs:
 
       # Install cosign for signing
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3
+        uses: sigstore/cosign-installer@v4.1.1
 
       # Install syft for SBOM generation
       - name: Install Syft
