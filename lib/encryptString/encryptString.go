@@ -28,7 +28,7 @@ const (
 	ParameterShortDescription = "Encrypt string in IBM Confidential Computing format"
 	ParameterLongDescription  = `Encrypt strings using the IBM Confidential Computing encryption format.
 
-Output format: contract-basic.<encrypted-password>.<encrypted-string> (or hyper-protect-basic for hpvs)
+Output format: hyper-protect-basic.<encrypted-password>.<encrypted-string>
 Use this to encrypt sensitive data like passwords or API keys for contracts.`
 	InputFlagDescription        = "String data to encrypt (text or JSON, use '-' for standard input)"
 	FormatFlagDescription       = "Input data format (text or json)"
