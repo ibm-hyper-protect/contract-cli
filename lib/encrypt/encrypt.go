@@ -49,7 +49,7 @@ enhanced security.`
 	InputFlagName                 = "in"
 	OutputFlagName                = "out"
 	OsVersionFlagName             = "os"
-	OsVersionFlagDescription      = "Target IBM Confidential Computing platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
+	OsVersionFlagDescription      = "Target IBM Confidential Computing platform (ccrt, ccrv, ccco, or hpvs for legacy)"
 	CertFlagName                  = "cert"
 	CertFlagDescription           = "Path to encryption certificate file"
 	PrivateKeyFlagName            = "priv"

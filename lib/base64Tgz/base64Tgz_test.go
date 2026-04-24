@@ -37,7 +37,7 @@ func TestValidateInput_Success(t *testing.T) {
 	cmd := &cobra.Command{}
 	cmd.Flags().String(InputFlagName, testInputPath, "")
 	cmd.Flags().String(OutputFormatFlag, OutputFormatUnencrypted, "")
-	cmd.Flags().String(OsVersionFlagName, "hpvs", "")
+	cmd.Flags().String(OsVersionFlagName, "ccrt", "")
 	cmd.Flags().String(CertFlagName, testCertPath, "")
 	cmd.Flags().String(OutputFlagName, testOutputPath, "")
 
@@ -46,7 +46,7 @@ func TestValidateInput_Success(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, testInputPath, inputData)
 	assert.Equal(t, OutputFormatUnencrypted, outputFormat)
-	assert.Equal(t, "hpvs", hyperProtectVersion)
+	assert.Equal(t, "ccrt", hyperProtectVersion)
 	assert.Equal(t, testCertPath, encCertPath)
 	assert.Equal(t, testOutputPath, outputPath)
 }
@@ -75,7 +75,7 @@ func TestProcess_PlainFormat(t *testing.T) {
 
 // TestProcess_EncryptedFormat tests Process function with encrypted output format
 func TestProcess_EncryptedFormat(t *testing.T) {
-	result, err := Process(testInputPath, OutputFormatEncrypted, "hpvs", testCertPath)
+	result, err := Process(testInputPath, OutputFormatEncrypted, "ccrt", testCertPath)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -119,7 +119,7 @@ func TestProcess_EmptyOutputFormat(t *testing.T) {
 
 // TestProcess_EncryptedInvalidCert tests Process function with invalid certificate path
 func TestProcess_EncryptedInvalidCert(t *testing.T) {
-	result, err := Process(testInputPath, OutputFormatEncrypted, "hpvs", testInvalidCertPath)
+	result, err := Process(testInputPath, OutputFormatEncrypted, "ccrt", testInvalidCertPath)
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -127,13 +127,13 @@ func TestProcess_EncryptedInvalidCert(t *testing.T) {
 
 // TestProcess_EncryptedWithDifferentOS tests Process function with different OS versions
 func TestProcess_EncryptedWithDifferentOS(t *testing.T) {
-	// Test with hpcr-rhvs
-	result, err := Process(testInputPath, OutputFormatEncrypted, "hpcr-rhvs", testCertPath)
+	// Test with ccrv
+	result, err := Process(testInputPath, OutputFormatEncrypted, "ccrv", testCertPath)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 
-	// Test with hpcc-peerpod
-	result, err = Process(testInputPath, OutputFormatEncrypted, "hpcc-peerpod", testCertPath)
+	// Test with ccco
+	result, err = Process(testInputPath, OutputFormatEncrypted, "ccco", testCertPath)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 }

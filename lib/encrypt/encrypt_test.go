@@ -33,7 +33,7 @@ const (
 	testCsrParamPath      = "" // Empty - using CSR PEM file only
 	testOutputPath        = "../../build/test_encrypt_output.txt"
 	testInvalidPath       = "../../build/file/file_not_exists.txt"
-	testOsVersion         = "hpvs"
+	testOsVersion         = "ccrt"
 	testCorruptedContract = "../../build/corrupted_contract.yaml"
 	testEmptyContract     = "../../build/empty_contract.yaml"
 	testCorruptedCert     = "../../build/corrupted_cert.crt"

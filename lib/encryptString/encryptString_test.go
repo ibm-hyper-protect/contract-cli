@@ -30,7 +30,7 @@ const (
 	testCertPath    = "../../samples/certificate/active.crt"
 	testOutputPath  = "../../build/test_encrypt_string_output.txt"
 	testInvalidPath = "../../build/file/file_not_exist.txt"
-	testOsVersion   = "hpvs"
+	testOsVersion   = "ccrt"
 )
 
 // TestValidateInput_Success tests ValidateInput with all required flags
@@ -188,20 +188,20 @@ func TestProcess_CorruptedCert(t *testing.T) {
 // TestProcess_SpecialCharacters tests Process function with special characters
 func TestProcess_SpecialCharacters(t *testing.T) {
 	specialInput := "!@#$%^&*()_+-=[]{}|;':\",./<>?"
-	result, err := Process(specialInput, TextFormat, "hpcr-rhvs", testCertPath)
+	result, err := Process(specialInput, TextFormat, "ccrv", testCertPath)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 }
 
 // TestProcess_DifferentOsVersions tests Process function with different OS versions
 func TestProcess_DifferentOsVersions(t *testing.T) {
-	// Test with hpcr-rhvs
-	result, err := Process(testInputText, TextFormat, "hpcr-rhvs", testCertPath)
+	// Test with ccrv
+	result, err := Process(testInputText, TextFormat, "ccrv", testCertPath)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 
-	// Test with hpcc-peerpod
-	result, err = Process(testInputText, TextFormat, "hpcc-peerpod", testCertPath)
+	// Test with ccco
+	result, err = Process(testInputText, TextFormat, "ccco", testCertPath)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 }

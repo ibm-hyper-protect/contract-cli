@@ -34,7 +34,7 @@ We use GitHub issue templates to ensure we collect all necessary information. To
    - Expected vs actual behavior
    - CLI command and flags used
    - Environment details (CLI version, OS, OpenSSL version, etc.)
-   - Target platform (hpvs, hpcr-rhvs, hpcc-peerpod)
+   - Target platform (ccrt, ccrv, ccco, or hpvs for legacy)
 
 **Important**: For security vulnerabilities, **do NOT create a public issue**. Instead, report them via [GitHub Security Advisories](https://github.com/ibm-hyper-protect/contract-cli/security/advisories/new) or follow our [Security Policy](SECURITY.md).
 

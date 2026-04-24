@@ -176,7 +176,7 @@ contract-cli base64-tgz [flags]
 | `--in` | string | Yes | Path to folder containing `docker-compose.yaml` or `pods.yaml` (use '-' for standard input) |
 | `--output` | string | No | Output type: `plain` or `encrypted` (default: `plain`) |
 | `--cert` | string | No | Path to encryption certificate (for encrypted output) |
-| `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
+| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (legacy) (default: `ccrt`) |
 | `--out` | string | No | Path to save the output |
 | `-h, --help` | - | No | Display help information |
 
@@ -205,15 +205,15 @@ contract-cli base64-tgz \
 contract-cli base64-tgz \
   --in ./pods-folder \
   --output encrypted \
-  --os hpcr-rhvs
+  --os ccrv
 ```
 
-**For HPCC Peer Pods:**
+**For CCCO:**
 ```bash
 contract-cli base64-tgz \
   --in ./pods-folder \
   --output encrypted \
-  --os hpcc-peerpod
+  --os ccco
 ```
 
 **Save to file:**
@@ -320,7 +320,7 @@ contract-cli decrypt-attestation \
 
 ### download-certificate
 
-Download encryption certificates from the IBM Hyper Protect Repository. Retrieves the latest or specific versions of HPCR encryption certificates required for contract encryption and workload deployment.
+Download encryption certificates from the IBM Confidential Computing Repository. Retrieves the latest or specific versions of encryption certificates required for contract encryption and workload deployment.
 
 #### Usage
 
@@ -430,7 +430,7 @@ contract-cli encrypt [flags]
 | `--priv` | string | No* | Path to private key for signing |
 | `--password` | string | No | Password for encrypted private key |
 | `--cert` | string | No | Path to encryption certificate (uses latest if not specified) |
-| `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
+| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (legacy) (default: `ccrt`) |
 | `--out` | string | No | Path to save signed and encrypted contract |
 | `--contract-expiry` | bool | No | Enable contract expiry feature |
 | `--cacert` | string | No** | Path to CA certificate (required with expiry) |
@@ -478,12 +478,12 @@ contract-cli encrypt \
   --expiry 90
 ```
 
-**For HPCR-RHVS:**
+**For CCRV:**
 ```bash
 contract-cli encrypt \
   --in contract.yaml \
   --priv private.pem \
-  --os hpcr-rhvs
+  --os ccrv
 ```
 
 **Using password-protected private key:**
@@ -495,12 +495,12 @@ contract-cli encrypt \
   --out encrypted-contract.yaml
 ```
 
-**For HPCC Peer Pods:**
+**For CCCO:**
 ```bash
 contract-cli encrypt \
   --in contract.yaml \
   --priv private.pem \
-  --os hpcc-peerpod
+  --os ccco
 ```
 
 **Using standard input:**
@@ -529,7 +529,7 @@ contract-cli encrypt-string [flags]
 | `--in` | string | Yes | String data to encrypt (use '-' for standard input) |
 | `--format` | string | No | Input data format (text or json) |
 | `--cert` | string | No | Path to encryption certificate (uses latest if not specified) |
-| `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
+| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (legacy) (default: `ccrt`) |
 | `--out` | string | No | Path to save encrypted output |
 | `-h, --help` | - | No | Display help information |
 
@@ -630,9 +630,9 @@ contract-cli image [flags]
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to IBM Cloud images JSON (from API, CLI, or Terraform) (use '-' for standard input) |
-| `--version` | string | No | Specific HPCR version to retrieve (returns latest if not specified) |
+| `--version` | string | No | Specific version to retrieve (returns latest if not specified) |
 | `--format` | string | No | Output format for data (json, yaml, or text) |
-| `--out` | string | No | Path to save HPCR image details |
+| `--out` | string | No | Path to save image details |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
@@ -686,7 +686,7 @@ contract-cli validate-contract [flags]
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to unencrypted IBM Confidential Computing contract YAML file (use '-' for standard input) |
-| `--os` | string | No | Target Hyper Protect platform: `hpvs`, `hpcr-rhvs`, or `hpcc-peerpod` (default: `hpvs`) |
+| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccrv`, or `hpvs` (legacy) (default: `ccrt`) |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
@@ -696,14 +696,14 @@ contract-cli validate-contract [flags]
 contract-cli validate-contract --in contract.yaml --os hpvs
 ```
 
-**Validate HPCR-RHVS contract:**
+**Validate CCRV contract:**
 ```bash
-contract-cli validate-contract --in contract.yaml --os hpcr-rhvs
+contract-cli validate-contract --in contract.yaml --os ccrv
 ```
 
-**Validate HPCC Peer Pods contract:**
+**Validate CCCO contract:**
 ```bash
-contract-cli validate-contract --in contract.yaml --os hpcc-peerpod
+contract-cli validate-contract --in contract.yaml --os ccco
 ```
 
 **Using standard input:**
@@ -1011,7 +1011,7 @@ The [`samples/`](../samples/) directory contains working examples:
 - **[Certificate Examples](../samples/certificate/)** - Encryption certificate samples
 - **[Network Configuration](../samples/network/)** - Network config examples
 - **[Docker Compose](../samples/tgz/)** - Compose file examples
-- **[Signed & Encrypted Contract](../samples/hpcc/signed-encrypt-hpcc.yaml)** - Signed & Encrypted HPCC contract
+- **[Signed & Encrypted Contract](../samples/hpcc/signed-encrypt-hpcc.yaml)** - Signed & Encrypted contract
 - **[Contract Signing](../samples/sign/)** - Contract signing examples
 
 ---

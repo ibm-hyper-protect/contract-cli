@@ -90,7 +90,7 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
 
 - **Network Validation**
   - Validate network-config schemas for on-premise deployments
-  - Support HPVS, HPCR RHVS, and HPCC Peer Pod configurations
+  - Support ccrt, ccrv, and ccco configurations
 
 
 ## Installation
@@ -280,7 +280,7 @@ contract-cli validate-encryption-certificate \
 # Validate contract schema
 contract-cli validate-contract \
   --in contract.yaml \
-  --os hpvs
+  --os ccrt
 ```
 
 ### Create initdata annotation from signed & encrypted contract

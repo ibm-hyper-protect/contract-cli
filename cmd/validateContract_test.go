@@ -25,7 +25,7 @@ import (
 
 const (
 	sampleValidateContractInput  = "../samples/contract.yaml"
-	sampleValidateContractOsType = "hpvs"
+	sampleValidateContractOsType = "ccrt"
 )
 
 var (

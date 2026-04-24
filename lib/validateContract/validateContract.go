@@ -32,7 +32,7 @@ Helps catch errors early in the development process.`
 	InputFlagDescription     = "Path to unencrypted IBM Confidential Computing contract YAML file (use '-' for standard input)"
 	InputFlagName            = "in"
 	OsVersionFlagName        = "os"
-	OsVersionFlagDescription = "Target IBM Confidential Computing platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
+	OsVersionFlagDescription = "Target IBM Confidential Computing platform (ccrt, ccrv, ccco, or hpvs for legacy)"
 )
 
 // ValidateInput - function to validate plain contract

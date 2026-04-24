@@ -42,7 +42,7 @@ for inclusion in IBM Confidential Computing contracts. Supports both plain and e
 	DefaultOutput            = OutputFormatUnencrypted
 	OutputPathDescription    = "Path to save Base64 tar.gz output"
 	OsVersionFlagName        = "os"
-	OsVersionFlagDescription = "Target IBM Confidential Computing platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
+	OsVersionFlagDescription = "Target IBM Confidential Computing platform (ccrt, ccrv, ccco, or hpvs for legacy)"
 	CertFlagName             = "cert"
 	CertPathDescription      = "Path to encryption certificate file"
 )
