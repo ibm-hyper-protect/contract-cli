@@ -1,3 +1,9 @@
+## [1.22.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.22.0...v1.22.1) (2026-04-24)
+
+### Bug Fixes
+
+* goreleaser error during release build ([7c001a3](https://github.com/ibm-hyper-protect/contract-cli/commit/7c001a3d6f41774a8411e369347b80d12828eab9))
+
 ## [1.22.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.21.3...v1.22.0) (2026-04-24)
 
 ### Features
