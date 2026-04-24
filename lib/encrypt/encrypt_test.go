@@ -351,7 +351,6 @@ func TestGenerateSignedEncryptContractExpiry_ZeroExpiryDays(t *testing.T) {
 }
 
 // TestGenerateSignedEncryptContractExpiry_NegativeExpiryDays tests with negative expiry days
-// Note: contract-go library doesn't validate expiry days, so negative is accepted
 func TestGenerateSignedEncryptContractExpiry_NegativeExpiryDays(t *testing.T) {
 	result, err := GenerateSignedEncryptContractExpiry(
 		testContractPath,
@@ -365,10 +364,10 @@ func TestGenerateSignedEncryptContractExpiry_NegativeExpiryDays(t *testing.T) {
 		testCsrPath,
 		-1,
 	)
-	// contract-go accepts negative expiry days without error
-	assert.NoError(t, err)
-	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	// contract-go v2.20.0+ now rejects negative expiry days
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "failed to generate signing certificate")
 }
 
 // TestValidateInput_WithPassword tests ValidateInput with password flag
