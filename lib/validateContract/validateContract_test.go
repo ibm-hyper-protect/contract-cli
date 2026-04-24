@@ -24,7 +24,7 @@ import (
 
 const (
 	testContractPath = "../../samples/contract.yaml"
-	testOsVersion    = "hpvs"
+	testOsVersion    = "ccrt"
 )
 
 // TestValidateInput_Success tests ValidateInput with all required flags
@@ -40,30 +40,30 @@ func TestValidateInput_Success(t *testing.T) {
 	assert.Equal(t, testOsVersion, version)
 }
 
-// TestValidateInput_WithHpcrRhvs tests ValidateInput with hpcr-rhvs OS version
-func TestValidateInput_WithHpcrRhvs(t *testing.T) {
+// TestValidateInput_WithCcrv tests ValidateInput with ccrv OS version
+func TestValidateInput_WithCcrv(t *testing.T) {
 	cmd := &cobra.Command{}
 	cmd.Flags().String(InputFlagName, testContractPath, "")
-	cmd.Flags().String(OsVersionFlagName, "hpcr-rhvs", "")
+	cmd.Flags().String(OsVersionFlagName, "ccrv", "")
 
 	contract, version, err := ValidateInput(cmd)
-
 	assert.NoError(t, err)
+
 	assert.Equal(t, testContractPath, contract)
-	assert.Equal(t, "hpcr-rhvs", version)
+	assert.Equal(t, "ccrv", version)
 }
 
-// TestValidateInput_WithHpccPeerpod tests ValidateInput with hpcc-peerpod OS version
-func TestValidateInput_WithHpccPeerpod(t *testing.T) {
+// TestValidateInput_WithCcco tests ValidateInput with ccco OS version
+func TestValidateInput_WithCcco(t *testing.T) {
 	cmd := &cobra.Command{}
 	cmd.Flags().String(InputFlagName, testContractPath, "")
-	cmd.Flags().String(OsVersionFlagName, "hpcc-peerpod", "")
+	cmd.Flags().String(OsVersionFlagName, "ccco", "")
 
 	contract, version, err := ValidateInput(cmd)
-
 	assert.NoError(t, err)
+
 	assert.Equal(t, testContractPath, contract)
-	assert.Equal(t, "hpcc-peerpod", version)
+	assert.Equal(t, "ccco", version)
 }
 
 // TestValidateInput_WithoutOsVersion tests ValidateInput without OS version (optional)
@@ -101,7 +101,7 @@ func TestValidateInput_WithRelativePath(t *testing.T) {
 
 // TestValidateInput_AllOsVersions tests ValidateInput with all supported OS versions
 func TestValidateInput_AllOsVersions(t *testing.T) {
-	osVersions := []string{"hpvs", "hpcr-rhvs", "hpcc-peerpod"}
+	osVersions := []string{"hpvs", "ccrt", "ccrv", "ccco"}
 
 	for _, osVer := range osVersions {
 		cmd := &cobra.Command{}

@@ -49,7 +49,7 @@ enhanced security.`
 	InputFlagName                 = "in"
 	OutputFlagName                = "out"
 	OsVersionFlagName             = "os"
-	OsVersionFlagDescription      = "Target IBM Confidential Computing platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
+	OsVersionFlagDescription      = "Target IBM Confidential Computing platform (ccrt, ccrv, ccco, or hpvs for legacy)"
 	CertFlagName                  = "cert"
 	CertFlagDescription           = "Path to encryption certificate file"
 	PrivateKeyFlagName            = "priv"
@@ -153,6 +153,11 @@ func GenerateSignedEncryptContract(inputDataPath, osVersion, certPath, privateKe
 
 // GenerateSignedEncryptContractExpiry - function to generated signed and encrypted contract with contract expiry
 func GenerateSignedEncryptContractExpiry(inputDataPath, osVersion, certPath, privateKeyPath, password, caCertPath, caKeyPath, csrParamPath, csrPath string, expiryDays int) (string, error) {
+
+	// Validate expiry days
+	if expiryDays <= 0 {
+		return "", fmt.Errorf("failed to generate signing certificate - expiry days must be greater than 0, got %d", expiryDays)
+	}
 
 	inputData, cert, privateKey, err := commonParameters(inputDataPath, certPath, privateKeyPath)
 	if err != nil {

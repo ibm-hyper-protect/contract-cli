@@ -33,7 +33,7 @@ const (
 	testCsrParamPath      = "" // Empty - using CSR PEM file only
 	testOutputPath        = "../../build/test_encrypt_output.txt"
 	testInvalidPath       = "../../build/file/file_not_exists.txt"
-	testOsVersion         = "hpvs"
+	testOsVersion         = "ccrt"
 	testCorruptedContract = "../../build/corrupted_contract.yaml"
 	testEmptyContract     = "../../build/empty_contract.yaml"
 	testCorruptedCert     = "../../build/corrupted_cert.crt"
@@ -330,7 +330,6 @@ func TestGenerateSignedEncryptContract_CorruptedPrivateKey(t *testing.T) {
 }
 
 // TestGenerateSignedEncryptContractExpiry_ZeroExpiryDays tests with zero expiry days
-// Note: contract-go library doesn't validate expiry days, so zero is accepted
 func TestGenerateSignedEncryptContractExpiry_ZeroExpiryDays(t *testing.T) {
 	result, err := GenerateSignedEncryptContractExpiry(
 		testContractPath,
@@ -344,14 +343,13 @@ func TestGenerateSignedEncryptContractExpiry_ZeroExpiryDays(t *testing.T) {
 		testCsrPath,
 		0,
 	)
-	// contract-go accepts zero expiry days without error
-	assert.NoError(t, err)
-	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	// Should reject zero expiry days
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "failed to generate signing certificate")
 }
 
 // TestGenerateSignedEncryptContractExpiry_NegativeExpiryDays tests with negative expiry days
-// Note: contract-go library doesn't validate expiry days, so negative is accepted
 func TestGenerateSignedEncryptContractExpiry_NegativeExpiryDays(t *testing.T) {
 	result, err := GenerateSignedEncryptContractExpiry(
 		testContractPath,
@@ -365,10 +363,9 @@ func TestGenerateSignedEncryptContractExpiry_NegativeExpiryDays(t *testing.T) {
 		testCsrPath,
 		-1,
 	)
-	// contract-go accepts negative expiry days without error
-	assert.NoError(t, err)
-	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "failed to generate signing certificate")
 }
 
 // TestValidateInput_WithPassword tests ValidateInput with password flag

@@ -40,7 +40,7 @@ Use this to encrypt sensitive data like passwords or API keys for contracts.`
 	TextFormat                  = "text"
 	JsonFormat                  = "json"
 	OsVersionFlagName           = "os"
-	OsVersionFlagDescription    = "Target IBM Confidential Computing platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
+	OsVersionFlagDescription    = "Target IBM Confidential Computing platform (ccrt, ccrv, ccco, or hpvs for legacy)"
 	CertFlagName                = "cert"
 	CertFlagDescription         = "Path to encryption certificate file"
 )

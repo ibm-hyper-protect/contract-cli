@@ -57,7 +57,7 @@ var validateContractCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("True")
+		fmt.Println("contract schema validated successfully")
 	},
 }
 
