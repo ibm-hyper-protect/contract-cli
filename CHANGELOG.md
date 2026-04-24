@@ -1,3 +1,17 @@
+## [1.22.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.21.3...v1.22.0) (2026-04-24)
+
+### Features
+
+* testcases fix ([b1174c5](https://github.com/ibm-hyper-protect/contract-cli/commit/b1174c502b4393cd5c1b7b396d07574b05435b86))
+* update offering name change ([cdb03a2](https://github.com/ibm-hyper-protect/contract-cli/commit/cdb03a202796174a69e77b788274ac104cb1feb7))
+* updated contract-go to latest version ([bc47119](https://github.com/ibm-hyper-protect/contract-cli/commit/bc471192fde05818acbd59b38d5722e71ffcde5c))
+* updating fucntion description ([0572c76](https://github.com/ibm-hyper-protect/contract-cli/commit/0572c765893193195bc10489e782bfde7d3c6b5f))
+
+### Miscellaneous Chores
+
+* **deps:** update sigstore/cosign-installer action to v4 ([#109](https://github.com/ibm-hyper-protect/contract-cli/issues/109)) ([7987e28](https://github.com/ibm-hyper-protect/contract-cli/commit/7987e2803c6ebb5af9cb54d07cfdff05a27604c6))
+* **homebrew:** update cask for contract-cli v1.21.3 ([9c26bb4](https://github.com/ibm-hyper-protect/contract-cli/commit/9c26bb44e1552fa04a8118d6d76f27b2d7fb80c0))
+
 ## [1.21.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.21.2...v1.21.3) (2026-04-16)
 
 ### Bug Fixes
