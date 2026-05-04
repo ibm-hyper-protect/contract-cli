@@ -1,5 +1,7 @@
 github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
 github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
+github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAwZ/2OOE=
+github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -7,6 +9,8 @@ github.com/ibm-hyper-protect/contract-go/v2 v2.20.0 h1:ThWQD2mHSQsWQMb1LK2SY63E0
 github.com/ibm-hyper-protect/contract-go/v2 v2.20.0/go.mod h1:VU8Tr3Kv8hvh8CBFl7PmNmqaavpoe2g+LIbRIpQ/cq8=
 github.com/ibm-hyper-protect/contract-go/v2 v2.21.0 h1:YlprJwfDORBTezZkVVt3Foyl066v1sGtbu5YtbFDUpk=
 github.com/ibm-hyper-protect/contract-go/v2 v2.21.0/go.mod h1:VU8Tr3Kv8hvh8CBFl7PmNmqaavpoe2g+LIbRIpQ/cq8=
+github.com/ibm-hyper-protect/contract-go/v2 v2.21.2 h1:ljOTk1Om7e961BmHiQERDuo5InMfhLzQ8g4rY7Epdiw=
+github.com/ibm-hyper-protect/contract-go/v2 v2.21.2/go.mod h1:tbxT+1Xpl4jyYhK2scBO/OTl7/iM2HOoAQxkjdbnY7A=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
