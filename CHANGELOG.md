@@ -1,3 +1,13 @@
+## [1.22.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.22.2...v1.22.3) (2026-05-04)
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.21.2 ([#115](https://github.com/ibm-hyper-protect/contract-cli/issues/115)) ([a80b1ea](https://github.com/ibm-hyper-protect/contract-cli/commit/a80b1eaaddb7075f57abe55d0ce2cbf52524cfb1))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.22.2 ([f79587a](https://github.com/ibm-hyper-protect/contract-cli/commit/f79587a47ef6ed5aed16117340380246503be7c1))
+
 ## [1.22.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.22.1...v1.22.2) (2026-04-29)
 
 ### Bug Fixes
