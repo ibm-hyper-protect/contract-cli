@@ -42,16 +42,18 @@ for inclusion in IBM Confidential Computing contracts. Supports both plain and e
 	DefaultOutput            = OutputFormatUnencrypted
 	OutputPathDescription    = "Path to save Base64 tar.gz output"
 	OsVersionFlagName        = "os"
-	OsVersionFlagDescription = "Target IBM Confidential Computing platform (ccrt, ccrv, ccco, or hpvs for legacy)"
+	OsVersionFlagDescription = "Target IBM Confidential Computing platform (hpvs, hpcr-rhvs, or hpcc-peerpod)"
 	CertFlagName             = "cert"
 	CertPathDescription      = "Path to encryption certificate file"
+	CertVersionFlagName      = "ver"
+	CertVersionDescription   = "Encryption certificate version (e.g., 26.2.0, 25.11.0). Uses latest if not specified"
 )
 
 // ValidateInput - function to validate base64-tgz inputs
-func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, error) {
+func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, string, error) {
 	inputData, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	if inputData == "" {
@@ -64,29 +66,34 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 
 	outputFormat, err := cmd.Flags().GetString(OutputFormatFlag)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	hyperProtectVersion, err := cmd.Flags().GetString(OsVersionFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	encCertPath, err := cmd.Flags().GetString(CertFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
+	}
+
+	certVersion, err := cmd.Flags().GetString(CertVersionFlagName)
+	if err != nil {
+		return "", "", "", "", "", "", err
 	}
 
 	outputPath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
-	return inputData, outputFormat, hyperProtectVersion, encCertPath, outputPath, nil
+	return inputData, outputFormat, hyperProtectVersion, encCertPath, certVersion, outputPath, nil
 }
 
 // Process - function to process base64-tgz inputs
-func Process(inputData, outputFormat, hyperProtectVersion, encCertPath string) (string, error) {
+func Process(inputData, outputFormat, hyperProtectVersion, encCertPath, certVersion string) (string, error) {
 	var folderPath string
 
 	// Handle stdin input
@@ -117,7 +124,7 @@ func Process(inputData, outputFormat, hyperProtectVersion, encCertPath string) (
 			return "", err
 		}
 
-		encryptedBase64Data, _, _, err := contract.HpcrTgzEncrypted(folderPath, hyperProtectVersion, encCert)
+		encryptedBase64Data, _, _, err := contract.HpcrTgzEncrypted(folderPath, hyperProtectVersion, certVersion, encCert)
 		if err != nil {
 			return "", fmt.Errorf("failed to generate encrypted base64 tar - %v", err)
 		}
