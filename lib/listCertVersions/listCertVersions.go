@@ -1,4 +1,4 @@
-// Copyright (c) 2025 IBM Corp.
+// Copyright (c) 2026 IBM Corp.
 // All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ const (
 Shows certificate versions organized by platform (ccrt, ccrv, ccco, hpvs). Use this to discover
 which certificate versions are available before using the --ver flag with encrypt commands.`
 	OsVersionFlagName        = "os"
-	OsVersionFlagDescription = "Filter by platform (ccrt, ccrv, ccco, or hpvs). Shows all platforms if not specified"
+	OsVersionFlagDescription = "Filter by platform (ccrt, ccrv, ccco, or hpvs for legacy). Shows all platforms if not specified"
 	OutputFlagName           = "out"
 	OutputFlagDescription    = "Path to save output (optional, prints to stdout if not specified)"
 	FormatFlagName           = "format"
@@ -94,5 +94,3 @@ func Process(osVersion, format string) (string, error) {
 func Output(result string) string {
 	return result
 }
-
-// Made with Bob

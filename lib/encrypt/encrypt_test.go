@@ -337,7 +337,6 @@ func TestGenerateSignedEncryptContract_CorruptedPrivateKey(t *testing.T) {
 }
 
 // TestGenerateSignedEncryptContractExpiry_ZeroExpiryDays tests with zero expiry days
-// Note: contract-go library doesn't validate expiry days, so zero is accepted
 func TestGenerateSignedEncryptContractExpiry_ZeroExpiryDays(t *testing.T) {
 	result, err := GenerateSignedEncryptContractExpiry(
 		testContractPath,
@@ -352,7 +351,6 @@ func TestGenerateSignedEncryptContractExpiry_ZeroExpiryDays(t *testing.T) {
 		testCsrPath,
 		0,
 	)
-	// contract-go accepts zero expiry days without error
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 	assert.Contains(t, result, "hyper-protect-basic")

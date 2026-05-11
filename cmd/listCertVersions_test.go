@@ -1,4 +1,4 @@
-// Copyright (c) 2025 IBM Corp.
+// Copyright (c) 2026 IBM Corp.
 // All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -92,5 +92,3 @@ func TestListCertVersionsCmdCaseInsensitive(t *testing.T) {
 
 	assert.NoError(t, err)
 }
-
-// Made with Bob

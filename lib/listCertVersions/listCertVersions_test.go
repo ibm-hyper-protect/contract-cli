@@ -1,4 +1,4 @@
-// Copyright (c) 2025 IBM Corp.
+// Copyright (c) 2026 IBM Corp.
 // All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -120,7 +120,7 @@ func TestProcess_InvalidPlatform(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 	assert.Contains(t, err.Error(), "no certificates found for platform")
-	assert.Contains(t, err.Error(), "Valid platforms: ccrt, ccrv, ccco")
+	assert.Contains(t, err.Error(), "Valid platforms: ccrt, ccrv, ccco and hpvs for legacy")
 }
 
 // TestProcess_CaseInsensitive tests Process function with uppercase platform name
@@ -159,5 +159,3 @@ func TestProcess_VersionOrdering(t *testing.T) {
 	assert.Contains(t, result, "ccrt")
 	assert.Regexp(t, `\d+\.\d+\.\d+`, result)
 }
-
-// Made with Bob
