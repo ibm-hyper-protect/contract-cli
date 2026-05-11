@@ -120,7 +120,7 @@ func TestProcess_InvalidPlatform(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 	assert.Contains(t, err.Error(), "no certificates found for platform")
-	assert.Contains(t, err.Error(), "Valid platforms: ccrt, ccrv, ccco and hpvs for legacy")
+	assert.Contains(t, err.Error(), "Valid platforms: ccrt, ccrv, ccco, hpvs")
 }
 
 // TestProcess_CaseInsensitive tests Process function with uppercase platform name
