@@ -11,6 +11,8 @@ github.com/ibm-hyper-protect/contract-go/v2 v2.21.0 h1:YlprJwfDORBTezZkVVt3Foyl0
 github.com/ibm-hyper-protect/contract-go/v2 v2.21.0/go.mod h1:VU8Tr3Kv8hvh8CBFl7PmNmqaavpoe2g+LIbRIpQ/cq8=
 github.com/ibm-hyper-protect/contract-go/v2 v2.21.2 h1:ljOTk1Om7e961BmHiQERDuo5InMfhLzQ8g4rY7Epdiw=
 github.com/ibm-hyper-protect/contract-go/v2 v2.21.2/go.mod h1:tbxT+1Xpl4jyYhK2scBO/OTl7/iM2HOoAQxkjdbnY7A=
+github.com/ibm-hyper-protect/contract-go/v2 v2.23.0 h1:pFzSzamtaD7Akf7rrM/yDQZmu1fS4/p7U7hFanbdRpY=
+github.com/ibm-hyper-protect/contract-go/v2 v2.23.0/go.mod h1:tbxT+1Xpl4jyYhK2scBO/OTl7/iM2HOoAQxkjdbnY7A=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
