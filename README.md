@@ -296,7 +296,7 @@ contract-cli base64-tgz \
   --in docker-compose.yaml \
   --os ccco \
   --ver 25.12.0 \
-  --encrypt
+  --output encrypt
 ```
 
 ### Download and Use Encryption Certificates

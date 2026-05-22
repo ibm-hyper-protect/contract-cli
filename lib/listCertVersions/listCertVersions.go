@@ -38,7 +38,7 @@ which certificate versions are available before using the --ver flag with encryp
 	FormatFlagDescription    = "Output format: 'json', or 'yaml' (defaults to 'json' if empty)"
 )
 
-// ValidateInput validates the input flags for list-cert-versions command
+// ValidateInput validates the input flags for list-encryptioncert-versions command
 func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 	osVersion, err := cmd.Flags().GetString(OsVersionFlagName)
 	if err != nil {

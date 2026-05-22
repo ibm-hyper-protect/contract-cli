@@ -24,8 +24,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// listCertVersionsCmd represents the list-cert-versions command
-var listCertVersionsCmd = &cobra.Command{
+// listEncCertVersionsCmd represents the list-encryptioncert-versions command
+var listEncCertVersionsCmd = &cobra.Command{
 	Use:   listCertVersions.ParameterName,
 	Short: listCertVersions.ParameterShortDescription,
 	Long:  listCertVersions.ParameterLongDescription,
@@ -47,7 +47,7 @@ var listCertVersionsCmd = &cobra.Command{
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println("Successfully stored certificate versions")
+			fmt.Println("Successfully stored encryption certificate versions")
 		} else {
 			fmt.Println(formattedResult)
 		}
@@ -55,26 +55,31 @@ var listCertVersionsCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(listCertVersionsCmd)
+	rootCmd.AddCommand(listEncCertVersionsCmd)
 
-	listCertVersionsCmd.Flags().StringP(
+	requiredFlags := map[string]bool{}
+
+	listEncCertVersionsCmd.Flags().StringP(
 		listCertVersions.OsVersionFlagName,
 		"",
 		"",
 		listCertVersions.OsVersionFlagDescription,
 	)
 
-	listCertVersionsCmd.Flags().StringP(
+	listEncCertVersionsCmd.Flags().StringP(
 		listCertVersions.OutputFlagName,
 		"",
 		"",
 		listCertVersions.OutputFlagDescription,
 	)
 
-	listCertVersionsCmd.Flags().StringP(
+	listEncCertVersionsCmd.Flags().StringP(
 		listCertVersions.FormatFlagName,
 		"",
 		"",
 		listCertVersions.FormatFlagDescription,
 	)
+
+	common.SetCustomHelpTemplate(listEncCertVersionsCmd, requiredFlags)
+	common.SetCustomErrorTemplate(listEncCertVersionsCmd)
 }

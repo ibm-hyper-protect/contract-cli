@@ -28,7 +28,7 @@ var (
 	sampleListCcrtCertVersionsCommand = []string{listCertVersions.ParameterName, "--os", "ccrt"}
 	sampleListCcrvCertVersionsCommand = []string{listCertVersions.ParameterName, "--os", "ccrv"}
 	sampleListCccoCertVersionsCommand = []string{listCertVersions.ParameterName, "--os", "ccco"}
-	sampleListInvalidPlatformCommand  = []string{listCertVersions.ParameterName, "--os", "invalid"}
+	sampleListHpvsCertVersionsCommand = []string{listCertVersions.ParameterName, "--os", "hpvs"}
 	sampleListCaseInsensitiveCommand  = []string{listCertVersions.ParameterName, "--os", "CCRT"}
 )
 
@@ -40,7 +40,7 @@ func TestListCertVersionsCmdSuccess(t *testing.T) {
 	rootCmd.SetErr(buf)
 
 	rootCmd.SetArgs(sampleListAllCertVersionsCommand)
-	err := listCertVersionsCmd.Execute()
+	err := listEncCertVersionsCmd.Execute()
 
 	assert.NoError(t, err)
 }
@@ -52,7 +52,7 @@ func TestListCertVersionsCmdCcrt(t *testing.T) {
 	rootCmd.SetErr(buf)
 
 	rootCmd.SetArgs(sampleListCcrtCertVersionsCommand)
-	err := listCertVersionsCmd.Execute()
+	err := listEncCertVersionsCmd.Execute()
 
 	assert.NoError(t, err)
 }
@@ -64,7 +64,7 @@ func TestListCertVersionsCmdCcrv(t *testing.T) {
 	rootCmd.SetErr(buf)
 
 	rootCmd.SetArgs(sampleListCcrvCertVersionsCommand)
-	err := listCertVersionsCmd.Execute()
+	err := listEncCertVersionsCmd.Execute()
 
 	assert.NoError(t, err)
 }
@@ -76,7 +76,19 @@ func TestListCertVersionsCmdCcco(t *testing.T) {
 	rootCmd.SetErr(buf)
 
 	rootCmd.SetArgs(sampleListCccoCertVersionsCommand)
-	err := listCertVersionsCmd.Execute()
+	err := listEncCertVersionsCmd.Execute()
+
+	assert.NoError(t, err)
+}
+
+// TestListCertVersionsCmdHpvs tests listing HPVS certificate versions
+func TestListCertVersionsCmdHpvs(t *testing.T) {
+	buf := new(bytes.Buffer)
+	rootCmd.SetOut(buf)
+	rootCmd.SetErr(buf)
+
+	rootCmd.SetArgs(sampleListHpvsCertVersionsCommand)
+	err := listEncCertVersionsCmd.Execute()
 
 	assert.NoError(t, err)
 }
@@ -88,7 +100,7 @@ func TestListCertVersionsCmdCaseInsensitive(t *testing.T) {
 	rootCmd.SetErr(buf)
 
 	rootCmd.SetArgs(sampleListCaseInsensitiveCommand)
-	err := listCertVersionsCmd.Execute()
+	err := listEncCertVersionsCmd.Execute()
 
 	assert.NoError(t, err)
 }

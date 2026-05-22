@@ -720,7 +720,7 @@ contract-cli list-encryptioncert-versions [flags]
 
 #### Examples
 
-**List all available certificate versions in JSON format (default):**
+**List all available encryption certificate versions in JSON format (default):**
 ```bash
 contract-cli list-encryptioncert-versions
 ```
@@ -730,7 +730,7 @@ Output:
 {"ccco":["25.12.0","25.10.0","25.7.1"],"ccrt":["26.2.0","25.11.0","25.8.1"],"ccrv":["26.4.1","25.11.0","25.8.1"]}
 ```
 
-**List all available certificate versions in YAML format:**
+**List all available encryption certificate versions in YAML format:**
 ```bash
 contract-cli list-encryptioncert-versions --format yaml
 ```
@@ -740,7 +740,6 @@ Output:
 ccco:
   - 25.12.0
   - 25.10.0
-  - 25.7.1
 ccrt:
   - 26.2.0
   - 25.11.0
@@ -789,11 +788,11 @@ Output:
 {"ccrt":["26.2.0","25.11.0","25.8.1"]}
 ```
 
-> **Note**: The `hpvs` platform name is an alias for `ccrt` (IBM Confidential Computing Container Runtime). Both names return the same certificate versions.
+> **Note**: The `hpvs` platform name is an alias for `ccrt` (IBM Confidential Computing Container Runtime). Both names return the same encryption certificate versions.
 
 #### Use Cases
 
-1. **Discover Available Versions**: Find out which certificate versions are embedded in your CLI installation
+1. **Discover Available Versions**: Find out which encryption certificate versions are embedded in your CLI installation
 2. **Version Selection**: Choose a specific version for encryption operations using the `--ver` flag
 3. **Compatibility Check**: Verify that a required certificate version is available before running automation scripts
 4. **Documentation**: Generate a list of supported versions for your deployment documentation
@@ -802,7 +801,7 @@ Output:
 
 - [`encrypt`](#encrypt) - Use `--ver` flag to specify certificate version for contract encryption
 - [`encrypt-string`](#encrypt-string) - Use `--ver` flag to specify certificate version for string encryption
-- [`base64-tgz`](#base64-tgz) - Use `--ver` flag with `--encrypt` to specify certificate version
+- [`base64-tgz`](#base64-tgz) - Use `--ver` flag with `--output encrypt` to specify encryption certificate version
 
 ---
 
