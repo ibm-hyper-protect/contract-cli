@@ -29,12 +29,12 @@ var encryptStringCmd = &cobra.Command{
 	Short: encryptString.ParameterShortDescription,
 	Long:  encryptString.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputData, inputFormat, hyperProtectVersion, encCertPath, outputPath, err := encryptString.ValidateInput(cmd)
+		inputData, inputFormat, hyperProtectVersion, encCertPath, certVersion, outputPath, err := encryptString.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		encryptedString, err := encryptString.Process(inputData, inputFormat, hyperProtectVersion, encCertPath)
+		encryptedString, err := encryptString.Process(inputData, inputFormat, hyperProtectVersion, encCertPath, certVersion)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -57,6 +57,7 @@ func init() {
 	encryptStringCmd.PersistentFlags().String(encryptString.FormatFlag, encryptString.TextFormat, encryptString.FormatFlagDescription)
 	encryptStringCmd.PersistentFlags().String(encryptString.OsVersionFlagName, "", encryptString.OsVersionFlagDescription)
 	encryptStringCmd.PersistentFlags().String(encryptString.CertFlagName, "", encryptString.CertFlagDescription)
+	encryptStringCmd.PersistentFlags().String(encryptString.CertVersionFlagName, "", encryptString.CertVersionFlagDescription)
 	encryptStringCmd.PersistentFlags().String(encryptString.OutputFlagName, "", encryptString.OutputFlagDescription)
 	common.SetCustomHelpTemplate(encryptStringCmd, requiredFlags)
 	common.SetCustomErrorTemplate(encryptStringCmd)

@@ -101,7 +101,7 @@ func TestValidateInput_WithRelativePath(t *testing.T) {
 
 // TestValidateInput_AllOsVersions tests ValidateInput with all supported OS versions
 func TestValidateInput_AllOsVersions(t *testing.T) {
-	osVersions := []string{"hpvs", "ccrt", "ccrv", "ccco"}
+	osVersions := []string{"ccrt", "ccrv", "ccco"}
 
 	for _, osVer := range osVersions {
 		cmd := &cobra.Command{}

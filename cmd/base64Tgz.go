@@ -29,12 +29,12 @@ var base64TgzCmd = &cobra.Command{
 	Short: base64Tgz.ParameterShortDescription,
 	Long:  base64Tgz.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputData, outputFormat, hyperProtectVersion, encCert, outputPath, err := base64Tgz.ValidateInput(cmd)
+		inputData, outputFormat, hyperProtectVersion, encCert, certVersion, outputPath, err := base64Tgz.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		base64TgzData, err := base64Tgz.Process(inputData, outputFormat, hyperProtectVersion, encCert)
+		base64TgzData, err := base64Tgz.Process(inputData, outputFormat, hyperProtectVersion, encCert, certVersion)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -57,6 +57,7 @@ func init() {
 	base64TgzCmd.PersistentFlags().String(base64Tgz.OutputFormatFlag, base64Tgz.DefaultOutput, base64Tgz.OutputFlagDescription)
 	base64TgzCmd.PersistentFlags().String(base64Tgz.OsVersionFlagName, "", base64Tgz.OsVersionFlagDescription)
 	base64TgzCmd.PersistentFlags().String(base64Tgz.CertFlagName, "", base64Tgz.CertPathDescription)
+	base64TgzCmd.PersistentFlags().String(base64Tgz.CertVersionFlagName, "", base64Tgz.CertVersionDescription)
 	base64TgzCmd.PersistentFlags().String(base64Tgz.OutputFlagName, "", base64Tgz.OutputPathDescription)
 	common.SetCustomHelpTemplate(base64TgzCmd, requiredFlags)
 	common.SetCustomErrorTemplate(base64TgzCmd)

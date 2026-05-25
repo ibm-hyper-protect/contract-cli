@@ -40,16 +40,18 @@ Use this to encrypt sensitive data like passwords or API keys for contracts.`
 	TextFormat                  = "text"
 	JsonFormat                  = "json"
 	OsVersionFlagName           = "os"
-	OsVersionFlagDescription    = "Target IBM Confidential Computing platform (ccrt, ccrv, ccco, or hpvs for legacy)"
+	OsVersionFlagDescription    = "Target IBM Confidential Computing platform (ccrt, ccrv, or ccco)"
 	CertFlagName                = "cert"
 	CertFlagDescription         = "Path to encryption certificate file"
+	CertVersionFlagName         = "ver"
+	CertVersionFlagDescription  = "Encryption certificate version (e.g., 26.2.0, 25.11.0). Uses latest if not specified"
 )
 
 // ValidateInput - function to validate encrypt-string inputs
-func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, error) {
+func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, string, error) {
 	inputData, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 	if inputData == "" {
 		err := fmt.Errorf("Error: required flag '--in' is missing")
@@ -61,29 +63,34 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, string, string, 
 
 	inputFormat, err := cmd.Flags().GetString(FormatFlag)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	hyperProtectVersion, err := cmd.Flags().GetString(OsVersionFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
 	encCertPath, err := cmd.Flags().GetString(CertFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
+	}
+
+	certVersion, err := cmd.Flags().GetString(CertVersionFlagName)
+	if err != nil {
+		return "", "", "", "", "", "", err
 	}
 
 	outputPath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
-		return "", "", "", "", "", err
+		return "", "", "", "", "", "", err
 	}
 
-	return inputData, inputFormat, hyperProtectVersion, encCertPath, outputPath, nil
+	return inputData, inputFormat, hyperProtectVersion, encCertPath, certVersion, outputPath, nil
 }
 
 // Process - function to generate encrypted string of plain or JSON text
-func Process(inputData, inputFormat, hyperProtectVersion, encCertPath string) (string, error) {
+func Process(inputData, inputFormat, hyperProtectVersion, encCertPath, certVersion string) (string, error) {
 	var data string
 	var err error
 
@@ -104,12 +111,12 @@ func Process(inputData, inputFormat, hyperProtectVersion, encCertPath string) (s
 
 	var encryptedString string
 	if inputFormat == TextFormat {
-		encryptedString, _, _, err = contract.HpcrTextEncrypted(data, hyperProtectVersion, encCert)
+		encryptedString, _, _, err = contract.HpcrTextEncrypted(data, hyperProtectVersion, certVersion, encCert)
 		if err != nil {
 			return "", err
 		}
 	} else if inputFormat == JsonFormat {
-		encryptedString, _, _, err = contract.HpcrJsonEncrypted(data, hyperProtectVersion, encCert)
+		encryptedString, _, _, err = contract.HpcrJsonEncrypted(data, hyperProtectVersion, certVersion, encCert)
 		if err != nil {
 			return "", err
 		}

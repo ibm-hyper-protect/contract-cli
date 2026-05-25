@@ -39,15 +39,17 @@ func TestValidateInput_Success(t *testing.T) {
 	cmd.Flags().String(OutputFormatFlag, OutputFormatUnencrypted, "")
 	cmd.Flags().String(OsVersionFlagName, "ccrt", "")
 	cmd.Flags().String(CertFlagName, testCertPath, "")
+	cmd.Flags().String(CertVersionFlagName, "", "")
 	cmd.Flags().String(OutputFlagName, testOutputPath, "")
 
-	inputData, outputFormat, hyperProtectVersion, encCertPath, outputPath, err := ValidateInput(cmd)
+	inputData, outputFormat, hyperProtectVersion, encCertPath, certVersion, outputPath, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testInputPath, inputData)
 	assert.Equal(t, OutputFormatUnencrypted, outputFormat)
 	assert.Equal(t, "ccrt", hyperProtectVersion)
 	assert.Equal(t, testCertPath, encCertPath)
+	assert.Equal(t, "", certVersion)
 	assert.Equal(t, testOutputPath, outputPath)
 }
 
@@ -55,19 +57,20 @@ func TestValidateInput_Success(t *testing.T) {
 func TestValidateInput_WithoutFlags(t *testing.T) {
 	cmd := &cobra.Command{}
 
-	inputData, outputFormat, hyperProtectVersion, encCertPath, outputPath, err := ValidateInput(cmd)
+	inputData, outputFormat, hyperProtectVersion, encCertPath, certVersion, outputPath, err := ValidateInput(cmd)
 
 	assert.Error(t, err)
 	assert.Equal(t, "", inputData)
 	assert.Equal(t, "", outputFormat)
 	assert.Equal(t, "", hyperProtectVersion)
 	assert.Equal(t, "", encCertPath)
+	assert.Equal(t, "", certVersion)
 	assert.Equal(t, "", outputPath)
 }
 
 // TestProcess_PlainFormat tests Process function with plain output format
 func TestProcess_PlainFormat(t *testing.T) {
-	result, err := Process(testInputPath, OutputFormatUnencrypted, "", "")
+	result, err := Process(testInputPath, OutputFormatUnencrypted, "", "", "")
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -75,7 +78,7 @@ func TestProcess_PlainFormat(t *testing.T) {
 
 // TestProcess_EncryptedFormat tests Process function with encrypted output format
 func TestProcess_EncryptedFormat(t *testing.T) {
-	result, err := Process(testInputPath, OutputFormatEncrypted, "ccrt", testCertPath)
+	result, err := Process(testInputPath, OutputFormatEncrypted, "ccrt", testCertPath, "")
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -83,7 +86,7 @@ func TestProcess_EncryptedFormat(t *testing.T) {
 
 // TestProcess_InvalidPath tests Process function with invalid input path
 func TestProcess_InvalidPath(t *testing.T) {
-	result, err := Process(testInvalidPath, OutputFormatUnencrypted, "", "")
+	result, err := Process(testInvalidPath, OutputFormatUnencrypted, "", "", "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -92,7 +95,7 @@ func TestProcess_InvalidPath(t *testing.T) {
 
 // TestProcess_EmptyPath tests Process function with empty input path
 func TestProcess_EmptyPath(t *testing.T) {
-	result, err := Process(testEmptyPath, OutputFormatUnencrypted, "", "")
+	result, err := Process(testEmptyPath, OutputFormatUnencrypted, "", "", "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -101,7 +104,7 @@ func TestProcess_EmptyPath(t *testing.T) {
 
 // TestProcess_InvalidOutputFormat tests Process function with invalid output format
 func TestProcess_InvalidOutputFormat(t *testing.T) {
-	result, err := Process(testInputPath, "invalid", "", "")
+	result, err := Process(testInputPath, "invalid", "", "", "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -110,7 +113,7 @@ func TestProcess_InvalidOutputFormat(t *testing.T) {
 
 // TestProcess_EmptyOutputFormat tests Process function with empty output format
 func TestProcess_EmptyOutputFormat(t *testing.T) {
-	result, err := Process(testInputPath, "", "", "")
+	result, err := Process(testInputPath, "", "", "", "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -119,7 +122,7 @@ func TestProcess_EmptyOutputFormat(t *testing.T) {
 
 // TestProcess_EncryptedInvalidCert tests Process function with invalid certificate path
 func TestProcess_EncryptedInvalidCert(t *testing.T) {
-	result, err := Process(testInputPath, OutputFormatEncrypted, "ccrt", testInvalidCertPath)
+	result, err := Process(testInputPath, OutputFormatEncrypted, "ccrt", testInvalidCertPath, "")
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -128,12 +131,12 @@ func TestProcess_EncryptedInvalidCert(t *testing.T) {
 // TestProcess_EncryptedWithDifferentOS tests Process function with different OS versions
 func TestProcess_EncryptedWithDifferentOS(t *testing.T) {
 	// Test with ccrv
-	result, err := Process(testInputPath, OutputFormatEncrypted, "ccrv", testCertPath)
+	result, err := Process(testInputPath, OutputFormatEncrypted, "ccrv", testCertPath, "")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 
 	// Test with ccco
-	result, err = Process(testInputPath, OutputFormatEncrypted, "ccco", testCertPath)
+	result, err = Process(testInputPath, OutputFormatEncrypted, "ccco", testCertPath, "")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 }

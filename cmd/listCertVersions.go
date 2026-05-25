@@ -1,0 +1,85 @@
+// Copyright (c) 2026 IBM Corp.
+// All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package cmd
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/ibm-hyper-protect/contract-cli/common"
+	"github.com/ibm-hyper-protect/contract-cli/lib/listCertVersions"
+	"github.com/spf13/cobra"
+)
+
+// listEncCertVersionsCmd represents the list-encryptioncert-versions command
+var listEncCertVersionsCmd = &cobra.Command{
+	Use:   listCertVersions.ParameterName,
+	Short: listCertVersions.ParameterShortDescription,
+	Long:  listCertVersions.ParameterLongDescription,
+	Run: func(cmd *cobra.Command, args []string) {
+		osVersion, outputPath, format, err := listCertVersions.ValidateInput(cmd)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		result, err := listCertVersions.Process(osVersion, format)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		formattedResult := listCertVersions.Output(result)
+
+		if outputPath != "" {
+			err = common.WriteDataToFile(outputPath, formattedResult)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println("Successfully stored encryption certificate versions")
+		} else {
+			fmt.Println(formattedResult)
+		}
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(listEncCertVersionsCmd)
+
+	requiredFlags := map[string]bool{}
+
+	listEncCertVersionsCmd.Flags().StringP(
+		listCertVersions.OsVersionFlagName,
+		"",
+		"",
+		listCertVersions.OsVersionFlagDescription,
+	)
+
+	listEncCertVersionsCmd.Flags().StringP(
+		listCertVersions.OutputFlagName,
+		"",
+		"",
+		listCertVersions.OutputFlagDescription,
+	)
+
+	listEncCertVersionsCmd.Flags().StringP(
+		listCertVersions.FormatFlagName,
+		"",
+		"",
+		listCertVersions.FormatFlagDescription,
+	)
+
+	common.SetCustomHelpTemplate(listEncCertVersionsCmd, requiredFlags)
+	common.SetCustomErrorTemplate(listEncCertVersionsCmd)
+}

@@ -67,12 +67,15 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - Download encryption certificates from IBM Cloud
   - Extract specific encryption certificates by version
   - Validate expiry of encryption certificate
+  - **List available embedded encryption certificate versions** for all platforms or specific platform
+  - **Use specific certificate encryption version** for encryption operations
 
 - **Contract Generation**
   - Generate Base64-encoded data from text, JSON, and docker compose / podman play archives
   - Create signed and signed & encrypted contracts
   - Support contract expiry with CA certificates
   - Support for password-protected private keys in signing and encryption operations
+  - **Specify encryption certificate version** for encryption operations with `--ver` flag
   - Validate contract schemas
   - Create Gzipped & Encoded initdata for IBM Confidential Computing Containers Peer Pod
 
@@ -252,6 +255,50 @@ contract-cli encrypt \
   --out encrypted-contract.yaml
 ```
 
+### List Available Certificate Versions
+
+```bash
+# List all available embedded certificate versions (JSON format by default)
+contract-cli list-encryptioncert-versions
+
+# List versions in YAML format
+contract-cli list-encryptioncert-versions --format yaml
+
+# List versions for a specific platform in JSON
+contract-cli list-encryptioncert-versions --os ccrt --format json
+
+# List versions for a specific platform in YAML
+contract-cli list-encryptioncert-versions --os ccrv --format yaml
+
+# Save output to file
+contract-cli list-encryptioncert-versions --os ccco --format yaml --out ccco-versions.yaml
+```
+
+### Use Specific Certificate Version for Encryption
+
+```bash
+# Encrypt contract with a specific certificate version
+contract-cli encrypt \
+  --in contract.yaml \
+  --priv private.pem \
+  --os ccrt \
+  --ver 26.2.0 \
+  --out encrypted-contract.yaml
+
+# Encrypt string with specific certificate version
+contract-cli encrypt-string \
+  --in "sensitive data" \
+  --os ccrv \
+  --ver 25.11.0
+
+# Create encrypted base64 tar with specific certificate version
+contract-cli base64-tgz \
+  --in docker-compose.yaml \
+  --os ccco \
+  --ver 25.12.0 \
+  --output encrypt
+```
+
 ### Download and Use Encryption Certificates
 
 ```bash
@@ -368,6 +415,7 @@ Available Commands:
   help                            Help about any command
   image                           Get IBM Confidential Computing Container Runtime image details from IBM Cloud
   initdata                        Gzip and Encoded initdata annotation
+  list-encryptioncert-versions    List available encryption certificate versions
   sign-contract                   Sign an encrypted contract
   validate-contract               Validate contract schema
   validate-encryption-certificate Validate encryption certificate
