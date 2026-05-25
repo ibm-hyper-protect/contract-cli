@@ -1,3 +1,16 @@
+## [1.23.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.22.3...v1.23.0) (2026-05-25)
+
+### Features
+
+* Addressing review comments ([614980a](https://github.com/ibm-hyper-protect/contract-cli/commit/614980a55cce86420532ab9fc2b839d919bae16c))
+* Built-in store for n, n-1, n-2 encryption certs ([2e9dee6](https://github.com/ibm-hyper-protect/contract-cli/commit/2e9dee601a52486acdbdff59f3562b23e73cfb8c))
+* fixing a test failure ([d24026e](https://github.com/ibm-hyper-protect/contract-cli/commit/d24026e156520e309a097208568bc0d73c9e750a))
+* Miscellaneous updates ([1567b5d](https://github.com/ibm-hyper-protect/contract-cli/commit/1567b5dc0ddf1a68be42d3d127e226ebb5d8906e))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.22.3 ([ee33156](https://github.com/ibm-hyper-protect/contract-cli/commit/ee33156a69c7896cfb7cd01caee38467fa4ac74f))
+
 ## [1.22.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.22.2...v1.22.3) (2026-05-04)
 
 ### Bug Fixes
