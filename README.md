@@ -79,6 +79,11 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - Validate contract schemas
   - Create Gzipped & Encoded initdata for IBM Confidential Computing Containers Peer Pod
 
+- **Sealed Secret Management**
+  - Generate sealed secrets for CCCO workload and environment sections
+  - Automatic key generation or use custom encryption/signing keys
+  - Output sealed secrets with decryption and verification keys
+
 - **Archive Management**
   - Generate Base64 tar archives of `docker-compose.yaml` or `pods.yaml`
   - Support encrypted base64 tar generation
@@ -387,6 +392,50 @@ contract-cli encrypt \
   --out encrypted-contract.yaml
 ```
 
+### Generate Sealed Secrets for CCCO
+
+```bash
+# Generate sealed secret for environment variables
+contract-cli sealed-secret \
+  --in "value123" \
+  --type env \
+  --out sealed-secret.txt
+
+# Generate sealed secret for workload data
+contract-cli sealed-secret \
+  --in workload-secret-data \
+  --type workload \
+  --out sealed-workload.txt
+
+# Generate sealed secret from file
+contract-cli sealed-secret \
+  --in secrets.txt \
+  --type env \
+  --out sealed-secret.txt
+
+# Generate sealed secret with custom encryption and signing keys
+
+openssl genrsa -out encryption.pem 2048
+openssl genrsa -out signing.pem 2048
+
+contract-cli sealed-secret \
+  --in "value123" \
+  --type env \
+  --encryptionkey encryption.pem \
+  --signingkey signing.pem \
+  --out sealed-secret.txt
+
+# Read secret from stdin
+echo "value123" | contract-cli sealed-secret \
+  --in - \
+  --type env
+```
+
+The sealed secret output includes:
+- The sealed secret data (for use in contract)
+- `SECRET_DECRYPTION_KEY` - Private key for decryption (keep secure)
+- `SECRET_VERIFICATION_KEY` - Public key for verification
+
 ## Usage
 
 ```bash
@@ -413,6 +462,7 @@ Available Commands:
   encrypt-string                  Encrypt string in IBM Confidential Computing format
   get-certificate                 Extract specific certificate version from download output
   help                            Help about any command
+  sealed-secret                   Generate sealed secret for CCCO
   image                           Get IBM Confidential Computing Container Runtime image details from IBM Cloud
   initdata                        Gzip and Encoded initdata annotation
   list-encryptioncert-versions    List available encryption certificate versions

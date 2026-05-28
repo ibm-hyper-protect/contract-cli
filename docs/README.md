@@ -19,6 +19,7 @@ Complete command reference and usage guide for the IBM Confidential Computing Co
   - [get-certificate](#get-certificate)
   - [image](#image)
   - [list-encryptioncert-versions](#list-encryptioncert-versions)
+  - [sealed-secret](#sealed-secret)
   - [validate-contract](#validate-contract)
   - [validate-network](#validate-network)
   - [validate-encryption-certificate](#validate-encryption-certificate)
@@ -909,6 +910,77 @@ contract-cli validate-encryption-certificate --in encryption-cert.crt
 ```bash
 cat encryption-cert.crt | contract-cli validate-encryption-certificate --in -
 ```
+
+---
+
+### sealed-secret
+Generate sealed secrets for IBM Confidential Computing Containers for Red Hat OpenShift Container Platform (CCCO).
+
+#### Usage
+
+```bash
+contract-cli sealed-secret [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Secret for sealing (provide as string or file path, use '-' for standard input) |
+| `--type` | string | Yes | Type of secret: 'env' for env section of contract or 'workload' for workload section of contract |
+| `--out` | string | No | Path to save sealed secret output (prints to stdout if not specified) |
+| `--encryptionkey` | string | No | Path to RSA private key for encryption (generates new key if not provided) |
+| `--signingkey` | string | No | Path to RSA private key for signing (generates new key if not provided) |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Generate sealed secret for env section:**
+```bash
+contract-cli sealed-secret \
+  --in "value123" \
+  --type env \
+  --out sealed-secret.txt
+```
+
+**Generate sealed secret for workload section:**
+```bash
+contract-cli sealed-secret \
+  --in workload-secret-data \
+  --type workload \
+  --out sealed-workload.txt
+```
+
+**Generate sealed secret from file:**
+```bash
+contract-cli sealed-secret \
+  --in secrets.txt \
+  --type env \
+  --out sealed-secret.txt
+```
+
+**Generate sealed secret with custom encryption and signing keys:**
+```bash
+contract-cli sealed-secret \
+  --in "value123" \
+  --type env \
+  --encryptionkey encryption.key \
+  --signingkey signing.key \
+  --out sealed-secret.txt
+```
+
+**Read secret from stdin:**
+```bash
+echo "value123" | contract-cli sealed-secret \
+  --in - \
+  --type env
+```
+
+**Output format:**
+The command outputs:
+- The sealed secret data (for use in contract)
+- `SECRET_DECRYPTION_KEY` - Private key for decryption (keep secure)
+- `SECRET_VERIFICATION_KEY` - Public key for verification
 
 ---
 
