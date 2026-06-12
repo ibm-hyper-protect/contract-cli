@@ -1,3 +1,14 @@
+## [1.24.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.23.3...v1.24.0) (2026-06-12)
+
+### Features
+
+* Sealed Secret Support in contract-cli ([30d69d0](https://github.com/ibm-hyper-protect/contract-cli/commit/30d69d062d2e70d9f1e2d7c878d96d5baaf1f2d0))
+
+### Miscellaneous Chores
+
+* **deps:** update go dependencies to v3.24 ([#124](https://github.com/ibm-hyper-protect/contract-cli/issues/124)) ([3d8d9d8](https://github.com/ibm-hyper-protect/contract-cli/commit/3d8d9d8f6c65e9ca8eb81fc1b13386d6cf4baf5b))
+* **homebrew:** update cask for contract-cli v1.23.3 ([672a123](https://github.com/ibm-hyper-protect/contract-cli/commit/672a123652745001593ef8d1a835c0699650f8c4))
+
 ## [1.23.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.23.2...v1.23.3) (2026-06-03)
 
 ### Bug Fixes
