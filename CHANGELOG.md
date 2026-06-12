@@ -1,3 +1,13 @@
+## [1.24.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.24.0...v1.24.1) (2026-06-12)
+
+### Bug Fixes
+
+* Potential fix for code scanning alert no. 1: Workflow does not contain permissions ([56fcbed](https://github.com/ibm-hyper-protect/contract-cli/commit/56fcbed94fb21b078d7a1ccaf4005321a945acd4))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.24.0 ([a1cefa8](https://github.com/ibm-hyper-protect/contract-cli/commit/a1cefa8f055a46f44de591eb8738256dfb86c208))
+
 ## [1.24.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.23.3...v1.24.0) (2026-06-12)
 
 ### Features
