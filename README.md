@@ -275,6 +275,9 @@ contract-cli list-encryptioncert-versions --os ccrt --format json
 # List versions for a specific platform in YAML
 contract-cli list-encryptioncert-versions --os ccrv --format yaml
 
+# List HPVS certificate versions
+contract-cli list-encryptioncert-versions --os hpvs --format json
+
 # Save output to file
 contract-cli list-encryptioncert-versions --os ccco --format yaml --out ccco-versions.yaml
 ```
@@ -296,11 +299,11 @@ contract-cli encrypt-string \
   --os ccrv \
   --ver 25.11.0
 
-# Create encrypted base64 tar with specific certificate version
+# Create encrypted base64 tar with specific certificate version for HPVS
 contract-cli base64-tgz \
   --in docker-compose.yaml \
-  --os ccco \
-  --ver 25.12.0 \
+  --os hpvs \
+  --ver 26.5.0 \
   --output encrypt
 ```
 

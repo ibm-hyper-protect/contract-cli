@@ -49,7 +49,7 @@ enhanced security.`
 	InputFlagName                 = "in"
 	OutputFlagName                = "out"
 	OsVersionFlagName             = "os"
-	OsVersionFlagDescription      = "Target IBM Confidential Computing platform (ccrt, ccrv, or ccco)"
+	OsVersionFlagDescription      = "Target IBM Confidential Computing platform (ccrt, ccrv, ccco, or hpvs)"
 	CertFlagName                  = "cert"
 	CertFlagDescription           = "Path to encryption certificate file"
 	CertVersionFlagName           = "ver"
