@@ -1,3 +1,15 @@
+## [1.25.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.24.1...v1.25.0) (2026-06-17)
+
+### Features
+
+* Added hpvs flag and marked it as default flag ([3325ddb](https://github.com/ibm-hyper-protect/contract-cli/commit/3325ddb3ec5cca59afeb9d2a44d1280a008746a3))
+* update testcase and contract-go version ([880af87](https://github.com/ibm-hyper-protect/contract-cli/commit/880af876632c4d520a87347ac79e1b4bb972cf79))
+
+### Miscellaneous Chores
+
+* **deps:** update go dependencies ([#125](https://github.com/ibm-hyper-protect/contract-cli/issues/125)) ([110b412](https://github.com/ibm-hyper-protect/contract-cli/commit/110b4126483063f1ce519f5ccadeda140220bed7))
+* **homebrew:** update cask for contract-cli v1.24.1 ([ca2b511](https://github.com/ibm-hyper-protect/contract-cli/commit/ca2b5113a0364b9170e71829f291754433e0e5c5))
+
 ## [1.24.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.24.0...v1.24.1) (2026-06-12)
 
 ### Bug Fixes
