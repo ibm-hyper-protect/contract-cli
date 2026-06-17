@@ -178,7 +178,7 @@ contract-cli base64-tgz [flags]
 | `--in` | string | Yes | Path to folder containing `docker-compose.yaml` or `pods.yaml` (use '-' for standard input) |
 | `--output` | string | No | Output type: `plain` or `encrypted` (default: `plain`) |
 | `--cert` | string | No | Path to encryption certificate (uses latest embedded certificate for the provided IBM Confidential Computing platform, if not specified) |
-| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, or `ccco` (default: `ccrt`) |
+| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
 | `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
 | `--out` | string | No | Path to save the output |
 | `-h, --help` | - | No | Display help information |
@@ -442,7 +442,7 @@ contract-cli encrypt [flags]
 | `--priv` | string | No* | Path to private key for signing |
 | `--password` | string | No | Password for encrypted private key |
 | `--cert` | string | No | Path to encryption certificate (uses latest embedded certificate for the provided IBM Confidential Computing platform, if not specified) |
-| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, or `ccco` (default: `ccrt`) |
+| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
 | `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
 | `--out` | string | No | Path to save signed and encrypted contract |
 | `--contract-expiry` | bool | No | Enable contract expiry feature |
@@ -551,7 +551,7 @@ contract-cli encrypt-string [flags]
 | `--in` | string | Yes | String data to encrypt (use '-' for standard input) |
 | `--format` | string | No | Input data format (text or json) |
 | `--cert` | string | No | Path to encryption certificate (uses latest embedded certificate for the provided IBM Confidential Computing platform, if not specified) |
-| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, or `ccco` (default: `ccrt`) |
+| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
 | `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
 | `--out` | string | No | Path to save encrypted output |
 | `-h, --help` | - | No | Display help information |
@@ -714,7 +714,7 @@ contract-cli list-encryptioncert-versions [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--os` | string | No | Filter by platform (ccrt, ccrv, ccco, or hpvs). Shows all platforms if not specified. Note: `hpvs` is an alias for `ccrt` |
+| `--os` | string | No | Filter by platform (ccrt, ccrv, ccco, or hpvs). Shows all platforms if not specified |
 | `--format` | string | No | Output format: `json` or `yaml` (defaults to `json` if not specified) |
 | `--out` | string | No | Path to save output (prints to stdout if not specified) |
 | `-h, --help` | - | No | Display help information |
@@ -728,7 +728,7 @@ contract-cli list-encryptioncert-versions
 
 Output:
 ```json
-{"ccco":["25.12.0","25.10.0","25.7.1"],"ccrt":["26.2.0","25.11.0","25.8.1"],"ccrv":["26.4.1","25.11.0","25.8.1"]}
+{"ccco":["25.12.0","25.10.0"],"ccrt":["26.5.0","26.2.0"],"ccrv":["26.4.1","25.11.0"],"hpvs":["26.5.0","26.2.0"]}
 ```
 
 **List all available encryption certificate versions in YAML format:**
@@ -742,13 +742,14 @@ ccco:
   - 25.12.0
   - 25.10.0
 ccrt:
+  - 26.5.0
   - 26.2.0
-  - 25.11.0
-  - 25.8.1
 ccrv:
   - 26.4.1
   - 25.11.0
-  - 25.8.1
+hpvs:
+  - 26.5.0
+  - 26.2.0
 ```
 
 **List versions for a specific platform in JSON:**
@@ -758,38 +759,25 @@ contract-cli list-encryptioncert-versions --os ccrt --format json
 
 Output:
 ```json
-{"ccrt":["26.2.0","25.11.0","25.8.1"]}
+{"ccrt":["26.5.0","26.2.0"]}
 ```
 
-**List versions for a specific platform in YAML:**
+**List versions for HPVS platform in YAML:**
 ```bash
-contract-cli list-encryptioncert-versions --os ccrt --format yaml
+contract-cli list-encryptioncert-versions --os hpvs --format yaml
 ```
 
 Output:
 ```yaml
-ccrt:
+hpvs:
+  - 26.5.0
   - 26.2.0
-  - 25.11.0
-  - 25.8.1
 ```
 
 **Save output to file:**
 ```bash
 contract-cli list-encryptioncert-versions --os ccrv --format yaml --out ccrv-versions.yaml
 ```
-
-**Using the "hpvs" alias (returns ccrt certificates):**
-```bash
-contract-cli list-encryptioncert-versions --os hpvs --format json
-```
-
-Output:
-```json
-{"ccrt":["26.2.0","25.11.0","25.8.1"]}
-```
-
-> **Note**: The `hpvs` platform name is an alias for `ccrt` (IBM Confidential Computing Container Runtime). Both names return the same encryption certificate versions.
 
 #### Use Cases
 
@@ -823,7 +811,7 @@ contract-cli validate-contract [flags]
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to unencrypted IBM Confidential Computing contract YAML file (use '-' for standard input) |
-| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccrv`, or `hpvs` (legacy) (default: `ccrt`) |
+| `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples

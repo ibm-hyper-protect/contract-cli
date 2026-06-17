@@ -108,7 +108,7 @@ func TestProcess_TextFormat(t *testing.T) {
 	result, err := Process(testInputText, TextFormat, testOsVersion, testCertPath, "")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	assert.Contains(t, result, "contract-basic")
 }
 
 // TestProcess_JsonFormat tests Process function with JSON format
@@ -116,7 +116,7 @@ func TestProcess_JsonFormat(t *testing.T) {
 	result, err := Process(testInputJson, JsonFormat, testOsVersion, testCertPath, "")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	assert.Contains(t, result, "contract-basic")
 }
 
 // TestProcess_InvalidFormat tests Process function with invalid format
@@ -282,4 +282,40 @@ func TestValidateInput_EmptyFormat(t *testing.T) {
 	assert.Equal(t, testCertPath, encCertPath)
 	assert.Equal(t, "", certVersion)
 	assert.Equal(t, testOutputPath, outputPath)
+}
+
+// TestProcess_CCCO tests CCCO uses hyper-protect-basic format
+func TestProcess_CCCO(t *testing.T) {
+	result, err := Process(testInputText, TextFormat, "ccco", testCertPath, "")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+	assert.NotContains(t, result, "contract-basic")
+}
+
+// TestProcess_HPVS tests HPVS uses hyper-protect-basic format
+func TestProcess_HPVS(t *testing.T) {
+	result, err := Process(testInputText, TextFormat, "hpvs", testCertPath, "")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+	assert.NotContains(t, result, "contract-basic")
+}
+
+// TestProcess_CCRV tests CCRV uses contract-basic format
+func TestProcess_CCRV(t *testing.T) {
+	result, err := Process(testInputText, TextFormat, "ccrv", testCertPath, "")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "contract-basic")
+	assert.NotContains(t, result, "hyper-protect-basic")
+}
+
+// TestProcess_EmptyOS tests empty OS defaults to hyper-protect-basic
+func TestProcess_EmptyOS(t *testing.T) {
+	result, err := Process(testInputText, TextFormat, "", testCertPath, "")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+	assert.NotContains(t, result, "contract-basic")
 }
