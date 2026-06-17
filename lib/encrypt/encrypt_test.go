@@ -124,7 +124,7 @@ func TestGenerateSignedEncryptContract_Success(t *testing.T) {
 	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, "", testPrivateKeyPath, "")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	assert.Contains(t, result, "contract-basic")
 }
 
 // TestGenerateSignedEncryptContract_InvalidContractPath tests with invalid contract path
@@ -353,7 +353,7 @@ func TestGenerateSignedEncryptContractExpiry_ZeroExpiryDays(t *testing.T) {
 	)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	assert.Contains(t, result, "contract-basic")
 }
 
 // TestGenerateSignedEncryptContractExpiry_MinimalExpiryDays tests with minimal expiry days
@@ -375,7 +375,7 @@ func TestGenerateSignedEncryptContractExpiry_MinimalExpiryDays(t *testing.T) {
 	// Should succeed with minimal valid expiry days
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	assert.Contains(t, result, "contract-basic")
 }
 
 // TestValidateInput_WithPassword tests ValidateInput with password flag
@@ -406,7 +406,7 @@ func TestGenerateSignedEncryptContract_WithEmptyPassword(t *testing.T) {
 	result, err := GenerateSignedEncryptContract(testContractPath, testOsVersion, testCertPath, "", testPrivateKeyPath, "")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	assert.Contains(t, result, "contract-basic")
 }
 
 // TestGenerateSignedEncryptContract_PasswordHandling tests password parameter handling
@@ -417,7 +417,7 @@ func TestGenerateSignedEncryptContract_PasswordHandling(t *testing.T) {
 	// Should succeed because the key is not encrypted
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	assert.Contains(t, result, "contract-basic")
 }
 
 // TestGenerateSignedEncryptContractExpiry_WithPassword tests contract expiry with password
@@ -439,7 +439,7 @@ func TestGenerateSignedEncryptContractExpiry_WithPassword(t *testing.T) {
 	// Should succeed with unencrypted key (password parameter ignored)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
+	assert.Contains(t, result, "contract-basic")
 }
 
 // TestGenerateSignedEncryptContractExpiry_WithEmptyPassword tests contract expiry with empty password
@@ -460,5 +460,60 @@ func TestGenerateSignedEncryptContractExpiry_WithEmptyPassword(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "contract-basic")
+}
+
+// TestGenerateSignedEncryptContract_EmptyOS tests empty OS defaults to hyper-protect-basic
+func TestGenerateSignedEncryptContract_EmptyOS(t *testing.T) {
+	result, err := GenerateSignedEncryptContract(testContractPath, "", testCertPath, "", testPrivateKeyPath, "")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
 	assert.Contains(t, result, "hyper-protect-basic")
+	assert.NotContains(t, result, "contract-basic")
+}
+
+// TestGenerateSignedEncryptContract_CCCO tests CCCO uses hyper-protect-basic format
+func TestGenerateSignedEncryptContract_CCCO(t *testing.T) {
+	result, err := GenerateSignedEncryptContract(testContractPath, "ccco", testCertPath, "", testPrivateKeyPath, "")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+	assert.NotContains(t, result, "contract-basic")
+}
+
+// TestGenerateSignedEncryptContract_HPVS tests HPVS uses hyper-protect-basic format
+func TestGenerateSignedEncryptContract_HPVS(t *testing.T) {
+	// Use empty cert path to use embedded certificate
+	result, err := GenerateSignedEncryptContract(testContractPath, "hpvs", "", "", testPrivateKeyPath, "")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+	assert.NotContains(t, result, "contract-basic")
+}
+
+// TestGenerateSignedEncryptContract_WithDownloadedCert tests using downloaded cert for CCCO
+func TestGenerateSignedEncryptContract_WithDownloadedCert(t *testing.T) {
+	// Test with empty cert path to trigger download for CCCO
+	result, err := GenerateSignedEncryptContract(testContractPath, "ccco", "", "", testPrivateKeyPath, "")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+}
+
+// TestGenerateSignedEncryptContractExpiry_CCCO tests CCCO with expiry uses hyper-protect-basic format
+func TestGenerateSignedEncryptContractExpiry_CCCO(t *testing.T) {
+	result, err := GenerateSignedEncryptContractExpiry(testContractPath, "ccco", testCertPath, "", testPrivateKeyPath, "", testCaCertPath, testCaKeyPath, testCsrParamPath, testCsrPath, 365)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+	assert.NotContains(t, result, "contract-basic")
+}
+
+// TestGenerateSignedEncryptContractExpiry_EmptyOS tests empty OS with expiry defaults to hyper-protect-basic
+func TestGenerateSignedEncryptContractExpiry_EmptyOS(t *testing.T) {
+	result, err := GenerateSignedEncryptContractExpiry(testContractPath, "", testCertPath, "", testPrivateKeyPath, "", testCaCertPath, testCaKeyPath, testCsrParamPath, testCsrPath, 365)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.Contains(t, result, "hyper-protect-basic")
+	assert.NotContains(t, result, "contract-basic")
 }
