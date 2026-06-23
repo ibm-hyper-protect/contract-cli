@@ -5,6 +5,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/ibm-hyper-protect/contract-go/v2 v2.29.0 h1:WoecJmbPxjO9qDYrmhiv20/We9Ki/1RYMbF47ncM8NM=
 github.com/ibm-hyper-protect/contract-go/v2 v2.29.0/go.mod h1:tbxT+1Xpl4jyYhK2scBO/OTl7/iM2HOoAQxkjdbnY7A=
+github.com/ibm-hyper-protect/contract-go/v2 v2.30.3 h1:17Q431wxtuxTBfQwm8PrcwlwMKtcnAALqFOefsRfBso=
+github.com/ibm-hyper-protect/contract-go/v2 v2.30.3/go.mod h1:/QDRixuFBZcYPkpwqQujd5t6zG3g40k1/1QagFLC7ME=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
