@@ -1,3 +1,15 @@
+## [1.26.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.25.0...v1.26.0) (2026-06-26)
+
+### Features
+
+* Added Initdata Support for CCCO Baremetal Solution ([682a0cb](https://github.com/ibm-hyper-protect/contract-cli/commit/682a0cbb6850ed271d9e743910d0355edf79ed70))
+
+### Miscellaneous Chores
+
+* **deps:** update go dependencies ([#132](https://github.com/ibm-hyper-protect/contract-cli/issues/132)) ([3f5b5a1](https://github.com/ibm-hyper-protect/contract-cli/commit/3f5b5a1fd8b9598b52d50f1410ddc7d9f4888125))
+* **deps:** update go dependencies to v7 ([#128](https://github.com/ibm-hyper-protect/contract-cli/issues/128)) ([4659c58](https://github.com/ibm-hyper-protect/contract-cli/commit/4659c58866c9bd46386bac770c3f3cfc3a9d0620))
+* **homebrew:** update cask for contract-cli v1.25.0 ([a947edc](https://github.com/ibm-hyper-protect/contract-cli/commit/a947edcd90ee954c2ccd089a661597f9a7e904cf))
+
 ## [1.25.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.24.1...v1.25.0) (2026-06-17)
 
 ### Features
