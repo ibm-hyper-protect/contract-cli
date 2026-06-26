@@ -973,7 +973,7 @@ The command outputs:
 ---
 
 ### initdata
-Create initdata annotation from signed and encrypted contract for IBM Confidential Computing Containers for Red Hat OpenShift Container Platform (Peer Pod) solution.
+Create initdata annotation from signed and encrypted contract for IBM Confidential Computing Containers for Red Hat OpenShift Container Platform. Supports both Peer Pod and Baremetal solutions.
 
 #### Usage
 
@@ -986,20 +986,52 @@ contract-cli initdata [flags]
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to signed & encrypted contract YAML file (use '-' for standard input) |
+| `--sehdr` | string | No | Path to SE header binary file (.bin) for baremetal solution |
 | `--out` | string | No | Path to store gzipped & encoded initdata value |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
 
-**Create initdata from signed & encrypted contract:**
+**Create initdata for Peer Pod solution without SE header binary:**
 ```bash
 contract-cli initdata --in signed_encrypted_contract.yaml
 ```
+
+**Create initdata for Baremetal solution with SE header binary:**
+```bash
+contract-cli initdata \
+  --in signed_encrypted_contract.yaml \
+  --sehdr se-header.bin \
+  --out initdata.txt
+```
+
+**Save output to file for peerpod solution without SE header binary:**
+```bash
+contract-cli initdata \
+  --in signed_encrypted_contract.yaml \
+  --out initdata-annotation.txt
+```
+
+**Save output to file for baremetal solution with SE header binary:**
+```bash
+contract-cli initdata \
+  --in signed_encrypted_contract.yaml \
+  --sehdr se-header.bin \
+  --out initdata-annotation.txt
+```
+
 
 **Using standard input:**
 ```bash
 cat signed_encrypted_contract.yaml | contract-cli initdata --in -
 ```
+
+#### Notes
+
+- With `--sehdr`, the command generates initdata for baremetal solution
+- Without `--sehdr`, the command generates initdata for Peer Pod solution
+- The SE header binary file is automatically encoded to base64 before being included in the initdata
+- Output is gzipped and base64 encoded, ready to use as an initdata annotation
 
 ---
 

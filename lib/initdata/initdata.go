@@ -31,15 +31,18 @@ const (
 	InputFlagName        = "in"
 	InputFlagDescription = "Path of Signed and Encrypted contract (use '-' for standard input)"
 
+	SehdrBinFlagName        = "sehdr"
+	SehdrBinFlagDescription = "Path to SE header binary file (.bin) for baremetal solution"
+
 	OutputFlagName        = "out"
 	OutputFlagDescription = "Path to save Gzipped and encoded initdata value"
 )
 
 // ValidateInput - function to validate inputs of initdata
-func ValidateInput(cmd *cobra.Command) (string, string, error) {
+func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 	inputData, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
 	if inputData == "" {
@@ -50,15 +53,20 @@ func ValidateInput(cmd *cobra.Command) (string, string, error) {
 	// Validate stdin input
 	common.ValidateStdinInput(cmd, inputData)
 
+	sehdrBinPath, err := cmd.Flags().GetString(SehdrBinFlagName)
+	if err != nil {
+		return "", "", "", err
+	}
+
 	outputPath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
-	return inputData, outputPath, nil
+	return inputData, sehdrBinPath, outputPath, nil
 }
 
 // GenerateInitdata - function to generate gzipped initdata
-func GenerateInitdata(inputDataPath string) (string, error) {
+func GenerateInitdata(inputDataPath, sehdrBinPath string) (string, bool, error) {
 	var inputData string
 	var err error
 
@@ -66,33 +74,56 @@ func GenerateInitdata(inputDataPath string) (string, error) {
 	if inputDataPath == "-" {
 		inputData, err = common.ReadDataFromStdin()
 		if err != nil {
-			return "", fmt.Errorf("unable to read input from standard input: %w", err)
+			return "", false, fmt.Errorf("unable to read input from standard input: %w", err)
 		}
 	} else {
 		if !common.CheckFileFolderExists(inputDataPath) {
-			return "", fmt.Errorf("the contract path doesn't exist")
+			return "", false, fmt.Errorf("the contract path doesn't exist")
 		}
 		inputData, err = common.ReadDataFromFile(inputDataPath)
 		if err != nil {
-			return "", err
+			return "", false, err
 		}
 	}
 
-	gzipInitdata, _, _, err := contract.HpccInitdata(inputData)
-	if err != nil {
-		return "", err
+	// Handle SE header binary file if provided
+	var sehdrBase64 string
+	isBaremetal := false
+	if sehdrBinPath != "" {
+		if !common.CheckFileFolderExists(sehdrBinPath) {
+			return "", false, fmt.Errorf("the SE header binary file path doesn't exist")
+		}
+		binData, err := common.ReadDataFromFile(sehdrBinPath)
+		if err != nil {
+			return "", false, fmt.Errorf("unable to read SE header binary file: %w", err)
+		}
+		// Generate base64 from binary data using HpcrText
+		sehdrBase64, _, _, err = contract.HpcrText(binData)
+		if err != nil {
+			return "", false, fmt.Errorf("unable to encode SE header binary to base64: %w", err)
+		}
+		isBaremetal = true
 	}
-	return gzipInitdata, nil
+
+	gzipInitdata, _, _, err := contract.HpccInitdata(inputData, sehdrBase64)
+	if err != nil {
+		return "", false, err
+	}
+	return gzipInitdata, isBaremetal, nil
 }
 
 // PrintInitdata - function to print generated gzipped initdata value
-func PrintInitdata(gzippedData, outputPath string) error {
+func PrintInitdata(gzippedData, outputPath string, isBaremetal bool) error {
 	if outputPath != "" {
 		err := common.WriteDataToFile(outputPath, gzippedData)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Successfully generated gzipped initdata annotation")
+		if isBaremetal {
+			fmt.Println("Successfully generated gzipped initdata annotation for baremetal solution")
+		} else {
+			fmt.Println("Successfully generated gzipped initdata annotation for peerpod solution")
+		}
 	} else {
 		fmt.Println(gzippedData)
 	}

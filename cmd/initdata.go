@@ -29,17 +29,17 @@ var initdataCmd = &cobra.Command{
 	Short: initdata.ParameterShortDescription,
 	Long:  initdata.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputDataPath, outputPath, err := initdata.ValidateInput(cmd)
+		inputDataPath, sehdrBinPath, outputPath, err := initdata.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		gzipInitdata, err := initdata.GenerateInitdata(inputDataPath)
+		gzipInitdata, isBaremetal, err := initdata.GenerateInitdata(inputDataPath, sehdrBinPath)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		err = initdata.PrintInitdata(gzipInitdata, outputPath)
+		err = initdata.PrintInitdata(gzipInitdata, outputPath, isBaremetal)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -54,6 +54,7 @@ func init() {
 	}
 
 	initdataCmd.PersistentFlags().String(initdata.InputFlagName, "", initdata.InputFlagDescription)
+	initdataCmd.PersistentFlags().String(initdata.SehdrBinFlagName, "", initdata.SehdrBinFlagDescription)
 	initdataCmd.PersistentFlags().String(initdata.OutputFlagName, "", initdata.OutputFlagDescription)
 	common.SetCustomHelpTemplate(initdataCmd, requiredFlags)
 	common.SetCustomErrorTemplate(initdataCmd)

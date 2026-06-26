@@ -77,7 +77,7 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - Support for password-protected private keys in signing and encryption operations
   - **Specify encryption certificate version** for encryption operations with `--ver` flag
   - Validate contract schemas
-  - Create Gzipped & Encoded initdata for IBM Confidential Computing Containers Peer Pod
+  - Create Gzipped & Encoded initdata for IBM Confidential Computing Containers (Peer Pod and Baremetal solutions)
 
 - **Sealed Secret Management**
   - Generate sealed secrets for CCCO workload and environment sections
@@ -341,9 +341,15 @@ contract-cli validate-contract \
 ### Create initdata annotation from signed & encrypted contract
 
 ```bash
-# Create initdata annotation
+# Create initdata annotation for Peer Pod solution
 contract-cli initdata \
   --in signed_encrypted_contract.yaml
+
+# Create initdata annotation for Baremetal solution with SE header binary
+contract-cli initdata \
+  --in signed_encrypted_contract.yaml \
+  --sehdr se-header.bin \
+  --out initdata.txt
 ```
 
 ### Using Password-Protected Private Keys
