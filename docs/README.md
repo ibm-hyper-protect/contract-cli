@@ -11,6 +11,7 @@ Complete command reference and usage guide for the IBM Confidential Computing Co
 - [Command Reference](#command-reference)
   - [base64](#base64)
   - [base64-tgz](#base64-tgz)
+  - [contract-template](#contract-template)
   - [decrypt-attestation](#decrypt-attestation)
   - [download-certificate](#download-certificate)
   - [sign-contract](#sign-contract)
@@ -236,6 +237,67 @@ contract-cli base64-tgz \
 **Using standard input (pipe input):**
 ```bash
 echo "pods-folder" | contract-cli base64-tgz --in -
+```
+
+---
+
+### contract-template
+
+Generate a contract YAML template for IBM Confidential Computing deployments. Returns a pre-filled YAML scaffold for the workload section, env section, or a combined contract containing both. Use this as a starting point when authoring a new contract.
+
+#### Usage
+
+```bash
+contract-cli contract-template [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--type` | string | No | Template type to generate: `env`, `workload`, or `contract` (default: `contract`) |
+| `--os` | string | No | Target IBM Confidential Computing platform: `hpvs`, `ccrt`, `ccrv`, or `ccco` (default: `hpvs`). `ccrv` returns a different workload template (podman `play` only; no docker `compose`) |
+| `--out` | string | No | Path to save the generated template (prints to terminal if not specified) |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Generate combined contract template (default):**
+```bash
+contract-cli contract-template
+```
+
+**Generate workload-only template:**
+```bash
+contract-cli contract-template --type workload
+```
+
+**Generate env-only template:**
+```bash
+contract-cli contract-template --type env
+```
+
+**Generate template for CCRT:**
+```bash
+contract-cli contract-template --type contract --os ccrt
+```
+
+**Generate workload template for CCCO:**
+```bash
+contract-cli contract-template --type workload --os ccco
+```
+
+**Save combined template to file:**
+```bash
+contract-cli contract-template --out contract-template.yaml
+```
+
+**Generate CCRV workload template:**
+```bash
+contract-cli contract-template \
+  --type workload \
+  --os ccrv \
+  --out ccrv-workload-template.yaml
 ```
 
 ---
