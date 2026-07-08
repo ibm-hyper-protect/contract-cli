@@ -66,7 +66,7 @@ func TestValidateInput_InvalidType(t *testing.T) {
 
 // TestValidateInput_ValidOs verifies all accepted --os values are parsed correctly.
 func TestValidateInput_ValidOs(t *testing.T) {
-	for _, osVal := range []string{OsHpvs, OsCcrt, OsCcrv, OsCcco} {
+	for _, osVal := range []string{OsHpvs, OsCcrt, OsCcrv, OsCccoPeerpod, OsCccoBmtl} {
 		_, got, _, err := ValidateInput(newCmd(TypeContract, osVal, ""))
 		assert.NoError(t, err, "os=%s", osVal)
 		assert.Equal(t, osVal, got, "os=%s", osVal)
@@ -76,6 +76,13 @@ func TestValidateInput_ValidOs(t *testing.T) {
 // TestValidateInput_InvalidOs verifies unsupported --os returns an error.
 func TestValidateInput_InvalidOs(t *testing.T) {
 	_, _, _, err := ValidateInput(newCmd(TypeContract, "bad-os", ""))
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid value for --os")
+}
+
+// TestValidateInput_LegacyCccoRejected verifies that the old "ccco" value is no longer accepted.
+func TestValidateInput_LegacyCccoRejected(t *testing.T) {
+	_, _, _, err := ValidateInput(newCmd(TypeContract, "ccco", ""))
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid value for --os")
 }
@@ -100,42 +107,65 @@ func TestValidateInput_FlagNotRegistered(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 // TestGenerateContractTemplate_WorkloadPerOs verifies the correct workload template is
-// returned for each OS: ccrt/hpvs/ccco/"" include compose; ccrv does not.
+// returned for each OS.
 func TestGenerateContractTemplate_WorkloadPerOs(t *testing.T) {
 	cases := []struct {
-		os         string
-		hasCompose bool
+		os                  string
+		hasCompose          bool
+		hasConfidentialCont bool
 	}{
-		{"", true},
-		{OsHpvs, true},
-		{OsCcrt, true},
-		{OsCcco, true},
-		{OsCcrv, false},
+		{"", true, false},
+		{OsHpvs, true, false},
+		{OsCcrt, true, false},
+		{OsCcrv, false, false},
+		{OsCccoPeerpod, false, true},
+		{OsCccoBmtl, false, true},
 	}
 	for _, tc := range cases {
 		result, err := GenerateContractTemplate(TypeWorkload, tc.os)
 		assert.NoError(t, err, "os=%s", tc.os)
 		assert.Contains(t, result, "type: workload", "os=%s", tc.os)
-		assert.Contains(t, result, "play:", "os=%s", tc.os)
 		if tc.hasCompose {
 			assert.Contains(t, result, "compose:", "os=%s should have compose", tc.os)
 		} else {
 			assert.NotContains(t, result, "compose:", "os=%s should not have compose", tc.os)
 		}
+		if tc.hasConfidentialCont {
+			assert.Contains(t, result, "confidential-containers:", "os=%s should have confidential-containers", tc.os)
+		} else {
+			assert.NotContains(t, result, "confidential-containers:", "os=%s should not have confidential-containers", tc.os)
+		}
 	}
 }
 
-// TestGenerateContractTemplate_EnvSameForAllOs verifies env template is identical for all OS values.
-func TestGenerateContractTemplate_EnvSameForAllOs(t *testing.T) {
-	base, err := GenerateContractTemplate(TypeEnv, "")
-	assert.NoError(t, err)
-	assert.Contains(t, base, "type: env")
-
-	for _, osVal := range []string{OsHpvs, OsCcrt, OsCcrv, OsCcco} {
+// TestGenerateContractTemplate_EnvPerOs verifies correct env template is returned per OS.
+// hpvs/ccrt/ccrv/"" use the standard env; ccco-peerpod and ccco-bmtl have distinct templates.
+func TestGenerateContractTemplate_EnvPerOs(t *testing.T) {
+	// Standard env (no host-attestation, no volumes)
+	for _, osVal := range []string{"", OsHpvs, OsCcrt, OsCcrv} {
 		result, err := GenerateContractTemplate(TypeEnv, osVal)
 		assert.NoError(t, err, "os=%s", osVal)
-		assert.Equal(t, base, result, "env template must be identical for os=%s", osVal)
+		assert.Contains(t, result, "type: env", "os=%s", osVal)
 	}
+
+	// ccco-peerpod: has logRouter, no volumes, no host-attestation
+	peerpodEnv, err := GenerateContractTemplate(TypeEnv, OsCccoPeerpod)
+	assert.NoError(t, err)
+	assert.Contains(t, peerpodEnv, "type: env")
+	assert.Contains(t, peerpodEnv, "logRouter:")
+	assert.NotContains(t, peerpodEnv, "host-attestation:")
+	assert.NotContains(t, peerpodEnv, "volumes:")
+
+	// ccco-bmtl: has logRouter, volumes, and host-attestation
+	bmtlEnv, err := GenerateContractTemplate(TypeEnv, OsCccoBmtl)
+	assert.NoError(t, err)
+	assert.Contains(t, bmtlEnv, "type: env")
+	assert.Contains(t, bmtlEnv, "logRouter:")
+	assert.Contains(t, bmtlEnv, "volumes:")
+	assert.Contains(t, bmtlEnv, "host-attestation:")
+
+	// ccco-peerpod and ccco-bmtl env templates must differ from each other
+	assert.NotEqual(t, peerpodEnv, bmtlEnv)
 }
 
 // TestGenerateContractTemplate_CombinedContainsBothSections verifies combined output has both sections.
@@ -155,8 +185,23 @@ func TestGenerateContractTemplate_CombinedContainsBothSections(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Contains(t, ccrvCombined, "workload:")
 	assert.Contains(t, ccrvCombined, "env:")
-	assert.Contains(t, ccrvCombined, "play:")
 	assert.NotContains(t, ccrvCombined, "compose:")
+
+	// ccco-peerpod combined has confidential-containers in workload section
+	peerpodCombined, err := GenerateContractTemplate(TypeContract, OsCccoPeerpod)
+	assert.NoError(t, err)
+	assert.Contains(t, peerpodCombined, "workload:")
+	assert.Contains(t, peerpodCombined, "env:")
+	assert.Contains(t, peerpodCombined, "confidential-containers:")
+	assert.NotContains(t, peerpodCombined, "host-attestation:")
+
+	// ccco-bmtl combined has confidential-containers and host-attestation
+	bmtlCombined, err := GenerateContractTemplate(TypeContract, OsCccoBmtl)
+	assert.NoError(t, err)
+	assert.Contains(t, bmtlCombined, "workload:")
+	assert.Contains(t, bmtlCombined, "env:")
+	assert.Contains(t, bmtlCombined, "confidential-containers:")
+	assert.Contains(t, bmtlCombined, "host-attestation:")
 }
 
 // TestGenerateContractTemplate_InvalidType verifies an unknown type returns an error.

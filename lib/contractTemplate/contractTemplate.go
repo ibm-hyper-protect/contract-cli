@@ -36,7 +36,7 @@ authoring a new contract.`
 	TypeFlagDescription = "Template type to generate: env, workload, or contract (default: contract)"
 
 	OsVersionFlagName        = "os"
-	OsVersionFlagDescription = "Target IBM Confidential Computing platform (hpvs, ccrt, ccrv, or ccco) (default: hpvs)"
+	OsVersionFlagDescription = "Target IBM Confidential Computing platform (hpvs, ccrt, ccrv, ccco-peerpod, or ccco-bmtl) (default: hpvs)"
 
 	OutputFlagName        = "out"
 	OutputFlagDescription = "Path to save the generated template (prints to terminal if not specified)"
@@ -47,10 +47,11 @@ authoring a new contract.`
 	TypeContract = "contract"
 
 	// ValidOs lists all accepted --os values.
-	OsHpvs = "hpvs"
-	OsCcrt = "ccrt"
-	OsCcrv = "ccrv"
-	OsCcco = "ccco"
+	OsHpvs        = "hpvs"
+	OsCcrt        = "ccrt"
+	OsCcrv        = "ccrv"
+	OsCccoPeerpod = "ccco-peerpod"
+	OsCccoBmtl    = "ccco-bmtl"
 )
 
 // ValidateInput parses and validates flags from the cobra command.
@@ -77,10 +78,10 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 	// Validate --os value if provided
 	if osVersion != "" {
 		switch osVersion {
-		case OsHpvs, OsCcrt, OsCcrv, OsCcco:
+		case OsHpvs, OsCcrt, OsCcrv, OsCccoPeerpod, OsCccoBmtl:
 			// valid
 		default:
-			return "", "", "", fmt.Errorf("invalid value for --os: %q. Allowed values: hpvs, ccrt, ccrv, ccco", osVersion)
+			return "", "", "", fmt.Errorf("invalid value for --os: %q. Allowed values: hpvs, ccrt, ccrv, ccco-peerpod, ccco-bmtl", osVersion)
 		}
 	}
 
@@ -94,7 +95,8 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 
 // GenerateContractTemplate calls contract-go to produce the requested template.
 // templateType may be "env", "workload", or "" / "contract" (combined).
-// os selects the platform-specific workload template ("ccrv" differs from all others).
+// os selects the platform-specific template:
+// "ccrv" — podman-play only; "ccco-peerpod" / "ccco-bmtl" — confidential-containers variants.
 func GenerateContractTemplate(templateType, os string) (string, error) {
 	// Map "contract" and "" to "" (combined template in contract-go)
 	contractGoType := templateType

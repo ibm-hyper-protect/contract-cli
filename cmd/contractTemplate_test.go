@@ -85,7 +85,8 @@ func TestContractTemplateCmd_AllOsValues(t *testing.T) {
 		contractTemplate.OsHpvs,
 		contractTemplate.OsCcrt,
 		contractTemplate.OsCcrv,
-		contractTemplate.OsCcco,
+		contractTemplate.OsCccoPeerpod,
+		contractTemplate.OsCccoBmtl,
 	} {
 		cmd := getContractTemplateCmd()
 		cmd.SetArgs([]string{"--" + contractTemplate.OsVersionFlagName, osVal})
@@ -94,7 +95,7 @@ func TestContractTemplateCmd_AllOsValues(t *testing.T) {
 }
 
 // TestContractTemplateCmd_CcrtWorkloadToFile verifies the standard workload template
-// (hpvs/ccrt/ccco) is written to a file and includes compose.
+// (hpvs/ccrt) is written to a file and includes compose.
 func TestContractTemplateCmd_CcrtWorkloadToFile(t *testing.T) {
 	os.Remove(testContractTemplateOutputPath)
 
@@ -147,8 +148,83 @@ func TestContractTemplateCmd_CcrvCombinedToFile(t *testing.T) {
 	content, _ := os.ReadFile(testContractTemplateOutputPath)
 	assert.Contains(t, string(content), "workload:")
 	assert.Contains(t, string(content), "env:")
-	assert.Contains(t, string(content), "play:")
 	assert.NotContains(t, string(content), "compose:")
+	os.Remove(testContractTemplateOutputPath)
+}
+
+// TestContractTemplateCmd_CccoPeerpodWorkloadToFile verifies the ccco-peerpod workload
+func TestContractTemplateCmd_CccoPeerpodWorkloadToFile(t *testing.T) {
+	os.Remove(testContractTemplateOutputPath)
+
+	cmd := getContractTemplateCmd()
+	cmd.SetArgs([]string{
+		"--" + contractTemplate.TypeFlagName, contractTemplate.TypeWorkload,
+		"--" + contractTemplate.OsVersionFlagName, contractTemplate.OsCccoPeerpod,
+		"--" + contractTemplate.OutputFlagName, testContractTemplateOutputPath,
+	})
+	assert.NoError(t, cmd.Execute())
+
+	content, _ := os.ReadFile(testContractTemplateOutputPath)
+	assert.Contains(t, string(content), "confidential-containers:")
+	assert.NotContains(t, string(content), "compose:")
+	assert.NotContains(t, string(content), "volumes:")
+	os.Remove(testContractTemplateOutputPath)
+}
+
+// TestContractTemplateCmd_CccoBmtlWorkloadToFile verifies the ccco-bmtl workload
+func TestContractTemplateCmd_CccoBmtlWorkloadToFile(t *testing.T) {
+	os.Remove(testContractTemplateOutputPath)
+
+	cmd := getContractTemplateCmd()
+	cmd.SetArgs([]string{
+		"--" + contractTemplate.TypeFlagName, contractTemplate.TypeWorkload,
+		"--" + contractTemplate.OsVersionFlagName, contractTemplate.OsCccoBmtl,
+		"--" + contractTemplate.OutputFlagName, testContractTemplateOutputPath,
+	})
+	assert.NoError(t, cmd.Execute())
+
+	content, _ := os.ReadFile(testContractTemplateOutputPath)
+	assert.Contains(t, string(content), "confidential-containers:")
+	assert.Contains(t, string(content), "volumes:")
+	assert.NotContains(t, string(content), "compose:")
+	os.Remove(testContractTemplateOutputPath)
+}
+
+// TestContractTemplateCmd_CccoPeerpodEnvToFile verifies the ccco-peerpod env template
+func TestContractTemplateCmd_CccoPeerpodEnvToFile(t *testing.T) {
+	os.Remove(testContractTemplateOutputPath)
+
+	cmd := getContractTemplateCmd()
+	cmd.SetArgs([]string{
+		"--" + contractTemplate.TypeFlagName, contractTemplate.TypeEnv,
+		"--" + contractTemplate.OsVersionFlagName, contractTemplate.OsCccoPeerpod,
+		"--" + contractTemplate.OutputFlagName, testContractTemplateOutputPath,
+	})
+	assert.NoError(t, cmd.Execute())
+
+	content, _ := os.ReadFile(testContractTemplateOutputPath)
+	assert.Contains(t, string(content), "logRouter:")
+	assert.NotContains(t, string(content), "host-attestation:")
+	assert.NotContains(t, string(content), "volumes:")
+	os.Remove(testContractTemplateOutputPath)
+}
+
+// TestContractTemplateCmd_CccoBmtlEnvToFile verifies the ccco-bmtl env template
+func TestContractTemplateCmd_CccoBmtlEnvToFile(t *testing.T) {
+	os.Remove(testContractTemplateOutputPath)
+
+	cmd := getContractTemplateCmd()
+	cmd.SetArgs([]string{
+		"--" + contractTemplate.TypeFlagName, contractTemplate.TypeEnv,
+		"--" + contractTemplate.OsVersionFlagName, contractTemplate.OsCccoBmtl,
+		"--" + contractTemplate.OutputFlagName, testContractTemplateOutputPath,
+	})
+	assert.NoError(t, cmd.Execute())
+
+	content, _ := os.ReadFile(testContractTemplateOutputPath)
+	assert.Contains(t, string(content), "logRouter:")
+	assert.Contains(t, string(content), "volumes:")
+	assert.Contains(t, string(content), "host-attestation:")
 	os.Remove(testContractTemplateOutputPath)
 }
 

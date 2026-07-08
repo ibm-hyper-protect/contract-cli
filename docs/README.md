@@ -256,9 +256,19 @@ contract-cli contract-template [flags]
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--type` | string | No | Template type to generate: `env`, `workload`, or `contract` (default: `contract`) |
-| `--os` | string | No | Target IBM Confidential Computing platform: `hpvs`, `ccrt`, `ccrv`, or `ccco` (default: `hpvs`). `ccrv` returns a different workload template (podman `play` only; no docker `compose`) |
+| `--os` | string | No | Target platform (default: `hpvs`). See OS values table below. |
 | `--out` | string | No | Path to save the generated template (prints to terminal if not specified) |
 | `-h, --help` | - | No | Display help information |
+
+#### OS Values
+
+| Value | Platform | Workload template | Env template |
+|-------|----------|-------------------|--------------|
+| `hpvs` | IBM Hyper Protect Virtual Servers | compose + play + volumes | standard (syslog, env vars, volumes) |
+| `ccrt` | IBM Confidential Computing Container Runtime | compose + play + volumes | standard |
+| `ccrv` | IBM CCRT for Red Hat Virtualization | play only (no compose) | standard |
+| `ccco-peerpod` | IBM CCCO Peer Pod | confidential-containers (no volumes) | logRouter only |
+| `ccco-bmtl` | IBM CCCO Baremetal | confidential-containers + volumes | logRouter + volumes + host-attestation |
 
 #### Examples
 
@@ -282,11 +292,6 @@ contract-cli contract-template --type env
 contract-cli contract-template --type contract --os ccrt
 ```
 
-**Generate workload template for CCCO:**
-```bash
-contract-cli contract-template --type workload --os ccco
-```
-
 **Save combined template to file:**
 ```bash
 contract-cli contract-template --out contract-template.yaml
@@ -298,6 +303,22 @@ contract-cli contract-template \
   --type workload \
   --os ccrv \
   --out ccrv-workload-template.yaml
+```
+
+**Generate CCCO Peer Pod workload template:**
+```bash
+contract-cli contract-template \
+  --type workload \
+  --os ccco-peerpod \
+  --out ccco-peerpod-workload.yaml
+```
+
+**Generate CCCO Baremetal combined template:**
+```bash
+contract-cli contract-template \
+  --type contract \
+  --os ccco-bmtl \
+  --out ccco-bmtl-contract.yaml
 ```
 
 ---
