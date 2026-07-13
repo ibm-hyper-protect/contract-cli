@@ -22,7 +22,7 @@ on:
   pull_request:
 
 env:
-  GO_VERSION: 1.26.1 # renovate: datasource=golang-version depName=golang
+  GO_VERSION: 1.26.4 # renovate: datasource=golang-version depName=golang
 
 jobs:
   build:
