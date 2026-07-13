@@ -23,6 +23,9 @@ on:
 jobs:
   branch-name-check:
     runs-on: ubuntu-latest
+    if: |
+      github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]'
     permissions:
       contents: read
     steps:
@@ -48,9 +51,10 @@ jobs:
 
   force-push-check:
     runs-on: ubuntu-latest
-    # Only meaningful when a new push updates the PR branch; skip for renovate.
+    # Only meaningful when a new push updates the PR branch; skip for bots.
     if: |
       github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]' &&
       (github.event.action == 'synchronize' || github.event.action == 'reopened')
     permissions:
       contents: read
@@ -92,6 +96,9 @@ jobs:
 
   commit-lint:
     runs-on: ubuntu-latest
+    if: |
+      github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]'
     permissions:
       contents: read
       pull-requests: read
@@ -152,6 +159,9 @@ jobs:
 
   verify-commit-signatures:
     runs-on: ubuntu-latest
+    if: |
+      github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]'
     permissions:
       contents: read
     steps:
