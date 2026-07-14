@@ -1,3 +1,19 @@
+## [1.26.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.26.0...v1.26.1) (2026-07-13)
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.32.0 ([#136](https://github.com/ibm-hyper-protect/contract-cli/issues/136)) ([fffe8bb](https://github.com/ibm-hyper-protect/contract-cli/commit/fffe8bb55eae02f66e02c7a0ccf3e5722b58c690))
+
+### Miscellaneous Chores
+
+* add Dirk as Maintainer ([#133](https://github.com/ibm-hyper-protect/contract-cli/issues/133)) ([86afd01](https://github.com/ibm-hyper-protect/contract-cli/commit/86afd01dfd4461e3b079c4084b2aa6e98875ae06))
+* **homebrew:** update cask for contract-cli v1.26.0 ([ccd6673](https://github.com/ibm-hyper-protect/contract-cli/commit/ccd66737423bd177bacf0942982ced9a03ffcb07))
+
+### CI/CD updates
+
+* exclude PR checks for renovate & dependabot & add copyright header for files ([#142](https://github.com/ibm-hyper-protect/contract-cli/issues/142)) ([bebf439](https://github.com/ibm-hyper-protect/contract-cli/commit/bebf43958e9b5fc14522c768a35c1fb9b8fdfcd9))
+* simplified github actions, fixed empty changelog & github release ([#138](https://github.com/ibm-hyper-protect/contract-cli/issues/138)) ([ced234d](https://github.com/ibm-hyper-protect/contract-cli/commit/ced234db5c0e4ba65fb5a63aa12d4fd6b3e0aa23))
+
 ## [1.26.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.25.0...v1.26.0) (2026-06-26)
 
 ### Features

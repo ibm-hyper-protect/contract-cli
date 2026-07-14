@@ -1,0 +1,188 @@
+# Copyright (c) 2026 IBM Corp.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Contract CLI - PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  branch-name-check:
+    runs-on: ubuntu-latest
+    if: |
+      github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]'
+    permissions:
+      contents: read
+    steps:
+      - name: Validate branch name
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          pattern='^(Feature|Fix|Docs|Refactor|Performance|Test|Chore|CI)/[a-zA-Z0-9._/-]+$'
+          echo "Branch: $BRANCH"
+          if ! echo "$BRANCH" | grep -qE "$pattern"; then
+            echo "Invalid branch name: '$BRANCH'"
+            echo ""
+            echo "Branch names must match: $pattern"
+            echo ""
+            echo "Examples:"
+            echo "  Feature/add-new-validation"
+            echo "  Fix/resolve-null-pointer"
+            echo "  Docs/update-readme"
+            echo "  Chore/bump-dependencies"
+            exit 1
+          fi
+          echo "Branch name is valid."
+
+  force-push-check:
+    runs-on: ubuntu-latest
+    # Only meaningful when a new push updates the PR branch; skip for bots.
+    if: |
+      github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]' &&
+      (github.event.action == 'synchronize' || github.event.action == 'reopened')
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Need enough history to check ancestry between before/after SHAs.
+          fetch-depth: 0
+
+      - name: Block force pushes
+        env:
+          # On pull_request `synchronize` events, github.event.before is the
+          # previous HEAD of the PR branch (the SHA before this push).
+          # github.event.after is the new HEAD (same as pull_request.head.sha).
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.event.after }}
+        run: |
+          echo "Before SHA: $BEFORE_SHA"
+          echo "After SHA:  $AFTER_SHA"
+
+          # If before is all-zeros the branch was just created — not a force push.
+          if [[ "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]]; then
+            echo "New branch push — not a force push."
+            exit 0
+          fi
+
+          # A force push means BEFORE_SHA is no longer an ancestor of AFTER_SHA.
+          if ! git merge-base --is-ancestor "$BEFORE_SHA" "$AFTER_SHA" 2>/dev/null; then
+            echo "Force push detected!"
+            echo "  Previous HEAD: $BEFORE_SHA"
+            echo "  Current HEAD:  $AFTER_SHA"
+            echo ""
+            echo "Force pushes are not allowed on this repository."
+            echo "Please push a NEW commit on top of your existing branch instead of amending/rebasing."
+            exit 1
+          fi
+
+          echo "No force push detected."
+
+  commit-lint:
+    runs-on: ubuntu-latest
+    if: |
+      github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]'
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+
+      - name: Validate PR title and HEAD commit message
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          pattern='^(feat|fix|docs|perf|revert|chore|refactor|test|build|ci)(\([a-z0-9-]+\))?!?: .{1,}'
+
+          fail=0
+
+          # --- Check PR title (becomes the squash-merge commit on main) ---
+          echo "PR title: $PR_TITLE"
+          if ! echo "$PR_TITLE" | grep -qE "$pattern"; then
+            echo ""
+            echo "PR title does not match the conventional-commit format."
+            fail=1
+          else
+            echo "PR title is valid."
+          fi
+
+          echo ""
+
+          # --- Check latest branch commit (HEAD) ---
+          commit_message=$(git log --format=%B -n 1 "$HEAD_SHA" | head -n 1)
+          short_sha=$(echo "$HEAD_SHA" | cut -c1-7)
+          echo "HEAD commit ($short_sha): $commit_message"
+          if ! echo "$commit_message" | grep -qE "$pattern"; then
+            echo ""
+            echo "HEAD commit message does not match the conventional-commit format."
+            fail=1
+          else
+            echo "HEAD commit message is valid."
+          fi
+
+          if [[ "$fail" -eq 1 ]]; then
+            echo ""
+            echo "Valid format: <type>(<optional-scope>): <description>"
+            echo "Allowed types: feat, fix, docs, perf, revert, chore, refactor, test, build, ci"
+            echo ""
+            echo "Examples:"
+            echo "  feat: add new feature"
+            echo "  fix(cli): resolve null pointer exception"
+            echo "  docs: update README"
+            echo "  chore!: breaking change in build process"
+            echo ""
+            echo "NOTE: Force push is not allowed on this repository."
+            echo "      Push a NEW commit on top of your branch to fix the message."
+            exit 1
+          fi
+
+  verify-commit-signatures:
+    runs-on: ubuntu-latest
+    if: |
+      github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]'
+    permissions:
+      contents: read
+    steps:
+      - name: Verify PR HEAD commit is GPG signed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          verification=$(gh api "repos/$REPO/commits/$HEAD_SHA" \
+            --jq '.commit.verification.verified')
+
+          echo "GPG verification status for $HEAD_SHA: $verification"
+
+          if [[ "$verification" != "true" ]]; then
+            echo ""
+            echo "Commit $HEAD_SHA is not GPG signed or the signature could not be verified."
+            echo "Please sign your commits with a GPG key registered in your GitHub account."
+            echo ""
+            echo "NOTE: Force push is not allowed on this repository."
+            echo "      Push a NEW signed commit on top of your branch."
+            exit 1
+          fi
+          echo "Commit signature verified."
