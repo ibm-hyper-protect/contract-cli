@@ -66,7 +66,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -175,7 +175,7 @@ jobs:
 
       # Install cosign for signing
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3
+        uses: sigstore/cosign-installer@v4.1.2
 
       # Install syft for SBOM generation
       - name: Install Syft
