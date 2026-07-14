@@ -255,8 +255,8 @@ contract-cli contract-template --type workload --os hpvs
 # Generate an env-only template for CCRT
 contract-cli contract-template --type env --os ccrt
 
-# Generate an env-only template for ccco-peerpod
-contract-cli contract-template --type env --os ccco-peerpod
+# Generate an workload-only template for ccco-peerpod
+contract-cli contract-template --type workload --os ccco-peerpod
 
 # Save the full contract template to a file
 contract-cli contract-template --out contract-template.yaml
