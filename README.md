@@ -90,6 +90,7 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
 - **Contract Generation**
   - Generate Base64-encoded data from text, JSON, and docker compose / podman play archives
   - Create signed and signed & encrypted contracts
+  - **Generate contract YAML templates** for workload, env, or combined contract sections
   - Support contract expiry with CA certificates
   - Support for password-protected private keys in signing and encryption operations
   - **Specify encryption certificate version** for encryption operations with `--ver` flag
@@ -241,6 +242,25 @@ docker run --rm -e OPENSSL_BIN=/usr/bin/openssl \
 ```
 
 ## Quick Start
+
+### Generate a Contract Template
+
+```bash
+# Generate a combined contract template (workload + env) to stdout
+contract-cli contract-template
+
+# Generate a workload-only template for HPVS
+contract-cli contract-template --type workload --os hpvs
+
+# Generate an env-only template for CCRT
+contract-cli contract-template --type env --os ccrt
+
+# Generate an workload-only template for ccco-peerpod
+contract-cli contract-template --type workload --os ccco-peerpod
+
+# Save the full contract template to a file
+contract-cli contract-template --out contract-template.yaml
+```
 
 ### Generate a Signed and Encrypted Contract
 
@@ -482,6 +502,7 @@ Usage:
 Available Commands:
   base64                          Encode input as Base64
   base64-tgz                      Create Base64 tar archive of container configurations
+  contract-template               Generate a contract template
   decrypt-attestation             Decrypt encrypted attestation records
   download-certificate            Download encryption certificates
   encrypt                         Generate signed and encrypted contract

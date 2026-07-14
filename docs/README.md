@@ -28,6 +28,7 @@ Complete command reference and usage guide for the IBM Confidential Computing Co
 - [Command Reference](#command-reference)
   - [base64](#base64)
   - [base64-tgz](#base64-tgz)
+  - [contract-template](#contract-template)
   - [decrypt-attestation](#decrypt-attestation)
   - [download-certificate](#download-certificate)
   - [sign-contract](#sign-contract)
@@ -253,6 +254,88 @@ contract-cli base64-tgz \
 **Using standard input (pipe input):**
 ```bash
 echo "pods-folder" | contract-cli base64-tgz --in -
+```
+
+---
+
+### contract-template
+
+Generate a contract YAML template for IBM Confidential Computing deployments. Returns a pre-filled YAML scaffold for the workload section, env section, or a combined contract containing both. Use this as a starting point when authoring a new contract.
+
+#### Usage
+
+```bash
+contract-cli contract-template [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--type` | string | No | Template type to generate: `env`, `workload`, or `contract` (default: `contract`) |
+| `--os` | string | No | Target platform (default: `hpvs`). See OS values table below. |
+| `--out` | string | No | Path to save the generated template (prints to terminal if not specified) |
+| `-h, --help` | - | No | Display help information |
+
+#### OS Values
+
+| Value | Platform | Workload template | Env template |
+|-------|----------|-------------------|--------------|
+| `hpvs` | IBM Hyper Protect Virtual Servers | compose + play + volumes | standard (syslog, env vars, volumes) |
+| `ccrt` | IBM Confidential Computing Container Runtime | compose + play + volumes | standard |
+| `ccrv` | IBM CCRT for Red Hat Virtualization | play only (no compose) | standard |
+| `ccco-peerpod` | IBM CCCO Peer Pod | confidential-containers (no volumes) | logRouter only |
+| `ccco-bmtl` | IBM CCCO Baremetal | confidential-containers + volumes | logRouter + volumes + host-attestation |
+
+#### Examples
+
+**Generate combined contract template (default):**
+```bash
+contract-cli contract-template
+```
+
+**Generate workload-only template:**
+```bash
+contract-cli contract-template --type workload
+```
+
+**Generate env-only template:**
+```bash
+contract-cli contract-template --type env
+```
+
+**Generate template for CCRT:**
+```bash
+contract-cli contract-template --type contract --os ccrt
+```
+
+**Save combined template to file:**
+```bash
+contract-cli contract-template --out contract-template.yaml
+```
+
+**Generate CCRV workload template:**
+```bash
+contract-cli contract-template \
+  --type workload \
+  --os ccrv \
+  --out ccrv-workload-template.yaml
+```
+
+**Generate CCCO Peer Pod workload template:**
+```bash
+contract-cli contract-template \
+  --type workload \
+  --os ccco-peerpod \
+  --out ccco-peerpod-workload.yaml
+```
+
+**Generate CCCO Baremetal combined template:**
+```bash
+contract-cli contract-template \
+  --type contract \
+  --os ccco-bmtl \
+  --out ccco-bmtl-contract.yaml
 ```
 
 ---
