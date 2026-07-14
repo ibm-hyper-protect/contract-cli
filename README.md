@@ -249,7 +249,7 @@ docker run --rm -e OPENSSL_BIN=/usr/bin/openssl \
 # Generate a combined contract template (workload + env) to stdout
 contract-cli contract-template
 
-# Generate a workload-only template for HPVS
+# Generate a workload-only template for HPVS 
 contract-cli contract-template --type workload --os hpvs
 
 # Generate an env-only template for CCRT
