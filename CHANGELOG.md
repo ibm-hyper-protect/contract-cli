@@ -1,3 +1,18 @@
+## [1.27.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.26.1...v1.27.0) (2026-07-14)
+
+### Features
+
+* Add contract-template command ([#137](https://github.com/ibm-hyper-protect/contract-cli/issues/137)) ([d6f5d24](https://github.com/ibm-hyper-protect/contract-cli/commit/d6f5d24d2263b564190cb5f4d42066a8afa9ee9b))
+
+### Miscellaneous Chores
+
+* **deps:** update go dependencies ([#140](https://github.com/ibm-hyper-protect/contract-cli/issues/140)) ([a8bb6b7](https://github.com/ibm-hyper-protect/contract-cli/commit/a8bb6b7d05bbaac9a956d9cf337c11a9c0aae5ba))
+* **homebrew:** update cask for contract-cli v1.26.1 ([d61536b](https://github.com/ibm-hyper-protect/contract-cli/commit/d61536b453ff1f0e98ec0a33b7b7c6f0937d28b0))
+
+### CI/CD updates
+
+* **deps:** bump the github-actions group across 1 directory with 8 updates ([#141](https://github.com/ibm-hyper-protect/contract-cli/issues/141)) ([acdd3b9](https://github.com/ibm-hyper-protect/contract-cli/commit/acdd3b91ffdab9b6f83ce4e47de3a2d5641d46ce))
+
 ## [1.26.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.26.0...v1.26.1) (2026-07-13)
 
 ### Bug Fixes
