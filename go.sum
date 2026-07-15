@@ -7,6 +7,8 @@ github.com/dlclark/regexp2 v1.11.0 h1:G/nrcoOa7ZXlpoa/91N3X7mM3r8eIlMBBJZvsz/mxK
 github.com/dlclark/regexp2 v1.11.0/go.mod h1:DHkYz0B9wPfa6wondMfaivmHpzrQ3v9q8cnmRbL6yW8=
 github.com/ibm-hyper-protect/contract-go/v2 v2.32.0 h1:9MRQ8eDkhRoeiObKCrSeG2YR5OV3+RuTwCjdIN7c7Eg=
 github.com/ibm-hyper-protect/contract-go/v2 v2.32.0/go.mod h1:GHA0T1/tOZn8/8JnMLoiMlSkFFLJh9RLcKG9ukYwm4c=
+github.com/ibm-hyper-protect/contract-go/v2 v2.33.0 h1:DZn9ikKKSywSyWxLxuzoFARrMUk/qHFDEBITmoJx680=
+github.com/ibm-hyper-protect/contract-go/v2 v2.33.0/go.mod h1:CtaL+0DX8Ez0tJqe4aqXgyVhBqm0bir0HSd5rWC2iik=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
