@@ -1,3 +1,13 @@
+## [1.28.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.27.1...v1.28.0) (2026-07-16)
+
+### Features
+
+* update ci/cd pipeline config & contributing documentation ([#145](https://github.com/ibm-hyper-protect/contract-cli/issues/145)) ([3c899fe](https://github.com/ibm-hyper-protect/contract-cli/commit/3c899fedea0235c3be5bfc77e50ead97eda22eca))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.27.1 ([20d4a6c](https://github.com/ibm-hyper-protect/contract-cli/commit/20d4a6c0ae0560b2168a1f4720281bd8a06985f4))
+
 ## [1.27.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.27.0...v1.27.1) (2026-07-15)
 
 ### Bug Fixes
