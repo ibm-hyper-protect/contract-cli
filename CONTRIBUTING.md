@@ -208,6 +208,55 @@ We actively welcome your pull requests! However, please follow this process:
 - **Update main README** - Add usage examples for significant new features
 - **Include examples** - Provide practical examples in documentation
 
+### Making Signed Commits
+
+Once configured, commits are signed automatically:
+```bash
+git commit -m "feat: add new feature"
+```
+
+Or explicitly sign:
+```bash
+git commit -S -m "feat: add new feature"
+```
+
+### Verify Your Commit is Signed
+
+```bash
+# Check last commit
+git log --show-signature -1
+
+# Should show:
+# gpg: Good signature from "Your Name <your-email@example.com>"
+```
+
+### Troubleshooting
+
+#### "gpg failed to sign the data"
+```bash
+export GPG_TTY=$(tty)
+git commit -m "your message"
+```
+
+#### Email Mismatch
+Ensure your Git email matches your GPG key email:
+```bash
+git config --local user.email "your-github-email@example.com"
+```
+
+#### Sign Previous Commit
+```bash
+git commit --amend --no-edit -S
+git push --force-with-lease
+```
+
+### Important Notes
+
+- **Local configuration only**: Signing is enabled only for this repository
+- **Other repos unaffected**: Your other repositories won't require signing
+- **Pipeline enforcement**: PRs with unsigned commits will fail CI/CD checks
+- **Squash and merge**: Only the latest commit needs to be signed
+
 ## Commit Messages
 
 We follow [Conventional Commits](https://www.conventionalcommits.org/) specification:
