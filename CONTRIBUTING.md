@@ -382,6 +382,40 @@ test(decrypt-attestation): add tests for malformed input
 - **Use body to explain what and why, not how**
 - **Reference issues** (e.g., "Fixes #123")
 
+## CI Requirements
+
+Every pull request must pass the following checks before it can be merged:
+
+### 1. Branch Name
+Branch names must follow the format `<Type>/<name>`:
+
+| Type | Purpose |
+|---|---|
+| `Feature` | A new feature |
+| `Fix` | A bug fix |
+| `Docs` | Documentation only changes |
+| `Refactor` | Code changes that neither fix a bug nor add a feature |
+| `Performance` | Performance improvements |
+| `Test` | Adding or updating tests |
+| `Chore` | Changes to build process, dependencies, etc. |
+| `CI` | CI/CD configuration changes |
+
+Valid: `Feature/add-encryption`, `Fix/null-pointer`, `Chore/upgrade-deps`
+Invalid: `my-branch`, `fix-bug`, `HPVM-123`
+
+### 2. Commit Message
+Commits must follow [Conventional Commits](https://www.conventionalcommits.org/) format: `type(optional-scope): description`
+
+Valid: `feat: add contract expiry`, `fix(api): handle null values`
+Invalid: `updated stuff`, `WIP`, `bug fix`
+
+### 3. No Force Pushes
+Force pushing to a PR branch is not allowed. If you need to update your branch, rebase and push normally:
+```bash
+git pull --rebase upstream main
+git push origin your-branch
+```
+
 ## Pull Request Process
 
 ### Before Submitting
