@@ -1,3 +1,13 @@
+## [1.31.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.30.0...v1.31.0) (2026-07-27)
+
+### Features
+
+* Update new issue template with 2 new options ([ca8bffa](https://github.com/ibm-hyper-protect/contract-cli/commit/ca8bffa7772a8432466f0e8d99f9a1de3f0022db))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.30.0 ([d8fb709](https://github.com/ibm-hyper-protect/contract-cli/commit/d8fb709c3a43bc9046ebbdb2fe6e4db8b98c5739))
+
 ## [1.30.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.29.0...v1.30.0) (2026-07-27)
 
 ### Features
