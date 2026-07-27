@@ -89,6 +89,8 @@ body:
         - Security enhancement
         - Platform support
         - Output format option
+        - Feature development
+        - Maintenance
         - Other
     validations:
       required: true
