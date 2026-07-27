@@ -1,3 +1,18 @@
+## [1.30.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.29.0...v1.30.0) (2026-07-27)
+
+### Features
+
+* add new type flag in validate-contract command ([c7cb971](https://github.com/ibm-hyper-protect/contract-cli/commit/c7cb97113e1572bbf4587b8e7a22f396e2c03077))
+* added testcase ([56b0897](https://github.com/ibm-hyper-protect/contract-cli/commit/56b08979f9e2b91c7bec67441bb4d00242712c08))
+* update documentation ([536a7d1](https://github.com/ibm-hyper-protect/contract-cli/commit/536a7d1142ca38b9dd03c594eed5cd5f4d7d7986))
+* updated contract-go version to latest ([c9a747a](https://github.com/ibm-hyper-protect/contract-cli/commit/c9a747a8f202684be34eccfdef9a544d52e5ec39))
+
+### Miscellaneous Chores
+
+* **deps:** update actions/setup-go action to v7 ([#144](https://github.com/ibm-hyper-protect/contract-cli/issues/144)) ([e6e3536](https://github.com/ibm-hyper-protect/contract-cli/commit/e6e35366271f9404b83cbee3bc034a3a640af2a6))
+* **deps:** update docker.io/library/hello-world docker digest to c3cbe1c ([#146](https://github.com/ibm-hyper-protect/contract-cli/issues/146)) ([8adb016](https://github.com/ibm-hyper-protect/contract-cli/commit/8adb0163cd95194fe33c30c06c6a33d9c5bf9839))
+* **homebrew:** update cask for contract-cli v1.29.0 ([3cff663](https://github.com/ibm-hyper-protect/contract-cli/commit/3cff66324dcc1a43cce885bfabdf7a8770e61b61))
+
 ## [1.29.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.28.0...v1.29.0) (2026-07-17)
 
 ### Features
