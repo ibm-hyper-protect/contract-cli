@@ -912,13 +912,24 @@ contract-cli validate-contract [flags]
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to unencrypted IBM Confidential Computing contract YAML file (use '-' for standard input) |
 | `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
+| `--type` | string | No | Contract section to validate: `workload`, `env`, or `''` for both (default: `''`) |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
 
-**Validate HPVS contract:**
+**Validate full contract (both sections):**
 ```bash
-contract-cli validate-contract --in contract.yaml --os hpvs
+contract-cli validate-contract --in contract.yaml --os ccrt
+```
+
+**Validate only the workload section:**
+```bash
+contract-cli validate-contract --in contract.yaml --os ccrt --type workload
+```
+
+**Validate only the env section:**
+```bash
+contract-cli validate-contract --in contract.yaml --os ccrt --type env
 ```
 
 **Validate CCRV contract:**
@@ -933,7 +944,7 @@ contract-cli validate-contract --in contract.yaml --os ccco
 
 **Using standard input:**
 ```bash
-cat contract.yaml | contract-cli validate-contract --in - --os hpvs
+cat contract.yaml | contract-cli validate-contract --in - --os ccrt
 ```
 
 ---

@@ -31,7 +31,7 @@ var validateContractCmd = &cobra.Command{
 	Short: validateContract.ParameterShortDescription,
 	Long:  validateContract.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		contractPath, version, err := validateContract.ValidateInput(cmd)
+		contractPath, version, section, err := validateContract.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -53,7 +53,7 @@ var validateContractCmd = &cobra.Command{
 			}
 		}
 
-		err = contract.HpcrVerifyContract(contractData, version)
+		err = contract.HpcrVerifyContract(contractData, version, section)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -70,6 +70,7 @@ func init() {
 	}
 	validateContractCmd.PersistentFlags().String(validateContract.InputFlagName, "", validateContract.InputFlagDescription)
 	validateContractCmd.PersistentFlags().String(validateContract.OsVersionFlagName, "", validateContract.OsVersionFlagDescription)
+	validateContractCmd.PersistentFlags().String(validateContract.TypeSectionFlagName, "", validateContract.TypeSectionFlagDescription)
 	common.SetCustomHelpTemplate(validateContractCmd, requiredFlags)
 	common.SetCustomErrorTemplate(validateContractCmd)
 }

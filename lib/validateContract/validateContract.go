@@ -29,17 +29,19 @@ const (
 
 Checks contract structure, required fields, and data types before encryption.
 Helps catch errors early in the development process.`
-	InputFlagDescription     = "Path to unencrypted IBM Confidential Computing contract YAML file (use '-' for standard input)"
-	InputFlagName            = "in"
-	OsVersionFlagName        = "os"
-	OsVersionFlagDescription = "Target IBM Confidential Computing platform (ccrt, ccrv, ccco, or hpvs for legacy)"
+	InputFlagDescription       = "Path to unencrypted IBM Confidential Computing contract YAML file (use '-' for standard input)"
+	InputFlagName              = "in"
+	OsVersionFlagName          = "os"
+	OsVersionFlagDescription   = "Target IBM Confidential Computing platform (ccrt, ccrv, ccco, or hpvs for legacy)"
+	TypeSectionFlagName        = "type"
+	TypeSectionFlagDescription = "Contract section to validate: 'workload', 'env', or '' for both (default: '')"
 )
 
 // ValidateInput - function to validate plain contract
-func ValidateInput(cmd *cobra.Command) (string, string, error) {
+func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 	contract, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	if contract == "" {
 		err := fmt.Errorf("Error: required flag '--in' is missing")
@@ -51,8 +53,13 @@ func ValidateInput(cmd *cobra.Command) (string, string, error) {
 
 	version, err := cmd.Flags().GetString(OsVersionFlagName)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
-	return contract, version, nil
+	section, err := cmd.Flags().GetString(TypeSectionFlagName)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	return contract, version, section, nil
 }

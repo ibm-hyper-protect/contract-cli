@@ -369,10 +369,22 @@ contract-cli validate-encryption-certificate \
 ### Validate a Contract Before Encryption
 
 ```bash
-# Validate contract schema
+# Validate full contract (both workload and env sections)
 contract-cli validate-contract \
   --in contract.yaml \
   --os ccrt
+
+# Validate only the workload section
+contract-cli validate-contract \
+  --in contract.yaml \
+  --os ccrt \
+  --type workload
+
+# Validate only the env section
+contract-cli validate-contract \
+  --in contract.yaml \
+  --os ccrt \
+  --type env
 ```
 
 ### Create initdata annotation from signed & encrypted contract
