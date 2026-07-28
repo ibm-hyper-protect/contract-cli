@@ -34,6 +34,7 @@ Complete command reference and usage guide for the IBM Confidential Computing Co
   - [sign-contract](#sign-contract)
   - [encrypt](#encrypt)
   - [encrypt-string](#encrypt-string)
+  - [decrypt](#decrypt)
   - [get-certificate](#get-certificate)
   - [image](#image)
   - [list-encryptioncert-versions](#list-encryptioncert-versions)
@@ -699,6 +700,63 @@ echo "my-secret-password" | contract-cli encrypt-string --in -
 
 # Encrypt file content
 cat workload.yaml | contract-cli encrypt-string --in -
+```
+
+---
+
+### decrypt
+
+Decrypt encrypted strings in IBM Confidential Computing format using an RSA private key. Supports both `contract-basic` (CCRT/CCRV) and `hyper-protect-basic` (CCCO/HPVS) encryption formats.
+
+#### Usage
+
+```bash
+contract-cli decrypt [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to encrypted input file or encrypted string (use '-' for standard input) |
+| `--priv` | string | Yes | Path to RSA private key file (PEM format) |
+| `--password` | string | No | Password for encrypted private key |
+| `--out` | string | No | Path to save decrypted output (prints to stdout if omitted) |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Decrypt from file, output to stdout:**
+```bash
+contract-cli decrypt --in encrypted.txt --priv private.key
+```
+
+**Decrypt raw encrypted string:**
+```bash
+contract-cli decrypt \
+  --in "hyper-protect-basic.xxx.yyy" \
+  --priv private.key
+```
+
+**Save decrypted output to file:**
+```bash
+contract-cli decrypt \
+  --in encrypted.txt \
+  --priv private.key \
+  --out decrypted.txt
+```
+
+**With password-protected private key:**
+```bash
+contract-cli decrypt \
+  --in encrypted.txt \
+  --priv private.key \
+  --password "yourpassword"
+```
+
+**Using standard input:**
+```bash
+cat encrypted.txt | contract-cli decrypt --in - --priv private.key
 ```
 
 ---
