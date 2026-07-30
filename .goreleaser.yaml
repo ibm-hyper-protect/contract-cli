@@ -74,7 +74,7 @@ checksum:
   name_template: "checksums.txt"
   algorithm: sha256
 
-# Signing (cosign)
+# Signing (cosign – key-based)
 signs:
   - cmd: cosign
     env:
@@ -82,13 +82,14 @@ signs:
     signature: "${artifact}.bundle"
     args:
       - sign-blob
+      - "--key=env://COSIGN_PRIVATE_KEY"
       - "--bundle=${signature}"
       - "${artifact}"
       - "--yes"
     artifacts: checksum
     output: true
 
-# Docker Signing (cosign)
+# Docker Signing (cosign – key-based)
 docker_signs:
   - cmd: cosign
     env:
@@ -96,6 +97,7 @@ docker_signs:
     output: true
     args:
       - sign
+      - "--key=env://COSIGN_PRIVATE_KEY"
       - "${artifact}"
       - "--yes"
 
@@ -170,7 +172,7 @@ homebrew_casks:
       owner: ibm-hyper-protect
       name: contract-cli
       branch: main
-      token: "{{ .Env.GITHUB_TOKEN }}"
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
     commit_author:
       name: github-actions[bot]
       email: github-actions[bot]@users.noreply.github.com
