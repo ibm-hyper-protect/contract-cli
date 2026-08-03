@@ -87,7 +87,7 @@ func ValidateStdinInput(cmd *cobra.Command, inputData string) {
 
 // WriteDataToFile - function to write data to file (create file if doesn't exists)
 func WriteDataToFile(filePath, data string) error {
-	DataFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	DataFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return fmt.Errorf("failed to create file - %v", err)
 	}
