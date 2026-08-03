@@ -118,6 +118,12 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - Validate network-config schemas for on-premise deployments
   - Support ccrt, ccrv, and ccco configurations
 
+- **Image Spec Generation**
+  - Fetch OCI image metadata from any registry (public or private)
+  - Generate Kubernetes pod YAML snippet with correct `env`, `command`, `args`, `securityContext`, and `ports`
+  - Designed for use with `registryMapping` in confidential-containers workload contracts
+  - Auto-derives container name from image reference when not specified
+
 
 ## Installation
 
@@ -494,6 +500,27 @@ The sealed secret output includes:
 - `SECRET_DECRYPTION_KEY` - Private key for decryption (keep secure)
 - `SECRET_VERIFICATION_KEY` - Public key for verification
 
+### Generate a Pod YAML Spec from an Image
+
+```bash
+# Public image — container name auto-derived from the reference
+contract-cli image-spec \
+  --in quay.io/sclorg/postgresql-15-c9s:latest
+
+# Digest-pinned image with explicit container name
+contract-cli image-spec \
+  --in quay.io/ramachandra_ch/redis@sha256:8e845b2ad2eec813a04896d4e2e5588827e49d5394579c95f3651f0cb11c1cb0 \
+  --container-name redis
+
+# Private registry — write output to file
+contract-cli image-spec \
+  --in us.icr.io/my-ns/my-app:latest \
+  --username iamapikey \
+  --password <API_KEY> \
+  --container-name my-app \
+  --out my-app-spec.yaml
+```
+
 ## Usage
 
 ```bash
@@ -521,6 +548,7 @@ Available Commands:
   encrypt-string                  Encrypt string in IBM Confidential Computing format
   get-certificate                 Extract specific certificate version from download output
   help                            Help about any command
+  image-spec                      Fetch OCI image metadata and generate a Kubernetes pod YAML template
   sealed-secret                   Generate sealed secret for CCCO
   image                           Get IBM Confidential Computing Container Runtime image details from IBM Cloud
   initdata                        Gzip and Encoded initdata annotation
