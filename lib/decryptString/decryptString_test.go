@@ -27,6 +27,12 @@ func TestProcessMissingInput(t *testing.T) {
 	assert.Error(t, err)
 }
 
+// TestProcessWrongEncryptionFormat - wrong encryption format returns error
+func TestProcessWrongEncryptionFormat(t *testing.T) {
+	_, err := Process("invalid-format.wrongpassword.wrongdata", "../../samples/decrypt/private.key", "")
+	assert.Error(t, err)
+}
+
 // TestOutputToStdout - output with no file path succeeds
 func TestOutputToStdout(t *testing.T) {
 	err := Output("", "decrypted text")

@@ -68,7 +68,7 @@ func getDecryptStringCmd() *cobra.Command {
 
 // TestDecryptStringCmd_Success - decrypt with valid input and private key succeeds
 func TestDecryptStringCmd_Success(t *testing.T) {
-	os.Remove(testDecryptOutputPath)
+	defer os.Remove(testDecryptOutputPath)
 
 	cmd := getDecryptStringCmd()
 	cmd.SetArgs([]string{
@@ -88,8 +88,6 @@ func TestDecryptStringCmd_Success(t *testing.T) {
 	content, readErr := os.ReadFile(testDecryptOutputPath)
 	assert.NoError(t, readErr)
 	assert.NotEmpty(t, content)
-
-	os.Remove(testDecryptOutputPath)
 }
 
 // TestDecryptStringCmd_WithoutOutputPath - decrypt to stdout succeeds
@@ -103,9 +101,3 @@ func TestDecryptStringCmd_WithoutOutputPath(t *testing.T) {
 	err := cmd.Execute()
 	assert.NoError(t, err)
 }
-
-// Note: Error test cases for missing flags (--in, --priv) and corrupted input are not
-// included here because they either call os.Exit() via common.SetMandatoryFlagError()
-// or cause a panic in contract-go on malformed input — both terminate the test process.
-// These error scenarios are thoroughly tested at the library level in
-// lib/decryptString/decryptString_test.go where they can be properly validated.
