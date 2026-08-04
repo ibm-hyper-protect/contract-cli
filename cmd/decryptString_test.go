@@ -28,7 +28,6 @@ import (
 const (
 	testDecryptEncryptedInput = "../samples/decrypt/encrypt.txt"
 	testDecryptPrivateKey     = "../samples/decrypt/private.key"
-	testDecryptOutputPath     = "../build/test_cmd_decrypt_output.txt"
 )
 
 // getDecryptStringCmd returns a fresh instance of the decrypt command for testing
@@ -68,24 +67,24 @@ func getDecryptStringCmd() *cobra.Command {
 
 // TestDecryptStringCmd_Success - decrypt with valid input and private key succeeds
 func TestDecryptStringCmd_Success(t *testing.T) {
-	defer os.Remove(testDecryptOutputPath)
+	outputPath := t.TempDir() + "/decrypted.txt"
 
 	cmd := getDecryptStringCmd()
 	cmd.SetArgs([]string{
 		"--" + decryptString.InputFlagName, testDecryptEncryptedInput,
 		"--" + decryptString.PrivateKeyFlagName, testDecryptPrivateKey,
-		"--" + decryptString.OutputFlagName, testDecryptOutputPath,
+		"--" + decryptString.OutputFlagName, outputPath,
 	})
 
 	err := cmd.Execute()
 	assert.NoError(t, err)
 
 	// Verify output file was created
-	_, statErr := os.Stat(testDecryptOutputPath)
+	_, statErr := os.Stat(outputPath)
 	assert.NoError(t, statErr)
 
 	// Verify output is not empty
-	content, readErr := os.ReadFile(testDecryptOutputPath)
+	content, readErr := os.ReadFile(outputPath)
 	assert.NoError(t, readErr)
 	assert.NotEmpty(t, content)
 }
