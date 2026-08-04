@@ -58,10 +58,10 @@ func getDecryptStringCmd() *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().String(decryptString.InputFlagName, "", decryptString.InputFlagDescription)
-	cmd.PersistentFlags().String(decryptString.PrivateKeyFlagName, "", decryptString.PrivateKeyFlagDescription)
-	cmd.PersistentFlags().String(decryptString.PasswordFlagName, "", decryptString.PasswordFlagDescription)
-	cmd.PersistentFlags().String(decryptString.OutputFlagName, "", decryptString.OutputFlagDescription)
+	cmd.Flags().String(decryptString.InputFlagName, "", decryptString.InputFlagDescription)
+	cmd.Flags().String(decryptString.PrivateKeyFlagName, "", decryptString.PrivateKeyFlagDescription)
+	cmd.Flags().String(decryptString.PasswordFlagName, "", decryptString.PasswordFlagDescription)
+	cmd.Flags().String(decryptString.OutputFlagName, "", decryptString.OutputFlagDescription)
 
 	return cmd
 }
