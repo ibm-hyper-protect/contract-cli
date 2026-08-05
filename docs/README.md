@@ -1338,6 +1338,34 @@ Error: permission denied reading file
 - Ensure you have read access to input files
 - Verify output directory is writable
 
+### Git Commits Showing Unverified on GitHub
+
+**Symptom:**
+Commits show **Unverified** badge on GitHub even after configuring SSH signing locally.
+
+**Cause:**
+The SSH key is added to GitHub as an **Authentication Key** only. GitHub requires a separate **Signing Key** entry to verify commit signatures.
+
+**Solution:**
+
+1. Copy your public key:
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+2. Go to **GitHub → Settings → SSH and GPG keys → New SSH key**
+
+3. Fill in:
+   - **Title:** `Mac Signing` (or any name)
+   - **Key type:** `Signing Key` ← must be Signing Key, not Authentication Key
+   - **Key:** paste the output from step 1
+
+4. Click **Add SSH key**
+
+GitHub will now show **Verified** on all commits signed with that key — no new push needed.
+
+> **Note:** You can have the same key added twice — once as Authentication Key (for push/pull) and once as Signing Key (for commit verification).
+
 ---
 
 ## Examples
