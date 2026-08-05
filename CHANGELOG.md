@@ -1,3 +1,9 @@
+## [1.32.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.31.1...v1.32.0) (2026-08-05)
+
+### Features
+
+* add decrypt command to decrypt the encrypted content  ([#157](https://github.com/ibm-hyper-protect/contract-cli/issues/157)) ([b4f6ef4](https://github.com/ibm-hyper-protect/contract-cli/commit/b4f6ef4f473b3c62448209608246b1f3e46a43de))
+
 ## [1.31.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.31.0...v1.31.1) (2026-08-01)
 
 ### Bug Fixes
