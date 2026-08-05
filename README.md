@@ -515,6 +515,7 @@ Available Commands:
   base64                          Encode input as Base64
   base64-tgz                      Create Base64 tar archive of container configurations
   contract-template               Generate a contract template
+  decrypt                         Decrypt encrypted text in IBM Confidential Computing format
   decrypt-attestation             Decrypt encrypted attestation records
   download-certificate            Download encryption certificates
   encrypt                         Generate signed and encrypted contract
