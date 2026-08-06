@@ -34,7 +34,7 @@ env:
   # Currently no way to detect automatically
   DEFAULT_BRANCH: main
   GO_VERSION: 1.26.4 # renovate: datasource=golang-version depName=golang
-  NODE_VERSION: 20
+  NODE_VERSION: 24
 
 jobs:
   release:
