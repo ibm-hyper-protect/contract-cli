@@ -45,13 +45,22 @@ func TestSealedSecretCmd_EnvType(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	// Verify output file was created and contains expected content
-	content, readErr := os.ReadFile(outputPath)
-	assert.NoError(t, readErr)
-	assert.Contains(t, string(content), "Sealed Secret:")
-	assert.Contains(t, string(content), "SECRET_DECRYPTION_KEY=")
-	assert.Contains(t, string(content), "SECRET_VERIFICATION_KEY=")
-	// t.TempDir() automatically cleans up after test
+	// Verify the three split output files were created with the correct content
+	sealedValuePath := filepath.Join(tmpDir, "sealed-secret-env-output_SealedValue.txt")
+	decryptionKeyPath := filepath.Join(tmpDir, "sealed-secret-env-output_DecryptionKey.txt")
+	verificationKeyPath := filepath.Join(tmpDir, "sealed-secret-env-output_VerificationKey.txt")
+
+	sealedContent, err := os.ReadFile(sealedValuePath)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, string(sealedContent))
+
+	decryptionContent, err := os.ReadFile(decryptionKeyPath)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, string(decryptionContent))
+
+	verificationContent, err := os.ReadFile(verificationKeyPath)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, string(verificationContent))
 }
 
 // TestSealedSecretCmd_WorkloadType tests if sealed secret command can generate workload type sealed secret
@@ -70,13 +79,22 @@ func TestSealedSecretCmd_WorkloadType(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	// Verify output file was created and contains expected content
-	content, readErr := os.ReadFile(outputPath)
-	assert.NoError(t, readErr)
-	assert.Contains(t, string(content), "Sealed Secret:")
-	assert.Contains(t, string(content), "SECRET_DECRYPTION_KEY=")
-	assert.Contains(t, string(content), "SECRET_VERIFICATION_KEY=")
-	// t.TempDir() automatically cleans up after test
+	// Verify the three split output files were created with the correct content
+	sealedValuePath := filepath.Join(tmpDir, "sealed-secret-workload-output_SealedValue.txt")
+	decryptionKeyPath := filepath.Join(tmpDir, "sealed-secret-workload-output_DecryptionKey.txt")
+	verificationKeyPath := filepath.Join(tmpDir, "sealed-secret-workload-output_VerificationKey.txt")
+
+	sealedContent, err := os.ReadFile(sealedValuePath)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, string(sealedContent))
+
+	decryptionContent, err := os.ReadFile(decryptionKeyPath)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, string(decryptionContent))
+
+	verificationContent, err := os.ReadFile(verificationKeyPath)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, string(verificationContent))
 }
 
 // TestSealedSecretCmd_CommandProperties tests command properties

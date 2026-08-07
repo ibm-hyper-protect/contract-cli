@@ -1134,10 +1134,16 @@ echo "value123" | contract-cli sealed-secret \
 ```
 
 **Output format:**
-The command outputs:
-- The sealed secret data (for use in contract)
-- `SECRET_DECRYPTION_KEY` - Private key for decryption (keep secure)
-- `SECRET_VERIFICATION_KEY` - Public key for verification
+
+When `--out` is provided (e.g. `--out sealed_secret.txt`), three separate files are created:
+
+| File | Contents |
+|------|----------|
+| `sealed_secret_SealedValue.txt` | Sealed secret value (for use in the contract) |
+| `sealed_secret_DecryptionKey.txt` | RSA private key for decryption — keep this secure |
+| `sealed_secret_VerificationKey.txt` | RSA public key for signature verification |
+
+When `--out` is **not** provided, all three values are printed to stdout.
 
 ---
 

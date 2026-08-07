@@ -17,6 +17,7 @@ package sealedSecret
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
@@ -157,30 +158,59 @@ func GenerateSealedSecret(inputDataPath, secretType, encryptionKeyPath, signingK
 	return sealedSecret, decryptionKey, verificationKey, inputSecretSha, encryptedSecretSha, nil
 }
 
-// Output - function to output sealed secret and keys
+// Output - function to output sealed secret and keys.
+// When outputPath is provided the three values are written to separate files
+// derived from the base name:
+//
+//	<base>_SealedValue<ext>   — the sealed secret
+//	<base>_DecryptionKey<ext> — the decryption key (PEM, escaped newlines)
+//	<base>_VerificationKey<ext> — the verification key (PEM, escaped newlines)
 func Output(sealedSecret, decryptionKeyPEM, verificationKeyPEM, outputPath string) error {
 	// Format keys with escaped newlines (replace actual newlines with \n)
 	decryptionKeyFormatted := formatKeyWithEscapedNewlines(decryptionKeyPEM)
 	verificationKeyFormatted := formatKeyWithEscapedNewlines(verificationKeyPEM)
 
-	// Format the output as shell variable assignments
-	output := fmt.Sprintf("Sealed Secret:\n%s\n\nSECRET_DECRYPTION_KEY=%s\n\nSECRET_VERIFICATION_KEY=%s",
-		sealedSecret,
-		decryptionKeyFormatted,
-		verificationKeyFormatted)
-
 	if outputPath != "" {
-		err := common.WriteDataToFile(outputPath, output)
-		if err != nil {
+		sealedValuePath, decryptionKeyPath, verificationKeyPath := splitOutputPaths(outputPath)
+
+		if err := common.WriteDataToFile(sealedValuePath, sealedSecret); err != nil {
 			return fmt.Errorf("failed to write sealed secret to file: %w", err)
 		}
-		fmt.Printf("Sealed secret and keys written to: %s\n", outputPath)
+		if err := common.WriteDataToFile(decryptionKeyPath, decryptionKeyFormatted); err != nil {
+			return fmt.Errorf("failed to write decryption key to file: %w", err)
+		}
+		if err := common.WriteDataToFile(verificationKeyPath, verificationKeyFormatted); err != nil {
+			return fmt.Errorf("failed to write verification key to file: %w", err)
+		}
+
+		fmt.Printf("Sealed value written to:      %s\n", sealedValuePath)
+		fmt.Printf("Decryption key written to:    %s\n", decryptionKeyPath)
+		fmt.Printf("Verification key written to:  %s\n", verificationKeyPath)
 	} else {
 		// Print to stdout if no output path specified
+		output := fmt.Sprintf("Sealed Secret:\n%s\n\nSECRET_DECRYPTION_KEY=%s\n\nSECRET_VERIFICATION_KEY=%s",
+			sealedSecret,
+			decryptionKeyFormatted,
+			verificationKeyFormatted)
 		fmt.Println(output)
 	}
 
 	return nil
+}
+
+// splitOutputPaths derives the three output file paths from the user-supplied base path.
+// The extension (if any) is preserved; suffixes are inserted before it.
+// Example: "sealed_secret.yaml" → "sealed_secret_SealedValue.yaml",
+//
+//	"sealed_secret_DecryptionKey.yaml", "sealed_secret_VerificationKey.yaml"
+func splitOutputPaths(outputPath string) (sealedValuePath, decryptionKeyPath, verificationKeyPath string) {
+	ext := filepath.Ext(outputPath)
+	base := strings.TrimSuffix(outputPath, ext)
+
+	sealedValuePath = base + "_SealedValue" + ext
+	decryptionKeyPath = base + "_DecryptionKey" + ext
+	verificationKeyPath = base + "_VerificationKey" + ext
+	return
 }
 
 // formatKeyWithEscapedNewlines converts actual newlines in a key to escaped newlines (\n)

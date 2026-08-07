@@ -187,21 +187,38 @@ func TestOutput_WithFilePath(t *testing.T) {
 	tmpDir := "../../build"
 	os.MkdirAll(tmpDir, 0755)
 	outputFile := filepath.Join(tmpDir, "test_output.txt")
-	os.Remove(outputFile)
+
+	// Remove any pre-existing split files
+	os.Remove(filepath.Join(tmpDir, "test_output_SealedValue.txt"))
+	os.Remove(filepath.Join(tmpDir, "test_output_DecryptionKey.txt"))
+	os.Remove(filepath.Join(tmpDir, "test_output_VerificationKey.txt"))
 
 	err := Output(sealedSecret, decryptionKey, verificationKey, outputFile)
 	assert.NoError(t, err)
 
-	_, statErr := os.Stat(outputFile)
+	// Verify the three split files exist and contain the expected content
+	sealedValuePath := filepath.Join(tmpDir, "test_output_SealedValue.txt")
+	decryptionKeyPath := filepath.Join(tmpDir, "test_output_DecryptionKey.txt")
+	verificationKeyPath := filepath.Join(tmpDir, "test_output_VerificationKey.txt")
+
+	_, statErr := os.Stat(sealedValuePath)
 	assert.NoError(t, statErr)
 
-	content, readErr := os.ReadFile(outputFile)
+	sealedContent, readErr := os.ReadFile(sealedValuePath)
 	assert.NoError(t, readErr)
-	assert.Contains(t, string(content), "Sealed Secret:")
-	assert.Contains(t, string(content), "SECRET_DECRYPTION_KEY=")
-	assert.Contains(t, string(content), "SECRET_VERIFICATION_KEY=")
+	assert.Contains(t, string(sealedContent), "sealed-secret-data")
 
-	os.Remove(outputFile)
+	decryptionContent, readErr := os.ReadFile(decryptionKeyPath)
+	assert.NoError(t, readErr)
+	assert.Contains(t, string(decryptionContent), "BEGIN PRIVATE KEY")
+
+	verificationContent, readErr := os.ReadFile(verificationKeyPath)
+	assert.NoError(t, readErr)
+	assert.Contains(t, string(verificationContent), "BEGIN PUBLIC KEY")
+
+	os.Remove(sealedValuePath)
+	os.Remove(decryptionKeyPath)
+	os.Remove(verificationKeyPath)
 }
 
 // TestOutput_WithoutFilePath tests Output function without file path (prints to stdout)
