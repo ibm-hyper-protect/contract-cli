@@ -1,3 +1,5 @@
+## [1.32.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.2...v1.32.3) (2026-08-17)
+
 ## [1.32.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.1...v1.32.2) (2026-08-06)
 
 ## [1.32.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.0...v1.32.1) (2026-08-05)
