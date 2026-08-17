@@ -43,4 +43,4 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 )
 
-replace github.com/ibm-hyper-protect/contract-go/v2 => ../contract-go
+replace github.com/ibm-hyper-protect/contract-go/v2 => ../../contract-go

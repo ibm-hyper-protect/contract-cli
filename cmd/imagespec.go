@@ -24,7 +24,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// imageSpecCmd is the cobra command for the image-spec sub-command.
 var imageSpecCmd = &cobra.Command{
 	Use:   imagespec.ParameterName,
 	Short: imagespec.ParameterShortDescription,
@@ -40,19 +39,20 @@ var imageSpecCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		fmt.Printf("Image user: %s\n", result.ImageUser)
+
 		if input.OutputPath != "" {
-			err = common.WriteDataToFile(input.OutputPath, result)
+			err = common.WriteDataToFile(input.OutputPath, result.YAML)
 			if err != nil {
 				log.Fatal(err)
 			}
 			fmt.Printf("Successfully wrote pod YAML template to %s\n", input.OutputPath)
 		} else {
-			fmt.Print(result)
+			fmt.Print(result.YAML)
 		}
 	},
 }
 
-// init registers image-spec with the root command and declares all its flags.
 func init() {
 	rootCmd.AddCommand(imageSpecCmd)
 

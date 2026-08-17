@@ -23,7 +23,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestValidateInput_Success verifies that a fully-populated set of flags parses correctly.
 func TestValidateInput_Success(t *testing.T) {
 	cmd := &cobra.Command{}
 	cmd.Flags().String(InputFlagName, "quay.io/sclorg/postgresql-15-c9s:latest", "")
@@ -42,7 +41,6 @@ func TestValidateInput_Success(t *testing.T) {
 	assert.Equal(t, "postgres", input.ContainerName)
 }
 
-// TestValidateInput_OptionalFieldsOmitted verifies optional flags default to empty string.
 func TestValidateInput_OptionalFieldsOmitted(t *testing.T) {
 	cmd := &cobra.Command{}
 	cmd.Flags().String(InputFlagName, "quay.io/fedora/fedora:38", "")
@@ -61,23 +59,22 @@ func TestValidateInput_OptionalFieldsOmitted(t *testing.T) {
 	assert.Equal(t, "", input.ContainerName)
 }
 
-// TestValidateInput_FlagsNotRegistered verifies an error when flags are absent.
 func TestValidateInput_FlagsNotRegistered(t *testing.T) {
 	cmd := &cobra.Command{}
 	_, err := ValidateInput(cmd)
 	assert.Error(t, err)
 }
 
-// TestProcess_EmptyRef verifies that an empty image reference returns an error.
 func TestProcess_EmptyRef(t *testing.T) {
-	_, err := Process("", "", "", "")
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "failed to generate image spec")
+	result, err := Process("", "", "", "")
+	assert.ErrorContains(t, err, "failed to generate image spec")
+	assert.Empty(t, result.YAML)
+	assert.Empty(t, result.ImageUser)
 }
 
-// TestProcess_InvalidRef verifies that a malformed reference returns an error.
 func TestProcess_InvalidRef(t *testing.T) {
-	_, err := Process(":::bad:::", "", "", "")
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "failed to generate image spec")
+	result, err := Process(":::bad:::", "", "", "")
+	assert.ErrorContains(t, err, "failed to generate image spec")
+	assert.Empty(t, result.YAML)
+	assert.Empty(t, result.ImageUser)
 }

@@ -90,9 +90,14 @@ func ValidateInput(cmd *cobra.Command) (ImageSpecInput, error) {
 	return input, nil
 }
 
+// ProcessResult holds the YAML output and identified image user.
+type ProcessResult struct {
+	YAML      string
+	ImageUser string
+}
+
 // Process generates the pod YAML template for the given image reference.
-// containerName defaults to the image name when empty.
-func Process(imageRef, containerName, username, password string) (string, error) {
+func Process(imageRef, containerName, username, password string) (ProcessResult, error) {
 	var auth *goImageSpec.AuthConfig
 	if username != "" || password != "" {
 		auth = &goImageSpec.AuthConfig{
@@ -101,10 +106,10 @@ func Process(imageRef, containerName, username, password string) (string, error)
 		}
 	}
 
-	yaml, _, _, err := goImageSpec.GenerateImageSpec(imageRef, containerName, auth)
+	yaml, imageUser, _, _, err := goImageSpec.GenerateImageSpec(imageRef, containerName, auth)
 	if err != nil {
-		return "", fmt.Errorf("failed to generate image spec for %q: %w", imageRef, err)
+		return ProcessResult{}, fmt.Errorf("failed to generate image spec for %q: %w", imageRef, err)
 	}
 
-	return yaml, nil
+	return ProcessResult{YAML: yaml, ImageUser: imageUser}, nil
 }
