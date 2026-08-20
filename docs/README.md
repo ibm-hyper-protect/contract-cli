@@ -39,6 +39,7 @@ Complete command reference and usage guide for the IBM Confidential Computing Co
   - [image](#image)
   - [list-encryptioncert-versions](#list-encryptioncert-versions)
   - [sealed-secret](#sealed-secret)
+  - [rego-generator](#rego-generator)
   - [validate-contract](#validate-contract)
   - [validate-network](#validate-network)
   - [validate-encryption-certificate](#validate-encryption-certificate)
@@ -1138,6 +1139,102 @@ The command outputs:
 - The sealed secret data (for use in contract)
 - `SECRET_DECRYPTION_KEY` - Private key for decryption (keep secure)
 - `SECRET_VERIFICATION_KEY` - Public key for verification
+
+---
+
+### rego-generator
+Generate an OPA v1 Rego policy from a Kubernetes pod specification for use with IBM Confidential Computing Containers (CCCO). The generated policy enforces container image and command validation via the Kata Agent Policy engine.
+
+When `--out` is specified, the command writes **two files**:
+- `<stem>.rego` — the plain OPA Rego source (human-readable)
+- `<stem>_base64` — the Base64-encoded policy, ready for direct use in `regoValidator.policy`
+
+No separate `base64` encoding step is required.
+
+#### Usage
+
+```bash
+contract-cli rego-generator [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to Kubernetes resource YAML file (use `-` for standard input) |
+| `--out` | string | No | Path to save generated Rego policy file. Also writes `<stem>_base64` companion file. Prints to stdout if not specified. |
+| `-h, --help` | - | No | Display help information |
+
+#### Supported Resource Types
+
+| Kind | Pod spec location |
+|------|-------------------|
+| `Pod` | directly |
+| `Deployment` | `spec.template` |
+| `StatefulSet` | `spec.template` |
+| `DaemonSet` | `spec.template` |
+| `CronJob` | `spec.jobTemplate.spec.template` |
+
+#### Output Files
+
+When `--out policy.rego` is specified:
+
+| File | Content |
+|------|---------|
+| `policy.rego` | Plain OPA v1 Rego source |
+| `policy_base64` | Base64-encoded policy (standard encoding, no newlines) |
+
+The `policy_base64` file value maps directly to `confidential-containers.regoValidator.policy` in the contract workload section.
+
+#### Examples
+
+**Generate policy from a Pod YAML and print to stdout:**
+```bash
+contract-cli rego-generator --in pod.yaml
+```
+
+**Generate policy from a Deployment and save to file:**
+```bash
+# Creates deployment_policy.rego and deployment_policy_base64
+contract-cli rego-generator \
+  --in deployment.yaml \
+  --out deployment_policy.rego
+```
+
+**Generate policy from stdin:**
+```bash
+cat pod.yaml | contract-cli rego-generator --in -
+```
+
+**End-to-end: generate policy and embed in contract workload section:**
+```bash
+# Step 1 — generate the Rego policy and its companion base64 file
+contract-cli rego-generator \
+  --in pod.yaml \
+  --out policy.rego
+# Output:
+#   Successfully generated Rego policy: policy.rego
+#   Successfully generated Rego policy (base64): policy_base64
+
+# Step 2 — read the ready-to-use base64 value (no manual encoding needed)
+POLICY_B64=$(cat policy_base64)
+
+# Step 3 — use in contract workload YAML under confidential-containers.regoValidator.policy
+cat <<EOF > workload.yaml
+type: workload
+confidential-containers:
+  regoValidator:
+    policy: ${POLICY_B64}
+EOF
+```
+
+**Output format:**
+The command outputs a complete OPA v1 Rego policy including:
+- `CreateContainerRequest` — wiring rule that requires both `allow_image` and `allow_command`
+- OCP baseline `allow_image` / `allow_command` — admits Kata pause/infra containers
+- Per-container `allow_image()` rules — anchored regex per unique image
+- Per-container `allow_command()` rules — strict (with `count(args)` and per-index checks) for containers with explicit `command`/`args`, permissive (image-only) for ENTRYPOINT-only containers
+- Named script validator functions for multiline shell script arguments
 
 ---
 

@@ -102,6 +102,15 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - Automatic key generation or use custom encryption/signing keys
   - Output sealed secrets with decryption and verification keys
 
+- **Rego Policy Generation**
+  - Generate OPA v1 Rego policy from Kubernetes Pod, Deployment, StatefulSet, DaemonSet, or CronJob YAML
+  - Automatically extract container images and commands to produce `allow_image()` and `allow_command()` rules
+  - Strict per-argument validation for containers with explicit `command`/`args`
+  - Permissive image-only validation for ENTRYPOINT-only containers
+  - Multiline shell scripts extracted into named validator functions
+  - OCP baseline rules for Kata pause/infra containers included automatically
+  - **When `--out` is specified**, automatically writes a companion `<stem>_base64` file containing the Base64-encoded policy ready for use in `regoValidator.policy`
+
 - **Archive Management**
   - Generate Base64 tar archives of `docker-compose.yaml` or `pods.yaml`
   - Support encrypted base64 tar generation
@@ -494,6 +503,36 @@ The sealed secret output includes:
 - `SECRET_DECRYPTION_KEY` - Private key for decryption (keep secure)
 - `SECRET_VERIFICATION_KEY` - Public key for verification
 
+### Generate a Rego Policy for CCCO
+
+```bash
+# Generate policy from a Pod YAML and print to stdout
+contract-cli rego-generator --in pod.yaml
+
+# Generate policy from a Deployment and save to file
+# Writes policy.rego (plain) and policy_base64 (Base64-encoded, ready for regoValidator.policy)
+contract-cli rego-generator \
+  --in deployment.yaml \
+  --out policy.rego
+
+# Generate policy from stdin
+cat pod.yaml | contract-cli rego-generator --in -
+```
+
+When `--out` is provided, two files are created:
+- `policy.rego` — the plain OPA Rego source
+- `policy_base64` — Base64-encoded policy, ready to paste directly into `regoValidator.policy`
+
+```bash
+# Use the generated base64 value directly — no manual encoding needed
+POLICY_B64=$(cat policy_base64)
+```
+
+The generated policy includes:
+- `CreateContainerRequest` — wiring rule requiring both `allow_image` and `allow_command`
+- OCP baseline rules admitting Kata pause/infra containers
+- Per-container `allow_image()` and `allow_command()` rules
+
 ## Usage
 
 ```bash
@@ -523,6 +562,7 @@ Available Commands:
   get-certificate                 Extract specific certificate version from download output
   help                            Help about any command
   sealed-secret                   Generate sealed secret for CCCO
+  rego-generator                  Generate OPA Rego policy from Kubernetes pod YAML
   image                           Get IBM Confidential Computing Container Runtime image details from IBM Cloud
   initdata                        Gzip and Encoded initdata annotation
   list-encryptioncert-versions    List available encryption certificate versions
