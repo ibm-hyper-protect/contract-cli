@@ -1085,7 +1085,29 @@ When `--out` is provided (e.g. `--out sealed_secret.txt`), three separate files 
 | `sealed_secret_DecryptionKey.txt` | RSA private key for decryption — keep this secure |
 | `sealed_secret_VerificationKey.txt` | RSA public key for signature verification |
 
-When `--out` is **not** provided, all three values are printed to stdout.
+When `--out` is **not** provided, all three values are printed to stdout as a JSON object:
+
+```json
+{
+  "sealed_secret": "<sealed-secret-value>",
+  "decryption_key": "<RSA-private-key-PEM-with-escaped-newlines>",
+  "verification_key": "<RSA-public-key-PEM-with-escaped-newlines>"
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `sealed_secret` | Sealed secret value for use in the contract |
+| `decryption_key` | RSA private key for decryption (PEM, `\n`-escaped) — keep this secure |
+| `verification_key` | RSA public key for signature verification (PEM, `\n`-escaped) |
+
+> **Note:** The `decryption_key` and `verification_key` PEM blocks have their newlines
+> replaced with the literal two-character sequence `\n` so the entire key fits on a
+> single JSON string value.
+> To restore the original PEM for use with OpenSSL, run:
+> ```bash
+> echo '<value>' | sed 's/\\n/\n/g'
+> ```
 
 ---
 

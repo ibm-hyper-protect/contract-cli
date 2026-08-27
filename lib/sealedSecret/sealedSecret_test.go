@@ -16,6 +16,9 @@
 package sealedSecret
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -221,14 +224,34 @@ func TestOutput_WithFilePath(t *testing.T) {
 	os.Remove(verificationKeyPath)
 }
 
-// TestOutput_WithoutFilePath tests Output function without file path (prints to stdout)
+// TestOutput_WithoutFilePath tests Output function without file path (prints JSON to stdout)
 func TestOutput_WithoutFilePath(t *testing.T) {
-	sealedSecret := "sealed-secret-data"
+	sealedSecretVal := "sealed-secret-data"
 	decryptionKey := "-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----"
 	verificationKey := "-----BEGIN PUBLIC KEY-----\ntest\n-----END PUBLIC KEY-----"
 
-	err := Output(sealedSecret, decryptionKey, verificationKey, "")
+	// Capture stdout
+	origStdout := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	err := Output(sealedSecretVal, decryptionKey, verificationKey, "")
+
+	w.Close()
+	os.Stdout = origStdout
+
+	var buf bytes.Buffer
+	io.Copy(&buf, r)
+
 	assert.NoError(t, err)
+
+	// Verify the output is valid JSON with the expected fields
+	var out SealedSecretOutput
+	jsonErr := json.Unmarshal(buf.Bytes(), &out)
+	assert.NoError(t, jsonErr)
+	assert.Equal(t, sealedSecretVal, out.SealedSecret)
+	assert.Contains(t, out.DecryptionKey, "BEGIN PRIVATE KEY")
+	assert.Contains(t, out.VerificationKey, "BEGIN PUBLIC KEY")
 }
 
 // TestOutput_InvalidPath tests Output function with invalid file path

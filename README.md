@@ -453,19 +453,19 @@ contract-cli encrypt \
 ### Generate Sealed Secrets for CCCO
 
 ```bash
-# Generate sealed secret for environment variables
+# Generate sealed secret for environment variables (output to files)
 contract-cli sealed-secret \
   --in "value123" \
   --type env \
   --out sealed-secret.txt
 
-# Generate sealed secret for workload data
+# Generate sealed secret for workload data (output to files)
 contract-cli sealed-secret \
   --in workload-secret-data \
   --type workload \
   --out sealed-workload.txt
 
-# Generate sealed secret from file
+# Generate sealed secret from file (output to files)
 contract-cli sealed-secret \
   --in secrets.txt \
   --type env \
@@ -483,16 +483,32 @@ contract-cli sealed-secret \
   --signingkey signing.pem \
   --out sealed-secret.txt
 
-# Read secret from stdin
+# Print all values as JSON to stdout (omit --out)
 echo "value123" | contract-cli sealed-secret \
   --in - \
   --type env
 ```
 
-The sealed secret output includes:
-- The sealed secret data (for use in contract)
-- `SECRET_DECRYPTION_KEY` - Private key for decryption (keep secure)
-- `SECRET_VERIFICATION_KEY` - Public key for verification
+When `--out` is provided (e.g. `--out sealed_secret.txt`) three files are written:
+
+| File | Contents |
+|------|----------|
+| `sealed_secret_SealedValue.txt` | Sealed secret for use in the contract |
+| `sealed_secret_DecryptionKey.txt` | RSA private key for decryption — keep secure |
+| `sealed_secret_VerificationKey.txt` | RSA public key for signature verification |
+
+When `--out` is **omitted**, all three values are printed to stdout as JSON:
+
+```json
+{
+  "sealed_secret": "<sealed-secret-value>",
+  "decryption_key": "<RSA-private-key-PEM-with-escaped-newlines>",
+  "verification_key": "<RSA-public-key-PEM-with-escaped-newlines>"
+}
+```
+
+> **Note:** `decryption_key` and `verification_key` have newlines replaced with `\n`.
+> To restore a PEM for use with OpenSSL: `echo '<value>' | sed 's/\\n/\n/g'`
 
 ## Usage
 

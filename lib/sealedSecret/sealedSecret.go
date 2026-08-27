@@ -16,6 +16,7 @@
 package sealedSecret
 
 import (
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -158,6 +159,13 @@ func GenerateSealedSecret(inputDataPath, secretType, encryptionKeyPath, signingK
 	return sealedSecret, decryptionKey, verificationKey, inputSecretSha, encryptedSecretSha, nil
 }
 
+// SealedSecretOutput holds the JSON-serialisable output fields.
+type SealedSecretOutput struct {
+	SealedSecret    string `json:"sealed_secret"`
+	DecryptionKey   string `json:"decryption_key"`
+	VerificationKey string `json:"verification_key"`
+}
+
 // Output - function to output sealed secret and keys.
 // When outputPath is provided the three values are written to separate files
 // derived from the base name:
@@ -165,6 +173,9 @@ func GenerateSealedSecret(inputDataPath, secretType, encryptionKeyPath, signingK
 //	<base>_SealedValue<ext>   — the sealed secret
 //	<base>_DecryptionKey<ext> — the decryption key (PEM, escaped newlines)
 //	<base>_VerificationKey<ext> — the verification key (PEM, escaped newlines)
+//
+// When no outputPath is given, a JSON object containing all three values is
+// printed to stdout.
 func Output(sealedSecret, decryptionKeyPEM, verificationKeyPEM, outputPath string) error {
 	// Format keys with escaped newlines (replace actual newlines with \n)
 	decryptionKeyFormatted := formatKeyWithEscapedNewlines(decryptionKeyPEM)
@@ -187,12 +198,17 @@ func Output(sealedSecret, decryptionKeyPEM, verificationKeyPEM, outputPath strin
 		fmt.Printf("Decryption key written to:    %s\n", decryptionKeyPath)
 		fmt.Printf("Verification key written to:  %s\n", verificationKeyPath)
 	} else {
-		// Print to stdout if no output path specified
-		output := fmt.Sprintf("Sealed Secret:\n%s\n\nSECRET_DECRYPTION_KEY=%s\n\nSECRET_VERIFICATION_KEY=%s",
-			sealedSecret,
-			decryptionKeyFormatted,
-			verificationKeyFormatted)
-		fmt.Println(output)
+		// Print JSON to stdout when no output path is specified
+		out := SealedSecretOutput{
+			SealedSecret:    sealedSecret,
+			DecryptionKey:   decryptionKeyFormatted,
+			VerificationKey: verificationKeyFormatted,
+		}
+		jsonBytes, err := json.MarshalIndent(out, "", "  ")
+		if err != nil {
+			return fmt.Errorf("failed to marshal output to JSON: %w", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 
 	return nil
