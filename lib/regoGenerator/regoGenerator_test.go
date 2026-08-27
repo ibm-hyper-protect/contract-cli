@@ -27,21 +27,24 @@ import (
 )
 
 const (
-	testPodFile    = "../../samples/hpcc/sample-pod.yaml"
-	testOutputPath = "../../build/test_rego_output.rego"
+	testPodFile = "../../samples/hpcc/sample-pod.yaml"
 )
 
 // TestValidateInput_Success tests ValidateInput with all required flags
 func TestValidateInput_Success(t *testing.T) {
+	outputPath := filepath.Join(t.TempDir(), "policy.rego")
+
 	cmd := &cobra.Command{}
 	cmd.Flags().String(InputFlagName, "test-pod.yaml", "")
-	cmd.Flags().String(OutputFlagName, testOutputPath, "")
+	cmd.Flags().String(OutputFlagName, outputPath, "")
+	cmd.Flags().String(FormatFlagName, FormatBase64, "")
 
-	inputPath, outputPath, err := ValidateInput(cmd)
+	inputPath, gotOutputPath, format, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, "test-pod.yaml", inputPath)
-	assert.Equal(t, testOutputPath, outputPath)
+	assert.Equal(t, outputPath, gotOutputPath)
+	assert.Equal(t, FormatBase64, format)
 }
 
 // TestValidateInput_WithoutOutputPath tests ValidateInput without output path (optional)
@@ -49,12 +52,44 @@ func TestValidateInput_WithoutOutputPath(t *testing.T) {
 	cmd := &cobra.Command{}
 	cmd.Flags().String(InputFlagName, "test-pod.yaml", "")
 	cmd.Flags().String(OutputFlagName, "", "")
+	cmd.Flags().String(FormatFlagName, FormatBase64, "")
 
-	inputPath, outputPath, err := ValidateInput(cmd)
+	inputPath, outputPath, format, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, "test-pod.yaml", inputPath)
 	assert.Equal(t, "", outputPath)
+	assert.Equal(t, FormatBase64, format)
+}
+
+// TestValidateInput_AllFormats tests ValidateInput accepts all valid format values
+func TestValidateInput_AllFormats(t *testing.T) {
+	for _, fmt := range []string{FormatBase64, FormatText, FormatBoth} {
+		t.Run(fmt, func(t *testing.T) {
+			cmd := &cobra.Command{}
+			cmd.Flags().String(InputFlagName, "test-pod.yaml", "")
+			cmd.Flags().String(OutputFlagName, "", "")
+			cmd.Flags().String(FormatFlagName, fmt, "")
+
+			_, _, format, err := ValidateInput(cmd)
+
+			assert.NoError(t, err)
+			assert.Equal(t, fmt, format)
+		})
+	}
+}
+
+// TestValidateInput_InvalidFormat tests ValidateInput rejects unknown format values
+func TestValidateInput_InvalidFormat(t *testing.T) {
+	cmd := &cobra.Command{}
+	cmd.Flags().String(InputFlagName, "test-pod.yaml", "")
+	cmd.Flags().String(OutputFlagName, "", "")
+	cmd.Flags().String(FormatFlagName, "json", "")
+
+	_, _, _, err := ValidateInput(cmd)
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid --format value")
 }
 
 // TestProcess_Success tests Process with valid pod YAML
@@ -97,39 +132,135 @@ func TestProcess_InvalidYAML(t *testing.T) {
 	assert.Contains(t, err.Error(), "failed to extract pod spec")
 }
 
-// TestOutput_ToStdout tests Output to stdout — only plain policy printed, no base64 file
-func TestOutput_ToStdout(t *testing.T) {
+// TestOutput_Base64_ToStdout tests Output with format=base64 to stdout — only base64 printed
+func TestOutput_Base64_ToStdout(t *testing.T) {
 	policy := "package agent_policy\n\ndefault CreateContainerRequest := false"
 
-	err := Output("", policy, "hyper-protect-basic.abc123")
+	err := Output("", FormatBase64, policy, "hyper-protect-basic.abc123")
 
 	assert.NoError(t, err)
 }
 
-// TestOutput_ToFile tests Output to file — plain policy + companion _base64 file
-func TestOutput_ToFile(t *testing.T) {
+// TestOutput_Text_ToStdout tests Output with format=text to stdout — only plain rego printed
+func TestOutput_Text_ToStdout(t *testing.T) {
+	policy := "package agent_policy\n\ndefault CreateContainerRequest := false"
+
+	err := Output("", FormatText, policy, "hyper-protect-basic.abc123")
+
+	assert.NoError(t, err)
+}
+
+// TestOutput_Both_ToStdout tests Output with format=both to stdout — both printed
+func TestOutput_Both_ToStdout(t *testing.T) {
+	policy := "package agent_policy\n\ndefault CreateContainerRequest := false"
+
+	err := Output("", FormatBoth, policy, "hyper-protect-basic.abc123")
+
+	assert.NoError(t, err)
+}
+
+// TestOutput_Base64_ToFile tests Output with format=base64 — only _base64 file written
+func TestOutput_Base64_ToFile(t *testing.T) {
 	tmpDir := t.TempDir()
-	outputFile := filepath.Join(tmpDir, "output.rego")
+	outputStem := filepath.Join(tmpDir, "policy")
 	policy := "package agent_policy\n\ndefault CreateContainerRequest := false"
 	b64Policy := "hyper-protect-basic.abc123"
 
-	err := Output(outputFile, policy, b64Policy)
+	err := Output(outputStem, FormatBase64, policy, b64Policy)
 
 	assert.NoError(t, err)
 
-	// Verify plain policy file
-	content, err := os.ReadFile(outputFile)
+	// Verify _base64 file is written
+	b64File := filepath.Join(tmpDir, "policy_base64")
+	b64Content, err := os.ReadFile(b64File)
+	assert.NoError(t, err)
+	assert.Equal(t, b64Policy, string(b64Content))
+
+	// Verify plain rego file is NOT written
+	_, err = os.Stat(filepath.Join(tmpDir, "policy.rego"))
+	assert.True(t, os.IsNotExist(err), "plain .rego file must not be created for format=base64")
+}
+
+// TestOutput_Text_ToFile tests Output with format=text — only .rego file written
+func TestOutput_Text_ToFile(t *testing.T) {
+	tmpDir := t.TempDir()
+	outputStem := filepath.Join(tmpDir, "policy")
+	policy := "package agent_policy\n\ndefault CreateContainerRequest := false"
+	b64Policy := "hyper-protect-basic.abc123"
+
+	err := Output(outputStem, FormatText, policy, b64Policy)
+
+	assert.NoError(t, err)
+
+	// Verify plain rego file is written
+	regoFile := filepath.Join(tmpDir, "policy.rego")
+	content, err := os.ReadFile(regoFile)
 	assert.NoError(t, err)
 	assert.Equal(t, policy, string(content))
 
-	// Verify companion base64 file: output_base64 (no extension)
-	b64File := filepath.Join(tmpDir, "output_base64")
+	// Verify _base64 file is NOT written
+	_, err = os.Stat(filepath.Join(tmpDir, "policy_base64"))
+	assert.True(t, os.IsNotExist(err), "_base64 file must not be created for format=text")
+}
+
+// TestOutput_Both_ToFile tests Output with format=both — both files written
+func TestOutput_Both_ToFile(t *testing.T) {
+	tmpDir := t.TempDir()
+	outputStem := filepath.Join(tmpDir, "policy")
+	policy := "package agent_policy\n\ndefault CreateContainerRequest := false"
+	b64Policy := "hyper-protect-basic.abc123"
+
+	err := Output(outputStem, FormatBoth, policy, b64Policy)
+
+	assert.NoError(t, err)
+
+	// Verify plain rego file
+	regoFile := filepath.Join(tmpDir, "policy.rego")
+	content, err := os.ReadFile(regoFile)
+	assert.NoError(t, err)
+	assert.Equal(t, policy, string(content))
+
+	// Verify _base64 file
+	b64File := filepath.Join(tmpDir, "policy_base64")
 	b64Content, err := os.ReadFile(b64File)
 	assert.NoError(t, err)
 	assert.Equal(t, b64Policy, string(b64Content))
 }
 
-// TestBase64OutputPath tests the companion path derivation
+// TestOutput_Text_ToFile_WithRegoExtension tests that passing a stem already ending in .rego works
+func TestOutput_Text_ToFile_WithRegoExtension(t *testing.T) {
+	tmpDir := t.TempDir()
+	outputStem := filepath.Join(tmpDir, "policy.rego")
+	policy := "package agent_policy\n\ndefault CreateContainerRequest := false"
+
+	err := Output(outputStem, FormatText, policy, "")
+
+	assert.NoError(t, err)
+
+	content, err := os.ReadFile(outputStem)
+	assert.NoError(t, err)
+	assert.Equal(t, policy, string(content))
+}
+
+// TestTextOutputPath tests the .rego path derivation
+func TestTextOutputPath(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{"policy", "policy.rego"},
+		{"out/policy", "out/policy.rego"},
+		{"/abs/path/policy", "/abs/path/policy.rego"},
+		{"policy.rego", "policy.rego"}, // already has extension — unchanged
+	}
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			assert.Equal(t, tt.want, textOutputPath(tt.input))
+		})
+	}
+}
+
+// TestBase64OutputPath tests the companion base64 path derivation
 func TestBase64OutputPath(t *testing.T) {
 	tests := []struct {
 		input string
@@ -148,11 +279,21 @@ func TestBase64OutputPath(t *testing.T) {
 	}
 }
 
-// TestOutput_InvalidPath tests Output with invalid file path
+// TestOutput_InvalidPath tests Output with an invalid file path (format=base64 reaches the base64 write)
 func TestOutput_InvalidPath(t *testing.T) {
 	policy := "package agent_policy"
 
-	err := Output("/invalid/path/that/does/not/exist/output.rego", policy, "hyper-protect-basic.abc")
+	err := Output("/invalid/path/that/does/not/exist/policy", FormatBase64, policy, "hyper-protect-basic.abc")
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "failed to write base64 Rego policy to file")
+}
+
+// TestOutput_InvalidPath_Text tests Output with an invalid file path (format=text reaches the rego write)
+func TestOutput_InvalidPath_Text(t *testing.T) {
+	policy := "package agent_policy"
+
+	err := Output("/invalid/path/that/does/not/exist/policy", FormatText, policy, "hyper-protect-basic.abc")
 
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to write Rego policy to file")
@@ -268,7 +409,28 @@ spec:
 	assert.Contains(t, policy, `docker\\.io/library/redis:alpine`)
 }
 
-// TestIntegration_EndToEnd tests the complete workflow
+// TestProcess_InvalidKind tests Process with an unsupported Kubernetes resource kind
+func TestProcess_InvalidKind(t *testing.T) {
+	invalidKindYAML := `apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-config
+data:
+  key: value
+`
+	tmpDir := t.TempDir()
+	invalidFile := filepath.Join(tmpDir, "configmap.yaml")
+	err := os.WriteFile(invalidFile, []byte(invalidKindYAML), 0644)
+	assert.NoError(t, err)
+
+	_, _, err = Process(invalidFile)
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "failed to extract pod spec")
+	assert.Contains(t, err.Error(), "unsupported resource kind: ConfigMap")
+}
+
+// TestIntegration_EndToEnd tests the complete workflow with format=both (writes both files)
 func TestIntegration_EndToEnd(t *testing.T) {
 	tmpDir := t.TempDir()
 
@@ -281,13 +443,14 @@ func TestIntegration_EndToEnd(t *testing.T) {
 	_, decErr := base64.StdEncoding.DecodeString(policyBase64)
 	assert.NoError(t, decErr, "policyBase64 must be valid standard base64")
 
-	// Output to file — should create policy.rego and policy_base64
-	outputFile := filepath.Join(tmpDir, "policy.rego")
-	err = Output(outputFile, policy, policyBase64)
+	// Output with format=both — should create policy.rego and policy_base64
+	outputStem := filepath.Join(tmpDir, "policy")
+	err = Output(outputStem, FormatBoth, policy, policyBase64)
 	assert.NoError(t, err)
 
 	// Verify the plain policy file
-	content, err := os.ReadFile(outputFile)
+	regoFile := filepath.Join(tmpDir, "policy.rego")
+	content, err := os.ReadFile(regoFile)
 	assert.NoError(t, err)
 	assert.Equal(t, policy, string(content))
 

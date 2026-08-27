@@ -109,7 +109,9 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - Permissive image-only validation for ENTRYPOINT-only containers
   - Multiline shell scripts extracted into named validator functions
   - OCP baseline rules for Kata pause/infra containers included automatically
-  - **When `--out` is specified**, automatically writes a companion `<stem>_base64` file containing the Base64-encoded policy ready for use in `regoValidator.policy`
+  - **`--format base64` (default)** — outputs only the IBM CC Base64 policy; ready for `regoValidator.policy` with no extra encoding step
+  - **`--format text`** — outputs only the plain Rego source
+  - **`--format both`** — outputs both the plain Rego source and the Base64 policy
 
 - **Archive Management**
   - Generate Base64 tar archives of `docker-compose.yaml` or `pods.yaml`
@@ -506,20 +508,29 @@ The sealed secret output includes:
 ### Generate a Rego Policy for CCCO
 
 ```bash
-# Generate policy from a Pod YAML and print to stdout
+# Print only the base64 policy to stdout (default)
 contract-cli rego-generator --in pod.yaml
 
-# Generate policy from a Deployment and save to file
-# Writes policy.rego (plain) and policy_base64 (Base64-encoded, ready for regoValidator.policy)
-contract-cli rego-generator \
-  --in deployment.yaml \
-  --out policy.rego
+# Print only the plain Rego source to stdout
+contract-cli rego-generator --in pod.yaml --format text
+
+# Print both to stdout
+contract-cli rego-generator --in pod.yaml --format both
+
+# Save only the base64 policy to file (default) — writes policy_base64
+contract-cli rego-generator --in pod.yaml --out policy
+
+# Save only the plain Rego source to file — writes policy.rego
+contract-cli rego-generator --in pod.yaml --out policy --format text
+
+# Save both files — writes policy.rego and policy_base64
+contract-cli rego-generator --in deployment.yaml --out policy --format both
 
 # Generate policy from stdin
 cat pod.yaml | contract-cli rego-generator --in -
 ```
 
-When `--out` is provided, two files are created:
+With `--format both --out policy`, two files are created:
 - `policy.rego` — the plain OPA Rego source
 - `policy_base64` — Base64-encoded policy, ready to paste directly into `regoValidator.policy`
 

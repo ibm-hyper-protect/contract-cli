@@ -29,7 +29,7 @@ var regoGeneratorCmd = &cobra.Command{
 	Short: regoGenerator.ParameterShortDescription,
 	Long:  regoGenerator.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputPath, outputPath, err := regoGenerator.ValidateInput(cmd)
+		inputPath, outputPath, format, err := regoGenerator.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -39,7 +39,7 @@ var regoGeneratorCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		err = regoGenerator.Output(outputPath, policy, policyBase64)
+		err = regoGenerator.Output(outputPath, format, policy, policyBase64)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -55,6 +55,7 @@ func init() {
 	}
 	regoGeneratorCmd.PersistentFlags().String(regoGenerator.InputFlagName, "", regoGenerator.InputFlagDescription)
 	regoGeneratorCmd.PersistentFlags().String(regoGenerator.OutputFlagName, "", regoGenerator.OutputFlagDescription)
+	regoGeneratorCmd.PersistentFlags().String(regoGenerator.FormatFlagName, regoGenerator.FormatBase64, regoGenerator.FormatFlagDescription)
 	common.SetCustomHelpTemplate(regoGeneratorCmd, requiredFlags)
 	common.SetCustomErrorTemplate(regoGeneratorCmd)
 }

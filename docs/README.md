@@ -1145,9 +1145,13 @@ The command outputs:
 ### rego-generator
 Generate an OPA v1 Rego policy from a Kubernetes pod specification for use with IBM Confidential Computing Containers (CCCO). The generated policy enforces container image and command validation via the Kata Agent Policy engine.
 
-When `--out` is specified, the command writes **two files**:
-- `<stem>.rego` — the plain OPA Rego source (human-readable)
-- `<stem>_base64` — the Base64-encoded policy, ready for direct use in `regoValidator.policy`
+Use `--format` to control what is written to stdout or to file:
+
+| `--format` | stdout | with `--out` |
+|------------|--------|--------------|
+| `base64` *(default)* | prints IBM CC base64 policy only | writes `<stem>_base64` only |
+| `text` | prints plain Rego policy only | writes `<stem>.rego` only |
+| `both` | prints both | writes both files |
 
 No separate `base64` encoding step is required.
 
@@ -1162,7 +1166,8 @@ contract-cli rego-generator [flags]
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to Kubernetes resource YAML file (use `-` for standard input) |
-| `--out` | string | No | Path to save generated Rego policy file. Also writes `<stem>_base64` companion file. Prints to stdout if not specified. |
+| `--out` | string | No | Output stem used for file names (e.g. `policy` or `policy.rego`). Prints to stdout if not specified. |
+| `--format` | string | No | Output format: `base64` (default), `text`, or `both` |
 | `-h, --help` | - | No | Display help information |
 
 #### Supported Resource Types
@@ -1177,28 +1182,52 @@ contract-cli rego-generator [flags]
 
 #### Output Files
 
-When `--out policy.rego` is specified:
+Files written when `--out policy` is specified (stem `policy`):
 
-| File | Content |
-|------|---------|
-| `policy.rego` | Plain OPA v1 Rego source |
-| `policy_base64` | Base64-encoded policy (standard encoding, no newlines) |
+| `--format` | Files written |
+|------------|---------------|
+| `base64` *(default)* | `policy_base64` |
+| `text` | `policy.rego` |
+| `both` | `policy.rego` + `policy_base64` |
 
-The `policy_base64` file value maps directly to `confidential-containers.regoValidator.policy` in the contract workload section.
+The `policy_base64` value maps directly to `confidential-containers.regoValidator.policy` in the contract workload section.
 
 #### Examples
 
-**Generate policy from a Pod YAML and print to stdout:**
+**Print only the base64 policy to stdout (default):**
 ```bash
 contract-cli rego-generator --in pod.yaml
 ```
 
-**Generate policy from a Deployment and save to file:**
+**Print only the plain Rego source to stdout:**
 ```bash
-# Creates deployment_policy.rego and deployment_policy_base64
+contract-cli rego-generator --in pod.yaml --format text
+```
+
+**Print both the plain Rego source and the base64 policy to stdout:**
+```bash
+contract-cli rego-generator --in pod.yaml --format both
+```
+
+**Save only the base64 policy to file (default):**
+```bash
+# Creates policy_base64 only
+contract-cli rego-generator --in pod.yaml --out policy
+```
+
+**Save only the plain Rego source to file:**
+```bash
+# Creates policy.rego only
+contract-cli rego-generator --in pod.yaml --out policy --format text
+```
+
+**Save both files (Rego source + base64):**
+```bash
+# Creates policy.rego and policy_base64
 contract-cli rego-generator \
   --in deployment.yaml \
-  --out deployment_policy.rego
+  --out policy \
+  --format both
 ```
 
 **Generate policy from stdin:**
@@ -1208,12 +1237,11 @@ cat pod.yaml | contract-cli rego-generator --in -
 
 **End-to-end: generate policy and embed in contract workload section:**
 ```bash
-# Step 1 — generate the Rego policy and its companion base64 file
+# Step 1 — generate the base64 policy file (default format)
 contract-cli rego-generator \
   --in pod.yaml \
-  --out policy.rego
+  --out policy
 # Output:
-#   Successfully generated Rego policy: policy.rego
 #   Successfully generated Rego policy (base64): policy_base64
 
 # Step 2 — read the ready-to-use base64 value (no manual encoding needed)

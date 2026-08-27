@@ -42,32 +42,52 @@ policies for confidential containers.`
 	InputFlagName         = "in"
 	InputFlagDescription  = "Path to Kubernetes pod YAML file (use '-' for standard input)"
 	OutputFlagName        = "out"
-	OutputFlagDescription = "Path to save generated Rego policy (optional, prints to stdout if not specified)"
-	successMessage        = "Successfully generated Rego policy"
-	successMessageBase64  = "Successfully generated Rego policy (base64)"
+	OutputFlagDescription = "Path to save the generated output (stem used for file names; prints to stdout if not specified)"
+	FormatFlagName        = "format"
+	FormatFlagDescription = "Output format: 'base64' (default) prints/writes only the IBM CC base64 policy, 'text' prints/writes only the plain Rego policy, 'both' produces both"
+
+	// Valid format values
+	FormatBase64 = "base64"
+	FormatText   = "text"
+	FormatBoth   = "both"
+
+	successMessage       = "Successfully generated Rego policy"
+	successMessageBase64 = "Successfully generated Rego policy (base64)"
 )
 
-// ValidateInput validates the input flags for rego-generator command
-func ValidateInput(cmd *cobra.Command) (string, string, error) {
-	inputPath, err := cmd.Flags().GetString(InputFlagName)
+// ValidateInput validates the input flags for rego-generator command.
+// Returns inputPath, outputPath, format, and any error.
+func ValidateInput(cmd *cobra.Command) (inputPath, outputPath, format string, err error) {
+	inputPath, err = cmd.Flags().GetString(InputFlagName)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	if inputPath == "" {
-		err := fmt.Errorf("Error: required flag '--in' is missing")
-		common.SetMandatoryFlagError(cmd, err)
-		return "", "", err
+		e := fmt.Errorf("Error: required flag '--in' is missing")
+		common.SetMandatoryFlagError(cmd, e)
+		return "", "", "", e
 	}
 
 	// Validate stdin input
 	common.ValidateStdinInput(cmd, inputPath)
 
-	outputPath, err := cmd.Flags().GetString(OutputFlagName)
+	outputPath, err = cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
-	return inputPath, outputPath, nil
+	format, err = cmd.Flags().GetString(FormatFlagName)
+	if err != nil {
+		return "", "", "", err
+	}
+	switch format {
+	case FormatBase64, FormatText, FormatBoth:
+		// valid
+	default:
+		return "", "", "", fmt.Errorf("invalid --format value %q: must be one of 'base64', 'text', 'both'", format)
+	}
+
+	return inputPath, outputPath, format, nil
 }
 
 // Process reads the Kubernetes resource YAML and generates the Rego policy.
@@ -201,8 +221,18 @@ func extractPodSpec(resourceYAML string) (string, error) {
 	}
 }
 
-// base64OutputPath derives the companion base64 output path from the policy output path.
-// e.g. "policy.rego" -> "policy_base64", "out/policy.rego" -> "out/policy_base64"
+// textOutputPath derives the plain-policy output path from the base output path.
+// e.g. "policy" -> "policy.rego", "out/policy" -> "out/policy.rego"
+// If the path already ends in ".rego" it is returned unchanged.
+func textOutputPath(outputPath string) string {
+	if strings.HasSuffix(outputPath, ".rego") {
+		return outputPath
+	}
+	return outputPath + ".rego"
+}
+
+// base64OutputPath derives the companion base64 output path from the base output path.
+// e.g. "policy" -> "policy_base64", "out/policy.rego" -> "out/policy_base64"
 func base64OutputPath(outputPath string) string {
 	dir := filepath.Dir(outputPath)
 	base := filepath.Base(outputPath)
@@ -211,27 +241,44 @@ func base64OutputPath(outputPath string) string {
 	return filepath.Join(dir, stem+"_base64")
 }
 
-// Output writes the plain policy to outputPath (or stdout if empty).
-// When outputPath is given, also writes the IBM CC base64 policy to <stem>_base64.
-func Output(outputPath, policy, policyBase64 string) error {
+// Output writes the generated policy according to format.
+//
+// format "base64" (default): stdout → print base64; file → write <stem>_base64
+// format "text":             stdout → print plain rego; file → write <stem>.rego
+// format "both":             stdout → print both; file → write both files
+//
+// outputPath is the user-supplied --out value (stem); an empty string means stdout.
+func Output(outputPath, format, policy, policyBase64 string) error {
+	writeText := format == FormatText || format == FormatBoth
+	writeBase64 := format == FormatBase64 || format == FormatBoth
+
 	if outputPath == "" {
-		// Print plain policy to stdout only
-		fmt.Println(policy)
+		// Print to stdout
+		if writeText {
+			fmt.Println(policy)
+		}
+		if writeBase64 {
+			fmt.Println(policyBase64)
+		}
 		return nil
 	}
 
-	// Write plain policy
-	if err := os.WriteFile(outputPath, []byte(policy), 0644); err != nil {
-		return fmt.Errorf("failed to write Rego policy to file: %w", err)
+	// Write to file(s)
+	if writeText {
+		textPath := textOutputPath(outputPath)
+		if err := os.WriteFile(textPath, []byte(policy), 0644); err != nil {
+			return fmt.Errorf("failed to write Rego policy to file: %w", err)
+		}
+		fmt.Printf("%s: %s\n", successMessage, textPath)
 	}
-	fmt.Printf("%s: %s\n", successMessage, outputPath)
 
-	// Write IBM CC base64 policy to companion file
-	b64Path := base64OutputPath(outputPath)
-	if err := os.WriteFile(b64Path, []byte(policyBase64), 0644); err != nil {
-		return fmt.Errorf("failed to write base64 Rego policy to file: %w", err)
+	if writeBase64 {
+		b64Path := base64OutputPath(outputPath)
+		if err := os.WriteFile(b64Path, []byte(policyBase64), 0644); err != nil {
+			return fmt.Errorf("failed to write base64 Rego policy to file: %w", err)
+		}
+		fmt.Printf("%s: %s\n", successMessageBase64, b64Path)
 	}
-	fmt.Printf("%s: %s\n", successMessageBase64, b64Path)
 
 	return nil
 }
