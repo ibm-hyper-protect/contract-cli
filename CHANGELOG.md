@@ -1,3 +1,17 @@
+## [1.33.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.33.0...v1.33.1) (2026-08-31)
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.42.0 ([#176](https://github.com/ibm-hyper-protect/contract-cli/issues/176)) ([89faaed](https://github.com/ibm-hyper-protect/contract-cli/commit/89faaede00fb2c1394da9585bde3724f8907e043))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.33.0 ([a1c89f5](https://github.com/ibm-hyper-protect/contract-cli/commit/a1c89f5c5072200f99b778b6c3288e3b32c6261f))
+
+### CI/CD updates
+
+* **deps:** bump anchore/sbom-action/download-syft ([#173](https://github.com/ibm-hyper-protect/contract-cli/issues/173)) ([7f2d1e8](https://github.com/ibm-hyper-protect/contract-cli/commit/7f2d1e8091994c5e26a0812442dbc3154c6b4ae6))
+
 ## [1.33.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.3...v1.33.0) (2026-08-31)
 
 ### Features
