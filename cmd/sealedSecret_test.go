@@ -29,70 +29,58 @@ const (
 	sampleSealedSecretInput = "value123"
 )
 
-// TestSealedSecretCmd_EnvType tests if sealed secret command can generate env type sealed secret
-func TestSealedSecretCmd_EnvType(t *testing.T) {
-	// Create unique output file for this test
+// TestSealedSecretCmd_EnvType_SingleOut tests --out with a single file;
+// sealed secret goes to that file, keys default to sealed_decryption.pem / sealed_encryption.pem.
+func TestSealedSecretCmd_EnvType_SingleOut(t *testing.T) {
 	tmpDir := t.TempDir()
 	outputPath := filepath.Join(tmpDir, "sealed-secret-env-output.txt")
 
-	// Capture output
 	buf := new(bytes.Buffer)
 	rootCmd.SetOut(buf)
 	rootCmd.SetErr(buf)
 
 	rootCmd.SetArgs([]string{sealedSecret.ParameterName, "--in", sampleSealedSecretInput, "--type", "env", "--out", outputPath})
 	err := sealedSecretCmd.Execute()
-
 	assert.NoError(t, err)
 
-	// Verify the three split output files were created with the correct content
-	sealedValuePath := filepath.Join(tmpDir, "sealed-secret-env-output_SealedValue.txt")
-	decryptionKeyPath := filepath.Join(tmpDir, "sealed-secret-env-output_DecryptionKey.txt")
-	verificationKeyPath := filepath.Join(tmpDir, "sealed-secret-env-output_VerificationKey.txt")
-
-	sealedContent, err := os.ReadFile(sealedValuePath)
+	sealedContent, err := os.ReadFile(outputPath)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, string(sealedContent))
 
-	decryptionContent, err := os.ReadFile(decryptionKeyPath)
+	decryptionContent, err := os.ReadFile(filepath.Join(tmpDir, sealedSecret.DefaultDecryptionKeyFileName))
 	assert.NoError(t, err)
 	assert.NotEmpty(t, string(decryptionContent))
 
-	verificationContent, err := os.ReadFile(verificationKeyPath)
+	verificationContent, err := os.ReadFile(filepath.Join(tmpDir, sealedSecret.DefaultVerificationKeyFileName))
 	assert.NoError(t, err)
 	assert.NotEmpty(t, string(verificationContent))
 }
 
-// TestSealedSecretCmd_WorkloadType tests if sealed secret command can generate workload type sealed secret
-func TestSealedSecretCmd_WorkloadType(t *testing.T) {
-	// Create unique output file for this test
+// TestSealedSecretCmd_WorkloadType_ThreeOut tests --out with 3 comma-separated file paths.
+func TestSealedSecretCmd_WorkloadType_ThreeOut(t *testing.T) {
 	tmpDir := t.TempDir()
-	outputPath := filepath.Join(tmpDir, "sealed-secret-workload-output.txt")
+	sealedPath := filepath.Join(tmpDir, "my_sealed.txt")
+	decryptPath := filepath.Join(tmpDir, "my_decryption.pem")
+	verifyPath := filepath.Join(tmpDir, "my_verification.pem")
+	outFlag := sealedPath + "," + decryptPath + "," + verifyPath
 
-	// Capture output
 	buf := new(bytes.Buffer)
 	rootCmd.SetOut(buf)
 	rootCmd.SetErr(buf)
 
-	rootCmd.SetArgs([]string{sealedSecret.ParameterName, "--in", sampleSealedSecretInput, "--type", "workload", "--out", outputPath})
+	rootCmd.SetArgs([]string{sealedSecret.ParameterName, "--in", sampleSealedSecretInput, "--type", "workload", "--out", outFlag})
 	err := sealedSecretCmd.Execute()
-
 	assert.NoError(t, err)
 
-	// Verify the three split output files were created with the correct content
-	sealedValuePath := filepath.Join(tmpDir, "sealed-secret-workload-output_SealedValue.txt")
-	decryptionKeyPath := filepath.Join(tmpDir, "sealed-secret-workload-output_DecryptionKey.txt")
-	verificationKeyPath := filepath.Join(tmpDir, "sealed-secret-workload-output_VerificationKey.txt")
-
-	sealedContent, err := os.ReadFile(sealedValuePath)
+	sealedContent, err := os.ReadFile(sealedPath)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, string(sealedContent))
 
-	decryptionContent, err := os.ReadFile(decryptionKeyPath)
+	decryptionContent, err := os.ReadFile(decryptPath)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, string(decryptionContent))
 
-	verificationContent, err := os.ReadFile(verificationKeyPath)
+	verificationContent, err := os.ReadFile(verifyPath)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, string(verificationContent))
 }

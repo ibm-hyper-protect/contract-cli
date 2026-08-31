@@ -41,7 +41,10 @@ of your contract. The secret can be provided as a string or read from a file.`
 	TypeFlagDescription = "Type of secret: 'env' for env section of contract or 'workload' for workload section of contract"
 
 	OutputFlagName        = "out"
-	OutputFlagDescription = "Path to save sealed secret output (optional, prints to stdout if not specified)"
+	OutputFlagDescription = "Comma-separated output paths (1 or 3 values). With 1 value: <sealed-secret-file> (key files default to sealed_decryption.pem and sealed_verification.pem). With 3 values: <sealed-secret-file>,<decryption-key-file>,<verification-key-file>. Omit to print JSON to stdout."
+
+	DefaultDecryptionKeyFileName   = "sealed_decryption.pem"
+	DefaultVerificationKeyFileName = "sealed_verification.pem"
 
 	EncryptionKeyFlagName        = "encryptionkey"
 	EncryptionKeyFlagDescription = "Path to RSA private key for encryption (optional, generates new key if not provided)"
@@ -182,7 +185,10 @@ func Output(sealedSecret, decryptionKeyPEM, verificationKeyPEM, outputPath strin
 	verificationKeyFormatted := formatKeyWithEscapedNewlines(verificationKeyPEM)
 
 	if outputPath != "" {
-		sealedValuePath, decryptionKeyPath, verificationKeyPath := splitOutputPaths(outputPath)
+		sealedValuePath, decryptionKeyPath, verificationKeyPath, err := splitOutputPaths(outputPath)
+		if err != nil {
+			return err
+		}
 
 		if err := common.WriteDataToFile(sealedValuePath, sealedSecret); err != nil {
 			return fmt.Errorf("failed to write sealed secret to file: %w", err)
@@ -194,9 +200,9 @@ func Output(sealedSecret, decryptionKeyPEM, verificationKeyPEM, outputPath strin
 			return fmt.Errorf("failed to write verification key to file: %w", err)
 		}
 
-		fmt.Printf("Sealed value written to:      %s\n", sealedValuePath)
-		fmt.Printf("Decryption key written to:    %s\n", decryptionKeyPath)
-		fmt.Printf("Verification key written to:  %s\n", verificationKeyPath)
+		fmt.Printf("Sealed value written to:               %s\n", sealedValuePath)
+		fmt.Printf("Decryption key written to:  (private)  %s\n", decryptionKeyPath)
+		fmt.Printf("Verification key written to: (public)  %s\n", verificationKeyPath)
 	} else {
 		// Print JSON to stdout when no output path is specified
 		out := SealedSecretOutput{
@@ -214,18 +220,38 @@ func Output(sealedSecret, decryptionKeyPEM, verificationKeyPEM, outputPath strin
 	return nil
 }
 
-// splitOutputPaths derives the three output file paths from the user-supplied base path.
-// The extension (if any) is preserved; suffixes are inserted before it.
-// Example: "sealed_secret.yaml" → "sealed_secret_SealedValue.yaml",
+// splitOutputPaths parses the user-supplied --out value into the three concrete
+// file paths used to write the sealed secret, decryption key, and verification key.
 //
-//	"sealed_secret_DecryptionKey.yaml", "sealed_secret_VerificationKey.yaml"
-func splitOutputPaths(outputPath string) (sealedValuePath, decryptionKeyPath, verificationKeyPath string) {
-	ext := filepath.Ext(outputPath)
-	base := strings.TrimSuffix(outputPath, ext)
+// Accepted forms:
+//
+//	1 value  – "<sealed-secret-file>"
+//	           Keys fall back to DefaultDecryptionKeyFileName and DefaultVerificationKeyFileName
+//	           in the same directory as the sealed-secret file.
+//
+//	3 values – "<sealed-secret-file>,<decryption-key-file>,<verification-key-file>"
+//	           Each path is used exactly as provided.
+//
+// Any other count returns an error.
+func splitOutputPaths(outputPath string) (sealedValuePath, decryptionKeyPath, verificationKeyPath string, err error) {
+	parts := strings.Split(outputPath, ",")
+	for i, p := range parts {
+		parts[i] = strings.TrimSpace(p)
+	}
 
-	sealedValuePath = base + "_SealedValue" + ext
-	decryptionKeyPath = base + "_DecryptionKey" + ext
-	verificationKeyPath = base + "_VerificationKey" + ext
+	switch len(parts) {
+	case 1:
+		sealedValuePath = parts[0]
+		dir := filepath.Dir(parts[0])
+		decryptionKeyPath = filepath.Join(dir, DefaultDecryptionKeyFileName)
+		verificationKeyPath = filepath.Join(dir, DefaultVerificationKeyFileName)
+	case 3:
+		sealedValuePath = parts[0]
+		decryptionKeyPath = parts[1]
+		verificationKeyPath = parts[2]
+	default:
+		err = fmt.Errorf("--out accepts 1 or 3 comma-separated values, got %d", len(parts))
+	}
 	return
 }
 

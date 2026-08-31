@@ -463,27 +463,50 @@ contract-cli encrypt \
 
 ### Generate Sealed Secrets for CCCO
 
+The `--out` flag accepts **1 or 3 comma-separated file paths**.
+The order is fixed and positional — position 1 is always the sealed secret value,
+position 2 is always the decryption (private) key, position 3 is always the
+verification (public) key.
+
+```
+--out <sealed-secret-file>,<decryption-key-file>,<verification-key-file>
+        position 1 (sealed)   position 2 (private)  position 3 (public)
+```
+
 ```bash
-# Generate sealed secret for environment variables (output to files)
+# 1-value form — key files use default names in the same directory
 contract-cli sealed-secret \
   --in "value123" \
   --type env \
-  --out sealed-secret.txt
+  --out sealed_secret.txt
+# Writes:
+#   sealed_secret.txt          ← sealed value
+#   sealed_decryption.pem      ← RSA private key  (decryption key, keep secure)
+#   sealed_verification.pem    ← RSA public key   (verification key)
 
-# Generate sealed secret for workload data (output to files)
+# 3-value form — all three file names are provided explicitly
+contract-cli sealed-secret \
+  --in "value123" \
+  --type env \
+  --out sealed_secret.txt,my_decryption.pem,my_verification.pem
+# Writes:
+#   sealed_secret.txt     ← sealed value          (position 1)
+#   my_decryption.pem     ← RSA private key       (position 2 — keep secure)
+#   my_verification.pem   ← RSA public key        (position 3)
+
+# Generate sealed secret for workload section (1-value form)
 contract-cli sealed-secret \
   --in workload-secret-data \
   --type workload \
-  --out sealed-workload.txt
+  --out sealed_workload.txt
 
-# Generate sealed secret from file (output to files)
+# Generate sealed secret from a file (3-value form)
 contract-cli sealed-secret \
   --in secrets.txt \
   --type env \
-  --out sealed-secret.txt
+  --out sealed_secret.txt,sealed_decryption.pem,sealed_verification.pem
 
 # Generate sealed secret with custom encryption and signing keys
-
 openssl genrsa -out encryption.pem 2048
 openssl genrsa -out signing.pem 2048
 
@@ -492,7 +515,7 @@ contract-cli sealed-secret \
   --type env \
   --encryptionkey encryption.pem \
   --signingkey signing.pem \
-  --out sealed-secret.txt
+  --out sealed_secret.txt,sealed_decryption.pem,sealed_verification.pem
 
 # Print all values as JSON to stdout (omit --out)
 echo "value123" | contract-cli sealed-secret \
@@ -500,13 +523,32 @@ echo "value123" | contract-cli sealed-secret \
   --type env
 ```
 
-When `--out` is provided (e.g. `--out sealed_secret.txt`) three files are written:
+**Output files — 1-value form** (`--out sealed_secret.txt`):
 
-| File | Contents |
-|------|----------|
-| `sealed_secret_SealedValue.txt` | Sealed secret for use in the contract |
-| `sealed_secret_DecryptionKey.txt` | RSA private key for decryption — keep secure |
-| `sealed_secret_VerificationKey.txt` | RSA public key for signature verification |
+| File | Key type | Contents |
+|------|----------|----------|
+| `sealed_secret.txt` | — | Sealed secret value for use in the contract |
+| `sealed_decryption.pem` | Private key | RSA private key for decryption — **keep secure** |
+| `sealed_verification.pem` | Public key | RSA public key for signature verification |
+
+**Output files — 3-value form** (`--out sealed_secret.txt,my_decryption.pem,my_verification.pem`):
+
+| Position | File (example) | Key type | Contents |
+|----------|----------------|----------|----------|
+| 1 | `sealed_secret.txt` | — | Sealed secret value for use in the contract |
+| 2 | `my_decryption.pem` | Private key | RSA private key for decryption — **keep secure** |
+| 3 | `my_verification.pem` | Public key | RSA public key for signature verification |
+
+> ⚠️ **Order matters.** Position 2 is always the private decryption key and position 3 is
+> always the public verification key. Swapping them will cause runtime failures.
+
+The terminal confirms exactly where each file was written:
+
+```
+Sealed value written to:               sealed_secret.txt
+Decryption key written to:  (private)  sealed_decryption.pem
+Verification key written to: (public)  sealed_verification.pem
+```
 
 When `--out` is **omitted**, all three values are printed to stdout as JSON:
 

@@ -181,47 +181,61 @@ func TestGenerateSealedSecret_InvalidSigningKeyPath(t *testing.T) {
 	assert.Empty(t, encryptedSha)
 }
 
-// TestOutput_WithFilePath tests Output function with valid file path
-func TestOutput_WithFilePath(t *testing.T) {
-	sealedSecret := "sealed-secret-data"
+// TestOutput_WithSingleFilePath tests Output when --out has 1 value;
+// key files should default to sealed_decryption.pem / sealed_encryption.pem
+// in the same directory.
+func TestOutput_WithSingleFilePath(t *testing.T) {
+	sealedSecretVal := "sealed-secret-data"
 	decryptionKey := "-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----"
 	verificationKey := "-----BEGIN PUBLIC KEY-----\ntest\n-----END PUBLIC KEY-----"
 
-	tmpDir := "../../build"
-	os.MkdirAll(tmpDir, 0755)
+	tmpDir := t.TempDir()
 	outputFile := filepath.Join(tmpDir, "test_output.txt")
 
-	// Remove any pre-existing split files
-	os.Remove(filepath.Join(tmpDir, "test_output_SealedValue.txt"))
-	os.Remove(filepath.Join(tmpDir, "test_output_DecryptionKey.txt"))
-	os.Remove(filepath.Join(tmpDir, "test_output_VerificationKey.txt"))
-
-	err := Output(sealedSecret, decryptionKey, verificationKey, outputFile)
+	err := Output(sealedSecretVal, decryptionKey, verificationKey, outputFile)
 	assert.NoError(t, err)
 
-	// Verify the three split files exist and contain the expected content
-	sealedValuePath := filepath.Join(tmpDir, "test_output_SealedValue.txt")
-	decryptionKeyPath := filepath.Join(tmpDir, "test_output_DecryptionKey.txt")
-	verificationKeyPath := filepath.Join(tmpDir, "test_output_VerificationKey.txt")
-
-	_, statErr := os.Stat(sealedValuePath)
-	assert.NoError(t, statErr)
-
-	sealedContent, readErr := os.ReadFile(sealedValuePath)
+	sealedContent, readErr := os.ReadFile(outputFile)
 	assert.NoError(t, readErr)
 	assert.Contains(t, string(sealedContent), "sealed-secret-data")
 
-	decryptionContent, readErr := os.ReadFile(decryptionKeyPath)
+	decryptionContent, readErr := os.ReadFile(filepath.Join(tmpDir, DefaultDecryptionKeyFileName))
 	assert.NoError(t, readErr)
 	assert.Contains(t, string(decryptionContent), "BEGIN PRIVATE KEY")
 
-	verificationContent, readErr := os.ReadFile(verificationKeyPath)
+	verificationContent, readErr := os.ReadFile(filepath.Join(tmpDir, DefaultVerificationKeyFileName))
 	assert.NoError(t, readErr)
 	assert.Contains(t, string(verificationContent), "BEGIN PUBLIC KEY")
+}
 
-	os.Remove(sealedValuePath)
-	os.Remove(decryptionKeyPath)
-	os.Remove(verificationKeyPath)
+// TestOutput_WithThreeFilePaths tests Output when --out has 3 comma-separated values;
+// each file should receive its designated content.
+func TestOutput_WithThreeFilePaths(t *testing.T) {
+	sealedSecretVal := "sealed-secret-data"
+	decryptionKey := "-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----"
+	verificationKey := "-----BEGIN PUBLIC KEY-----\ntest\n-----END PUBLIC KEY-----"
+
+	tmpDir := t.TempDir()
+	sealedPath := filepath.Join(tmpDir, "my_secret.txt")
+	decryptPath := filepath.Join(tmpDir, "my_decrypt.pem")
+	verifyPath := filepath.Join(tmpDir, "my_verify.pem")
+
+	outFlag := sealedPath + "," + decryptPath + "," + verifyPath
+
+	err := Output(sealedSecretVal, decryptionKey, verificationKey, outFlag)
+	assert.NoError(t, err)
+
+	sealedContent, readErr := os.ReadFile(sealedPath)
+	assert.NoError(t, readErr)
+	assert.Contains(t, string(sealedContent), "sealed-secret-data")
+
+	decryptionContent, readErr := os.ReadFile(decryptPath)
+	assert.NoError(t, readErr)
+	assert.Contains(t, string(decryptionContent), "BEGIN PRIVATE KEY")
+
+	verificationContent, readErr := os.ReadFile(verifyPath)
+	assert.NoError(t, readErr)
+	assert.Contains(t, string(verificationContent), "BEGIN PUBLIC KEY")
 }
 
 // TestOutput_WithoutFilePath tests Output function without file path (prints JSON to stdout)
@@ -262,6 +276,23 @@ func TestOutput_InvalidPath(t *testing.T) {
 
 	err := Output(sealedSecret, decryptionKey, verificationKey, testInvalidPath)
 	assert.Error(t, err)
+}
+
+// TestOutput_InvalidOutCount tests Output function with wrong number of comma-separated values
+func TestOutput_InvalidOutCount(t *testing.T) {
+	sealedSecret := "sealed-secret-data"
+	decryptionKey := "test-key"
+	verificationKey := "test-key"
+
+	// 2 values — should be rejected
+	err := Output(sealedSecret, decryptionKey, verificationKey, "file1.txt,file2.txt")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "--out accepts 1 or 3 comma-separated values")
+
+	// 4 values — should be rejected
+	err = Output(sealedSecret, decryptionKey, verificationKey, "f1.txt,f2.txt,f3.txt,f4.txt")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "--out accepts 1 or 3 comma-separated values")
 }
 
 // TestFormatKeyWithEscapedNewlines_WithNewlines tests formatKeyWithEscapedNewlines with newlines
