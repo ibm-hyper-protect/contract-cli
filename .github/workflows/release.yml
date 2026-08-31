@@ -98,7 +98,7 @@ jobs:
                 -p @semantic-release/git \
                 -p @semantic-release/github \
                 -p @semantic-release/release-notes-generator \
-                -p conventional-changelog-conventionalcommits \
+                -p conventional-changelog-conventionalcommits@8 \
                 -p semantic-release \
                 semantic-release --dry-run
           else
@@ -107,7 +107,7 @@ jobs:
                 -p @semantic-release/git \
                 -p @semantic-release/github \
                 -p @semantic-release/release-notes-generator \
-                -p conventional-changelog-conventionalcommits \
+                -p conventional-changelog-conventionalcommits@8 \
                 -p semantic-release \
                 semantic-release
           fi
