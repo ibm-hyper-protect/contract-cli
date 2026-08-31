@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ccco-workload-pod
+  labels:
+    app: ccco-workload
+    environment: production
+spec:
+  initContainers:
+  - name: init-setup
+    image: quay.io/prometheus/busybox:latest
+    command: ["/bin/sh"]
+    args: ["-c", "echo 'Initializing CCCO workload...' && sleep 2"]
+  containers:
+  - name: nginx-frontend
+    image: docker.io/library/nginx:latest
+    command: ["/bin/sh"]
+    args: ["-c", "nginx -g 'daemon off;'"]
+    ports:
+    - containerPort: 80
+      protocol: TCP
+  - name: redis-cache
+    image: docker.io/library/redis:alpine
+    command: ["redis-server"]
+    args: ["--appendonly", "yes"]
+    ports:
+    - containerPort: 6379
+      protocol: TCP
+  - name: postgres-db
+    image: docker.io/library/postgres:15-alpine
+    command: ["docker-entrypoint.sh"]
+    args: ["postgres"]
+    ports:
+    - containerPort: 5432
+      protocol: TCP
+    env:
+    - name: POSTGRES_PASSWORD
+      value: "example"
+  restartPolicy: Always
+
