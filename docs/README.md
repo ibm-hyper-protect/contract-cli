@@ -34,10 +34,12 @@ Complete command reference and usage guide for the IBM Confidential Computing Co
   - [sign-contract](#sign-contract)
   - [encrypt](#encrypt)
   - [encrypt-string](#encrypt-string)
+  - [decrypt](#decrypt)
   - [get-certificate](#get-certificate)
   - [image](#image)
   - [list-encryptioncert-versions](#list-encryptioncert-versions)
   - [sealed-secret](#sealed-secret)
+  - [rego-generator](#rego-generator)
   - [validate-contract](#validate-contract)
   - [validate-network](#validate-network)
   - [validate-encryption-certificate](#validate-encryption-certificate)
@@ -703,6 +705,63 @@ cat workload.yaml | contract-cli encrypt-string --in -
 
 ---
 
+### decrypt
+
+Decrypt encrypted strings in IBM Confidential Computing format using an RSA private key. Supports both `contract-basic` (CCRT/CCRV) and `hyper-protect-basic` (CCCO/HPVS) encryption formats.
+
+#### Usage
+
+```bash
+contract-cli decrypt [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to encrypted input file or encrypted string (use '-' for standard input) |
+| `--priv` | string | Yes | Path to RSA private key file (PEM format) |
+| `--password` | string | No | Password for encrypted private key |
+| `--out` | string | No | Path to save decrypted output (prints to stdout if omitted) |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Decrypt from file, output to stdout:**
+```bash
+contract-cli decrypt --in encrypted.txt --priv private.key
+```
+
+**Decrypt raw encrypted string:**
+```bash
+contract-cli decrypt \
+  --in "hyper-protect-basic.xxx.yyy" \
+  --priv private.key
+```
+
+**Save decrypted output to file:**
+```bash
+contract-cli decrypt \
+  --in encrypted.txt \
+  --priv private.key \
+  --out decrypted.txt
+```
+
+**With password-protected private key:**
+```bash
+contract-cli decrypt \
+  --in encrypted.txt \
+  --priv private.key \
+  --password "yourpassword"
+```
+
+**Using standard input:**
+```bash
+cat encrypted.txt | contract-cli decrypt --in - --priv private.key
+```
+
+---
+
 ### get-certificate
 
 Extract a specific encryption certificate version from download-certificate output. Parses the JSON output from download-certificate and extracts the certificate for the specified version.
@@ -1111,6 +1170,130 @@ When `--out` is **not** provided, all three values are printed to stdout as a JS
 
 ---
 
+### rego-generator
+Generate an OPA v1 Rego policy from a Kubernetes pod specification for use with IBM Confidential Computing Containers (CCCO). The generated policy enforces container image and command validation via the Kata Agent Policy engine.
+
+Use `--format` to control what is written to stdout or to file:
+
+| `--format` | stdout | with `--out` |
+|------------|--------|--------------|
+| `base64` *(default)* | prints IBM CC base64 policy only | writes `<stem>_base64` only |
+| `text` | prints plain Rego policy only | writes `<stem>.rego` only |
+| `both` | prints both | writes both files |
+
+No separate `base64` encoding step is required.
+
+#### Usage
+
+```bash
+contract-cli rego-generator [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Path to Kubernetes resource YAML file (use `-` for standard input) |
+| `--out` | string | No | Output stem used for file names (e.g. `policy` or `policy.rego`). Prints to stdout if not specified. |
+| `--format` | string | No | Output format: `base64` (default), `text`, or `both` |
+| `-h, --help` | - | No | Display help information |
+
+#### Supported Resource Types
+
+| Kind | Pod spec location |
+|------|-------------------|
+| `Pod` | directly |
+| `Deployment` | `spec.template` |
+| `StatefulSet` | `spec.template` |
+| `DaemonSet` | `spec.template` |
+| `CronJob` | `spec.jobTemplate.spec.template` |
+
+#### Output Files
+
+Files written when `--out policy` is specified (stem `policy`):
+
+| `--format` | Files written |
+|------------|---------------|
+| `base64` *(default)* | `policy_base64` |
+| `text` | `policy.rego` |
+| `both` | `policy.rego` + `policy_base64` |
+
+The `policy_base64` value maps directly to `confidential-containers.regoValidator.policy` in the contract workload section.
+
+#### Examples
+
+**Print only the base64 policy to stdout (default):**
+```bash
+contract-cli rego-generator --in pod.yaml
+```
+
+**Print only the plain Rego source to stdout:**
+```bash
+contract-cli rego-generator --in pod.yaml --format text
+```
+
+**Print both the plain Rego source and the base64 policy to stdout:**
+```bash
+contract-cli rego-generator --in pod.yaml --format both
+```
+
+**Save only the base64 policy to file (default):**
+```bash
+# Creates policy_base64 only
+contract-cli rego-generator --in pod.yaml --out policy
+```
+
+**Save only the plain Rego source to file:**
+```bash
+# Creates policy.rego only
+contract-cli rego-generator --in pod.yaml --out policy --format text
+```
+
+**Save both files (Rego source + base64):**
+```bash
+# Creates policy.rego and policy_base64
+contract-cli rego-generator \
+  --in deployment.yaml \
+  --out policy \
+  --format both
+```
+
+**Generate policy from stdin:**
+```bash
+cat pod.yaml | contract-cli rego-generator --in -
+```
+
+**End-to-end: generate policy and embed in contract workload section:**
+```bash
+# Step 1 — generate the base64 policy file (default format)
+contract-cli rego-generator \
+  --in pod.yaml \
+  --out policy
+# Output:
+#   Successfully generated Rego policy (base64): policy_base64
+
+# Step 2 — read the ready-to-use base64 value (no manual encoding needed)
+POLICY_B64=$(cat policy_base64)
+
+# Step 3 — use in contract workload YAML under confidential-containers.regoValidator.policy
+cat <<EOF > workload.yaml
+type: workload
+confidential-containers:
+  regoValidator:
+    policy: ${POLICY_B64}
+EOF
+```
+
+**Output format:**
+The command outputs a complete OPA v1 Rego policy including:
+- `CreateContainerRequest` — wiring rule that requires both `allow_image` and `allow_command`
+- OCP baseline `allow_image` / `allow_command` — admits Kata pause/infra containers
+- Per-container `allow_image()` rules — anchored regex per unique image
+- Per-container `allow_command()` rules — strict (with `count(args)` and per-index checks) for containers with explicit `command`/`args`, permissive (image-only) for ENTRYPOINT-only containers
+- Named script validator functions for multiline shell script arguments
+
+---
+
 ### initdata
 Create initdata annotation from signed and encrypted contract for IBM Confidential Computing Containers for Red Hat OpenShift Container Platform. Supports both Peer Pod and Baremetal solutions.
 
@@ -1366,6 +1549,34 @@ Error: permission denied reading file
 - Ensure you have read access to input files
 - Verify output directory is writable
 
+### Git Commits Showing Unverified on GitHub
+
+**Symptom:**
+Commits show **Unverified** badge on GitHub even after configuring SSH signing locally.
+
+**Cause:**
+The SSH key is added to GitHub as an **Authentication Key** only. GitHub requires a separate **Signing Key** entry to verify commit signatures.
+
+**Solution:**
+
+1. Copy your public key:
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+2. Go to **GitHub → Settings → SSH and GPG keys → New SSH key**
+
+3. Fill in:
+   - **Title:** `Mac Signing` (or any name)
+   - **Key type:** `Signing Key` ← must be Signing Key, not Authentication Key
+   - **Key:** paste the output from step 1
+
+4. Click **Add SSH key**
+
+GitHub will now show **Verified** on all commits signed with that key — no new push needed.
+
+> **Note:** You can have the same key added twice — once as Authentication Key (for push/pull) and once as Signing Key (for commit verification).
+
 ---
 
 ## Examples
@@ -1411,4 +1622,3 @@ The [`samples/`](../samples/) directory contains working examples:
 - [Open an issue](https://github.com/ibm-hyper-protect/contract-cli/issues/new/choose)
 - [Ask a question](https://github.com/ibm-hyper-protect/contract-cli/discussions)
 - Check the [troubleshooting](#troubleshooting) section above
-

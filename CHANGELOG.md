@@ -1,3 +1,19 @@
+## [1.32.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.2...v1.32.3) (2026-08-17)
+
+## [1.32.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.1...v1.32.2) (2026-08-06)
+
+## [1.32.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.0...v1.32.1) (2026-08-05)
+
+### Bug Fixes
+
+* update gorelease yaml config file ([#160](https://github.com/ibm-hyper-protect/contract-cli/issues/160)) ([6ed3224](https://github.com/ibm-hyper-protect/contract-cli/commit/6ed3224d0d83f00d208d28576702e2cb55370240))
+
+## [1.32.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.31.1...v1.32.0) (2026-08-05)
+
+### Features
+
+* add decrypt command to decrypt the encrypted content  ([#157](https://github.com/ibm-hyper-protect/contract-cli/issues/157)) ([b4f6ef4](https://github.com/ibm-hyper-protect/contract-cli/commit/b4f6ef4f473b3c62448209608246b1f3e46a43de))
+
 ## [1.31.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.31.0...v1.31.1) (2026-08-01)
 
 ### Bug Fixes

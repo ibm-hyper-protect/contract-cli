@@ -102,6 +102,17 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - Automatic key generation or use custom encryption/signing keys
   - Output sealed secrets with decryption and verification keys
 
+- **Rego Policy Generation**
+  - Generate OPA v1 Rego policy from Kubernetes Pod, Deployment, StatefulSet, DaemonSet, or CronJob YAML
+  - Automatically extract container images and commands to produce `allow_image()` and `allow_command()` rules
+  - Strict per-argument validation for containers with explicit `command`/`args`
+  - Permissive image-only validation for ENTRYPOINT-only containers
+  - Multiline shell scripts extracted into named validator functions
+  - OCP baseline rules for Kata pause/infra containers included automatically
+  - **`--format base64` (default)** — outputs only the IBM CC Base64 policy; ready for `regoValidator.policy` with no extra encoding step
+  - **`--format text`** — outputs only the plain Rego source
+  - **`--format both`** — outputs both the plain Rego source and the Base64 policy
+
 - **Archive Management**
   - Generate Base64 tar archives of `docker-compose.yaml` or `pods.yaml`
   - Support encrypted base64 tar generation
@@ -510,6 +521,45 @@ When `--out` is **omitted**, all three values are printed to stdout as JSON:
 > **Note:** `decryption_key` and `verification_key` have newlines replaced with `\n`.
 > To restore a PEM for use with OpenSSL: `echo '<value>' | sed 's/\\n/\n/g'`
 
+### Generate a Rego Policy for CCCO
+
+```bash
+# Print only the base64 policy to stdout (default)
+contract-cli rego-generator --in pod.yaml
+
+# Print only the plain Rego source to stdout
+contract-cli rego-generator --in pod.yaml --format text
+
+# Print both to stdout
+contract-cli rego-generator --in pod.yaml --format both
+
+# Save only the base64 policy to file (default) — writes policy_base64
+contract-cli rego-generator --in pod.yaml --out policy
+
+# Save only the plain Rego source to file — writes policy.rego
+contract-cli rego-generator --in pod.yaml --out policy --format text
+
+# Save both files — writes policy.rego and policy_base64
+contract-cli rego-generator --in deployment.yaml --out policy --format both
+
+# Generate policy from stdin
+cat pod.yaml | contract-cli rego-generator --in -
+```
+
+With `--format both --out policy`, two files are created:
+- `policy.rego` — the plain OPA Rego source
+- `policy_base64` — Base64-encoded policy, ready to paste directly into `regoValidator.policy`
+
+```bash
+# Use the generated base64 value directly — no manual encoding needed
+POLICY_B64=$(cat policy_base64)
+```
+
+The generated policy includes:
+- `CreateContainerRequest` — wiring rule requiring both `allow_image` and `allow_command`
+- OCP baseline rules admitting Kata pause/infra containers
+- Per-container `allow_image()` and `allow_command()` rules
+
 ## Usage
 
 ```bash
@@ -531,6 +581,7 @@ Available Commands:
   base64                          Encode input as Base64
   base64-tgz                      Create Base64 tar archive of container configurations
   contract-template               Generate a contract template
+  decrypt                         Decrypt encrypted text in IBM Confidential Computing format
   decrypt-attestation             Decrypt encrypted attestation records
   download-certificate            Download encryption certificates
   encrypt                         Generate signed and encrypted contract
@@ -538,6 +589,7 @@ Available Commands:
   get-certificate                 Extract specific certificate version from download output
   help                            Help about any command
   sealed-secret                   Generate sealed secret for CCCO
+  rego-generator                  Generate OPA Rego policy from Kubernetes pod YAML
   image                           Get IBM Confidential Computing Container Runtime image details from IBM Cloud
   initdata                        Gzip and Encoded initdata annotation
   list-encryptioncert-versions    List available encryption certificate versions
