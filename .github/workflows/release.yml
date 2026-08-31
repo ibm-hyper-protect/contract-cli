@@ -94,16 +94,20 @@ jobs:
         run: |
           if [[ "${{ steps.dry_run.outputs.dry_run }}" == "true" ]]; then
             npx -p @semantic-release/changelog \
+                -p @semantic-release/commit-analyzer \
                 -p @semantic-release/git \
                 -p @semantic-release/github \
-                -p conventional-changelog-conventionalcommits \
+                -p @semantic-release/release-notes-generator \
+                -p conventional-changelog-conventionalcommits@8 \
                 -p semantic-release \
                 semantic-release --dry-run
           else
             npx -p @semantic-release/changelog \
+                -p @semantic-release/commit-analyzer \
                 -p @semantic-release/git \
                 -p @semantic-release/github \
-                -p conventional-changelog-conventionalcommits \
+                -p @semantic-release/release-notes-generator \
+                -p conventional-changelog-conventionalcommits@8 \
                 -p semantic-release \
                 semantic-release
           fi
