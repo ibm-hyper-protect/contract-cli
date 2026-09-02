@@ -98,15 +98,7 @@ type ProcessResult struct {
 
 // Process generates the pod YAML template for the given image reference.
 func Process(imageRef, containerName, username, password string) (ProcessResult, error) {
-	var auth *goImageSpec.AuthConfig
-	if username != "" || password != "" {
-		auth = &goImageSpec.AuthConfig{
-			Username: username,
-			Password: password,
-		}
-	}
-
-	yaml, imageUser, _, _, err := goImageSpec.GenerateImageSpec(imageRef, containerName, auth)
+	yaml, imageUser, _, _, err := goImageSpec.HpccGenerateImageSpec(imageRef, containerName, username, password)
 	if err != nil {
 		return ProcessResult{}, fmt.Errorf("failed to generate image spec for %q: %w", imageRef, err)
 	}
