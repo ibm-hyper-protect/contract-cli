@@ -1,3 +1,37 @@
+## [1.33.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.33.0...v1.33.1) (2026-08-31)
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.42.0 ([#176](https://github.com/ibm-hyper-protect/contract-cli/issues/176)) ([89faaed](https://github.com/ibm-hyper-protect/contract-cli/commit/89faaede00fb2c1394da9585bde3724f8907e043))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.33.0 ([a1c89f5](https://github.com/ibm-hyper-protect/contract-cli/commit/a1c89f5c5072200f99b778b6c3288e3b32c6261f))
+
+### CI/CD updates
+
+* **deps:** bump anchore/sbom-action/download-syft ([#173](https://github.com/ibm-hyper-protect/contract-cli/issues/173)) ([7f2d1e8](https://github.com/ibm-hyper-protect/contract-cli/commit/7f2d1e8091994c5e26a0812442dbc3154c6b4ae6))
+
+## [1.33.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.3...v1.33.0) (2026-08-31)
+
+### Features
+
+* Feature/rego generator ([#167](https://github.com/ibm-hyper-protect/contract-cli/issues/167)) ([a97ea8e](https://github.com/ibm-hyper-protect/contract-cli/commit/a97ea8ee9ec5d5dda84e08354d1fe1f9d780f54f))
+
+### Bug Fixes
+
+* **deps:** update go dependencies ([#166](https://github.com/ibm-hyper-protect/contract-cli/issues/166)) ([ae3e8dd](https://github.com/ibm-hyper-protect/contract-cli/commit/ae3e8dd678a1180b5fd4007eb40416f33ac46660))
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.41.1 ([#168](https://github.com/ibm-hyper-protect/contract-cli/issues/168)) ([b202724](https://github.com/ibm-hyper-protect/contract-cli/commit/b20272408a339f41b179ec5bc6e22fc21fc6d9a1))
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.41.2 ([#171](https://github.com/ibm-hyper-protect/contract-cli/issues/171)) ([eabad85](https://github.com/ibm-hyper-protect/contract-cli/commit/eabad859422e7464bed23156244721ae4907adee))
+* Fixed release workflow ([#172](https://github.com/ibm-hyper-protect/contract-cli/issues/172)) ([4553de8](https://github.com/ibm-hyper-protect/contract-cli/commit/4553de85f4020dbd980b678a7deb4a9a09cef467))
+* Fixed Release workflow ([#175](https://github.com/ibm-hyper-protect/contract-cli/issues/175)) ([ebbd3fb](https://github.com/ibm-hyper-protect/contract-cli/commit/ebbd3fbb3178dbb43796d59e625b0532ddaff9fb))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.32.3 ([bf4d38d](https://github.com/ibm-hyper-protect/contract-cli/commit/bf4d38d0aea7807b0be0a9a1a0cc57da15e3ead2))
+
+## [1.32.3](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.2...v1.32.3) (2026-08-17)
+
 ## [1.32.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.1...v1.32.2) (2026-08-06)
 
 ## [1.32.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.32.0...v1.32.1) (2026-08-05)
