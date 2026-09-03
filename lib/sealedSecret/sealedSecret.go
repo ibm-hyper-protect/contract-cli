@@ -16,7 +16,9 @@
 package sealedSecret
 
 import (
+	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
@@ -39,7 +41,10 @@ of your contract. The secret can be provided as a string or read from a file.`
 	TypeFlagDescription = "Type of secret: 'env' for env section of contract or 'workload' for workload section of contract"
 
 	OutputFlagName        = "out"
-	OutputFlagDescription = "Path to save sealed secret output (optional, prints to stdout if not specified)"
+	OutputFlagDescription = "Comma-separated output paths (1 or 3 values). With 1 value: <sealed-secret-file> (key files default to sealed_decryption.pem and sealed_verification.pem). With 3 values: <sealed-secret-file>,<decryption-key-file>,<verification-key-file>. Omit to print JSON to stdout."
+
+	DefaultDecryptionKeyFileName   = "sealed_decryption.pem"
+	DefaultVerificationKeyFileName = "sealed_verification.pem"
 
 	EncryptionKeyFlagName        = "encryptionkey"
 	EncryptionKeyFlagDescription = "Path to RSA private key for encryption (optional, generates new key if not provided)"
@@ -157,30 +162,97 @@ func GenerateSealedSecret(inputDataPath, secretType, encryptionKeyPath, signingK
 	return sealedSecret, decryptionKey, verificationKey, inputSecretSha, encryptedSecretSha, nil
 }
 
-// Output - function to output sealed secret and keys
+// SealedSecretOutput holds the JSON-serialisable output fields.
+type SealedSecretOutput struct {
+	SealedSecret    string `json:"sealed_secret"`
+	DecryptionKey   string `json:"decryption_key"`
+	VerificationKey string `json:"verification_key"`
+}
+
+// Output - function to output sealed secret and keys.
+// When outputPath is provided the three values are written to separate files
+// derived from the base name:
+//
+//	<base>_SealedValue<ext>   — the sealed secret
+//	<base>_DecryptionKey<ext> — the decryption key (PEM, escaped newlines)
+//	<base>_VerificationKey<ext> — the verification key (PEM, escaped newlines)
+//
+// When no outputPath is given, a JSON object containing all three values is
+// printed to stdout.
 func Output(sealedSecret, decryptionKeyPEM, verificationKeyPEM, outputPath string) error {
 	// Format keys with escaped newlines (replace actual newlines with \n)
 	decryptionKeyFormatted := formatKeyWithEscapedNewlines(decryptionKeyPEM)
 	verificationKeyFormatted := formatKeyWithEscapedNewlines(verificationKeyPEM)
 
-	// Format the output as shell variable assignments
-	output := fmt.Sprintf("Sealed Secret:\n%s\n\nSECRET_DECRYPTION_KEY=%s\n\nSECRET_VERIFICATION_KEY=%s",
-		sealedSecret,
-		decryptionKeyFormatted,
-		verificationKeyFormatted)
-
 	if outputPath != "" {
-		err := common.WriteDataToFile(outputPath, output)
+		sealedValuePath, decryptionKeyPath, verificationKeyPath, err := splitOutputPaths(outputPath)
 		if err != nil {
+			return err
+		}
+
+		if err := common.WriteDataToFile(sealedValuePath, sealedSecret); err != nil {
 			return fmt.Errorf("failed to write sealed secret to file: %w", err)
 		}
-		fmt.Printf("Sealed secret and keys written to: %s\n", outputPath)
+		if err := common.WriteDataToFile(decryptionKeyPath, decryptionKeyFormatted); err != nil {
+			return fmt.Errorf("failed to write decryption key to file: %w", err)
+		}
+		if err := common.WriteDataToFile(verificationKeyPath, verificationKeyFormatted); err != nil {
+			return fmt.Errorf("failed to write verification key to file: %w", err)
+		}
+
+		fmt.Printf("Sealed value written to:               %s\n", sealedValuePath)
+		fmt.Printf("Decryption key written to:  (private)  %s\n", decryptionKeyPath)
+		fmt.Printf("Verification key written to: (public)  %s\n", verificationKeyPath)
 	} else {
-		// Print to stdout if no output path specified
-		fmt.Println(output)
+		// Print JSON to stdout when no output path is specified
+		out := SealedSecretOutput{
+			SealedSecret:    sealedSecret,
+			DecryptionKey:   decryptionKeyFormatted,
+			VerificationKey: verificationKeyFormatted,
+		}
+		jsonBytes, err := json.MarshalIndent(out, "", "  ")
+		if err != nil {
+			return fmt.Errorf("failed to marshal output to JSON: %w", err)
+		}
+		fmt.Println(string(jsonBytes))
 	}
 
 	return nil
+}
+
+// splitOutputPaths parses the user-supplied --out value into the three concrete
+// file paths used to write the sealed secret, decryption key, and verification key.
+//
+// Accepted forms:
+//
+//	1 value  – "<sealed-secret-file>"
+//	           Keys fall back to DefaultDecryptionKeyFileName and DefaultVerificationKeyFileName
+//	           in the same directory as the sealed-secret file.
+//
+//	3 values – "<sealed-secret-file>,<decryption-key-file>,<verification-key-file>"
+//	           Each path is used exactly as provided.
+//
+// Any other count returns an error.
+func splitOutputPaths(outputPath string) (sealedValuePath, decryptionKeyPath, verificationKeyPath string, err error) {
+	parts := strings.Split(outputPath, ",")
+	for i, p := range parts {
+		parts[i] = strings.TrimSpace(p)
+	}
+
+	switch len(parts) {
+	case 1:
+		sealedValuePath = parts[0]
+		dir := filepath.Dir(parts[0])
+		decryptionKeyPath = filepath.Join(dir, DefaultDecryptionKeyFileName)
+		verificationKeyPath = filepath.Join(dir, DefaultVerificationKeyFileName)
+	case 3:
+		sealedValuePath = parts[0]
+		decryptionKeyPath = parts[1]
+		verificationKeyPath = parts[2]
+	default:
+		err = fmt.Errorf("--out accepts 1 or 3 comma-separated values, got %d", len(parts))
+	}
+	return
 }
 
 // formatKeyWithEscapedNewlines converts actual newlines in a key to escaped newlines (\n)

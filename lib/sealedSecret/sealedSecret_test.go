@@ -16,6 +16,9 @@
 package sealedSecret
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -178,40 +181,91 @@ func TestGenerateSealedSecret_InvalidSigningKeyPath(t *testing.T) {
 	assert.Empty(t, encryptedSha)
 }
 
-// TestOutput_WithFilePath tests Output function with valid file path
-func TestOutput_WithFilePath(t *testing.T) {
-	sealedSecret := "sealed-secret-data"
+// TestOutput_WithSingleFilePath tests Output when --out has 1 value;
+// key files should default to sealed_decryption.pem / sealed_encryption.pem
+// in the same directory.
+func TestOutput_WithSingleFilePath(t *testing.T) {
+	sealedSecretVal := "sealed-secret-data"
 	decryptionKey := "-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----"
 	verificationKey := "-----BEGIN PUBLIC KEY-----\ntest\n-----END PUBLIC KEY-----"
 
-	tmpDir := "../../build"
-	os.MkdirAll(tmpDir, 0755)
+	tmpDir := t.TempDir()
 	outputFile := filepath.Join(tmpDir, "test_output.txt")
-	os.Remove(outputFile)
 
-	err := Output(sealedSecret, decryptionKey, verificationKey, outputFile)
+	err := Output(sealedSecretVal, decryptionKey, verificationKey, outputFile)
 	assert.NoError(t, err)
 
-	_, statErr := os.Stat(outputFile)
-	assert.NoError(t, statErr)
-
-	content, readErr := os.ReadFile(outputFile)
+	sealedContent, readErr := os.ReadFile(outputFile)
 	assert.NoError(t, readErr)
-	assert.Contains(t, string(content), "Sealed Secret:")
-	assert.Contains(t, string(content), "SECRET_DECRYPTION_KEY=")
-	assert.Contains(t, string(content), "SECRET_VERIFICATION_KEY=")
+	assert.Contains(t, string(sealedContent), "sealed-secret-data")
 
-	os.Remove(outputFile)
+	decryptionContent, readErr := os.ReadFile(filepath.Join(tmpDir, DefaultDecryptionKeyFileName))
+	assert.NoError(t, readErr)
+	assert.Contains(t, string(decryptionContent), "BEGIN PRIVATE KEY")
+
+	verificationContent, readErr := os.ReadFile(filepath.Join(tmpDir, DefaultVerificationKeyFileName))
+	assert.NoError(t, readErr)
+	assert.Contains(t, string(verificationContent), "BEGIN PUBLIC KEY")
 }
 
-// TestOutput_WithoutFilePath tests Output function without file path (prints to stdout)
-func TestOutput_WithoutFilePath(t *testing.T) {
-	sealedSecret := "sealed-secret-data"
+// TestOutput_WithThreeFilePaths tests Output when --out has 3 comma-separated values;
+// each file should receive its designated content.
+func TestOutput_WithThreeFilePaths(t *testing.T) {
+	sealedSecretVal := "sealed-secret-data"
 	decryptionKey := "-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----"
 	verificationKey := "-----BEGIN PUBLIC KEY-----\ntest\n-----END PUBLIC KEY-----"
 
-	err := Output(sealedSecret, decryptionKey, verificationKey, "")
+	tmpDir := t.TempDir()
+	sealedPath := filepath.Join(tmpDir, "my_secret.txt")
+	decryptPath := filepath.Join(tmpDir, "my_decrypt.pem")
+	verifyPath := filepath.Join(tmpDir, "my_verify.pem")
+
+	outFlag := sealedPath + "," + decryptPath + "," + verifyPath
+
+	err := Output(sealedSecretVal, decryptionKey, verificationKey, outFlag)
 	assert.NoError(t, err)
+
+	sealedContent, readErr := os.ReadFile(sealedPath)
+	assert.NoError(t, readErr)
+	assert.Contains(t, string(sealedContent), "sealed-secret-data")
+
+	decryptionContent, readErr := os.ReadFile(decryptPath)
+	assert.NoError(t, readErr)
+	assert.Contains(t, string(decryptionContent), "BEGIN PRIVATE KEY")
+
+	verificationContent, readErr := os.ReadFile(verifyPath)
+	assert.NoError(t, readErr)
+	assert.Contains(t, string(verificationContent), "BEGIN PUBLIC KEY")
+}
+
+// TestOutput_WithoutFilePath tests Output function without file path (prints JSON to stdout)
+func TestOutput_WithoutFilePath(t *testing.T) {
+	sealedSecretVal := "sealed-secret-data"
+	decryptionKey := "-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----"
+	verificationKey := "-----BEGIN PUBLIC KEY-----\ntest\n-----END PUBLIC KEY-----"
+
+	// Capture stdout
+	origStdout := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	err := Output(sealedSecretVal, decryptionKey, verificationKey, "")
+
+	w.Close()
+	os.Stdout = origStdout
+
+	var buf bytes.Buffer
+	io.Copy(&buf, r)
+
+	assert.NoError(t, err)
+
+	// Verify the output is valid JSON with the expected fields
+	var out SealedSecretOutput
+	jsonErr := json.Unmarshal(buf.Bytes(), &out)
+	assert.NoError(t, jsonErr)
+	assert.Equal(t, sealedSecretVal, out.SealedSecret)
+	assert.Contains(t, out.DecryptionKey, "BEGIN PRIVATE KEY")
+	assert.Contains(t, out.VerificationKey, "BEGIN PUBLIC KEY")
 }
 
 // TestOutput_InvalidPath tests Output function with invalid file path
@@ -222,6 +276,23 @@ func TestOutput_InvalidPath(t *testing.T) {
 
 	err := Output(sealedSecret, decryptionKey, verificationKey, testInvalidPath)
 	assert.Error(t, err)
+}
+
+// TestOutput_InvalidOutCount tests Output function with wrong number of comma-separated values
+func TestOutput_InvalidOutCount(t *testing.T) {
+	sealedSecret := "sealed-secret-data"
+	decryptionKey := "test-key"
+	verificationKey := "test-key"
+
+	// 2 values — should be rejected
+	err := Output(sealedSecret, decryptionKey, verificationKey, "file1.txt,file2.txt")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "--out accepts 1 or 3 comma-separated values")
+
+	// 4 values — should be rejected
+	err = Output(sealedSecret, decryptionKey, verificationKey, "f1.txt,f2.txt,f3.txt,f4.txt")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "--out accepts 1 or 3 comma-separated values")
 }
 
 // TestFormatKeyWithEscapedNewlines_WithNewlines tests formatKeyWithEscapedNewlines with newlines

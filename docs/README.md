@@ -1084,21 +1084,97 @@ contract-cli sealed-secret [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Secret for sealing (provide as string or file path, use '-' for standard input) |
-| `--type` | string | Yes | Type of secret: 'env' for env section of contract or 'workload' for workload section of contract |
-| `--out` | string | No | Path to save sealed secret output (prints to stdout if not specified) |
+| `--in` | string | Yes | Secret for sealing (provide as string or file path, use `'-'` for standard input) |
+| `--type` | string | Yes | Type of secret: `env` for env section of contract or `workload` for workload section of contract |
+| `--out` | string | No | 1 or 3 comma-separated output file paths (see [Output format](#output-format) below). Omit to print JSON to stdout. |
 | `--encryptionkey` | string | No | Path to RSA private key for encryption (generates new key if not provided) |
 | `--signingkey` | string | No | Path to RSA private key for signing (generates new key if not provided) |
-| `-h, --help` | - | No | Display help information |
+| `-h, --help` | — | No | Display help information |
+
+#### Output format
+
+The `--out` flag accepts **1 or 3 comma-separated file paths**.
+The mapping is fixed and positional:
+
+```
+--out <sealed-secret-file>,<decryption-key-file>,<verification-key-file>
+        position 1             position 2            position 3
+        sealed value           private key           public key
+```
+
+> ⚠️ **Order matters.** Position 2 is always the private decryption key and position 3 is
+> always the public verification key. Swapping them will cause runtime failures.
+
+**1-value form** — only the sealed secret file name is given; key files fall back to
+`sealed_decryption.pem` and `sealed_verification.pem` in the **same directory**:
+
+| File | Key type | Contents |
+|------|----------|----------|
+| `<your-file>` | — | Sealed secret value for use in the contract |
+| `sealed_decryption.pem` | Private key | RSA private key for decryption — **keep secure** |
+| `sealed_verification.pem` | Public key | RSA public key for signature verification |
+
+**3-value form** — all three names are given explicitly:
+
+| Position | File | Key type | Contents |
+|----------|------|----------|----------|
+| 1 | `<sealed-secret-file>` | — | Sealed secret value for use in the contract |
+| 2 | `<decryption-key-file>` | Private key | RSA private key for decryption — **keep secure** |
+| 3 | `<verification-key-file>` | Public key | RSA public key for signature verification |
+
+The terminal always confirms what was written and explicitly labels private vs public:
+
+```
+Sealed value written to:               sealed_secret.txt
+Decryption key written to:  (private)  sealed_decryption.pem
+Verification key written to: (public)  sealed_verification.pem
+```
+
+**JSON stdout** (when `--out` is omitted):
+
+```json
+{
+  "sealed_secret": "<sealed-secret-value>",
+  "decryption_key": "<RSA-private-key-PEM-with-escaped-newlines>",
+  "verification_key": "<RSA-public-key-PEM-with-escaped-newlines>"
+}
+```
+
+| JSON field | Key type | Description |
+|------------|----------|-------------|
+| `sealed_secret` | — | Sealed secret value for use in the contract |
+| `decryption_key` | Private key | RSA private key for decryption (PEM, `\n`-escaped) — **keep secure** |
+| `verification_key` | Public key | RSA public key for signature verification (PEM, `\n`-escaped) |
+
+> **Note:** PEM newlines are replaced with the literal `\n` sequence so the value fits
+> on a single JSON string line.
+> To restore the original PEM for use with OpenSSL:
+> ```bash
+> echo '<value>' | sed 's/\\n/\n/g'
+> ```
 
 #### Examples
 
-**Generate sealed secret for env section:**
+**1-value form — key files use default names:**
 ```bash
 contract-cli sealed-secret \
   --in "value123" \
   --type env \
-  --out sealed-secret.txt
+  --out sealed_secret.txt
+# sealed_secret.txt        ← sealed value
+# sealed_decryption.pem    ← private key (position 2 default)
+# sealed_verification.pem  ← public key  (position 3 default)
+```
+
+**3-value form — all file names explicit:**
+```bash
+contract-cli sealed-secret \
+  --in "value123" \
+  --type env \
+  --out sealed_secret.txt,my_decryption.pem,my_verification.pem
+# sealed_secret.txt    ← position 1  sealed value
+# my_decryption.pem    ← position 2  private key (keep secure)
+# my_verification.pem  ← position 3  public key
 ```
 
 **Generate sealed secret for workload section:**
@@ -1106,7 +1182,7 @@ contract-cli sealed-secret \
 contract-cli sealed-secret \
   --in workload-secret-data \
   --type workload \
-  --out sealed-workload.txt
+  --out sealed_workload.txt,sealed_decryption.pem,sealed_verification.pem
 ```
 
 **Generate sealed secret from file:**
@@ -1114,17 +1190,20 @@ contract-cli sealed-secret \
 contract-cli sealed-secret \
   --in secrets.txt \
   --type env \
-  --out sealed-secret.txt
+  --out sealed_secret.txt,sealed_decryption.pem,sealed_verification.pem
 ```
 
 **Generate sealed secret with custom encryption and signing keys:**
 ```bash
+openssl genrsa -out encryption.pem 2048
+openssl genrsa -out signing.pem 2048
+
 contract-cli sealed-secret \
   --in "value123" \
   --type env \
-  --encryptionkey encryption.key \
-  --signingkey signing.key \
-  --out sealed-secret.txt
+  --encryptionkey encryption.pem \
+  --signingkey signing.pem \
+  --out sealed_secret.txt,sealed_decryption.pem,sealed_verification.pem
 ```
 
 **Read secret from stdin:**
@@ -1134,11 +1213,12 @@ echo "value123" | contract-cli sealed-secret \
   --type env
 ```
 
-**Output format:**
-The command outputs:
-- The sealed secret data (for use in contract)
-- `SECRET_DECRYPTION_KEY` - Private key for decryption (keep secure)
-- `SECRET_VERIFICATION_KEY` - Public key for verification
+**Print all values as JSON to stdout (omit --out):**
+```bash
+contract-cli sealed-secret \
+  --in "value123" \
+  --type env
+```
 
 ---
 
