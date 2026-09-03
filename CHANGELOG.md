@@ -1,3 +1,13 @@
+## [1.35.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.34.0...v1.35.0) (2026-09-03)
+
+### Features
+
+* Add CCRV 26.9.0 encryption certificate ([#178](https://github.com/ibm-hyper-protect/contract-cli/issues/178)) ([b0acf69](https://github.com/ibm-hyper-protect/contract-cli/commit/b0acf6996602bdf403dabfcc1e42474d69b8e535))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.34.0 ([ff3889f](https://github.com/ibm-hyper-protect/contract-cli/commit/ff3889f1506c6c8498c0a988fb117d5cdda26804))
+
 ## [1.34.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.33.1...v1.34.0) (2026-09-03)
 
 ### Features
