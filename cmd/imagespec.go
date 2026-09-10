@@ -39,8 +39,6 @@ var imageSpecCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		fmt.Printf("Image user: %s\n", result.ImageUser)
-
 		if input.OutputPath != "" {
 			err = common.WriteDataToFile(input.OutputPath, result.YAML)
 			if err != nil {

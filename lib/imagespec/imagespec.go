@@ -37,10 +37,10 @@ the registryMapping feature of confidential-containers workload contracts.`
 
 	ImageRefDescription      = "Fully-qualified image reference to inspect (e.g. quay.io/fedora/fedora:38)"
 	OutputDescription        = "Path to write the generated pod YAML template (prints to stdout when omitted)"
-	UsernameDescription      = "Registry username for private image access (optional)"
-	PasswordDescription      = "Registry password / API key for private image access (optional)"
+	UsernameDescription      = "Registry username for private image access"
+	PasswordDescription      = "Registry password / API key for private image access"
 	ContainerNameFlagName    = "container-name"
-	ContainerNameDescription = "Container name to use in the generated pod spec (default: derived from image name)"
+	ContainerNameDescription = "Container name to use in the generated pod spec"
 )
 
 // ImageSpecInput holds the validated flag values for the image-spec command.
@@ -94,14 +94,16 @@ func ValidateInput(cmd *cobra.Command) (ImageSpecInput, error) {
 type ProcessResult struct {
 	YAML      string
 	ImageUser string
+	InputSha  string
+	OutputSha string
 }
 
 // Process generates the pod YAML template for the given image reference.
 func Process(imageRef, containerName, username, password string) (ProcessResult, error) {
-	yaml, imageUser, _, _, err := goImageSpec.HpccGenerateImageSpec(imageRef, containerName, username, password)
+	yaml, imageUser, inputSha, outputSha, err := goImageSpec.HpccGenerateImageSpec(imageRef, containerName, username, password)
 	if err != nil {
 		return ProcessResult{}, fmt.Errorf("failed to generate image spec for %q: %w", imageRef, err)
 	}
 
-	return ProcessResult{YAML: yaml, ImageUser: imageUser}, nil
+	return ProcessResult{YAML: yaml, ImageUser: imageUser, InputSha: inputSha, OutputSha: outputSha}, nil
 }
