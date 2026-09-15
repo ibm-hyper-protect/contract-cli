@@ -1,3 +1,4 @@
+
 <!--
 Copyright (c) 2026 IBM Corp.
 All rights reserved.
@@ -37,6 +38,7 @@ Complete command reference and usage guide for the IBM Confidential Computing Co
   - [decrypt](#decrypt)
   - [get-certificate](#get-certificate)
   - [image](#image)
+  - [image-spec](#image-spec)
   - [list-encryptioncert-versions](#list-encryptioncert-versions)
   - [sealed-secret](#sealed-secret)
   - [rego-generator](#rego-generator)
@@ -858,6 +860,116 @@ contract-cli image \
 cat "ibm-cloud-images.json" | contract-cli image --in -
 ```
 
+
+### image-spec
+
+Fetch OCI image metadata from a container registry and generate a Kubernetes pod YAML template with the correct env, entrypoint, user, and port overrides for use with the `registryMapping` feature of confidential-containers workload contracts.
+
+The command inspects the image's `USER` field and reports it as `Image user: <value>` before printing the YAML. For numeric UIDs the generated spec includes a `securityContext.runAsUser` entry. For named users (e.g. `postgres`) the securityContext is omitted and the name is surfaced only in the header comment `# image user: <name>`. When the image declares no user at all the output reads `Image user: no user specified`.
+
+#### Usage
+
+```bash
+contract-cli image-spec [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--in` | string | Yes | Fully-qualified image reference to inspect (e.g. `quay.io/fedora/fedora:38`) |
+| `--out` | string | No | Path to write the generated pod YAML template (prints to stdout when omitted) |
+| `--username` | string | No | Registry username for private image access |
+| `--password` | string | No | Registry password / API key for private image access |
+| `--container-name` | string | No | Container name in the generated pod spec (default: derived from image name) |
+| `-h, --help` | - | No | Display help information |
+
+#### Examples
+
+**Public image with numeric UID (e.g. postgresql-15-c9s uses UID 26):**
+```bash
+contract-cli image-spec --in quay.io/sclorg/postgresql-15-c9s:latest
+```
+
+Output:
+```
+Image user: 26
+# image user: 26
+spec:
+  containers:
+    - name: postgresql-15-c9s
+      image: quay.io/sclorg/postgresql-15-c9s:latest
+      securityContext:
+        runAsUser: 26
+        allowPrivilegeEscalation: false
+      env:
+        - name: POSTGRESQL_VERSION
+          value: "15"
+        ...
+      command:
+        - container-entrypoint
+      args:
+        - run-postgresql
+      workingDir: /opt/app-root/src
+      ports:
+        - containerPort: 5432
+          protocol: TCP
+```
+
+**Image with a named user (e.g. official postgres image uses user "postgres"):**
+```bash
+contract-cli image-spec --in docker.io/library/postgres:16 --container-name postgres
+```
+
+Output:
+```
+Image user: postgres
+# image user: postgres
+spec:
+  containers:
+    - name: postgres
+      image: docker.io/library/postgres:16
+      env:
+        ...
+      ports:
+        - containerPort: 5432
+          protocol: TCP
+```
+
+> **Note:** No `securityContext` is emitted for named users because Kubernetes `runAsUser` requires an integer. You must resolve the UID manually (e.g. for `postgres` the UID is typically `999`) and set it in your pod spec.
+
+**Image with no user declared:**
+```bash
+contract-cli image-spec --in quay.io/fedora/fedora:38
+```
+
+Output:
+```
+Image user: no user specified
+# image user: no user specified
+spec:
+  containers:
+    - name: fedora
+      image: quay.io/fedora/fedora:38
+```
+
+**Private registry:**
+```bash
+contract-cli image-spec \
+  --in us.icr.io/my-ns/my-app:latest \
+  --container-name my-app \
+  --username iamapikey \
+  --password <API_KEY>
+```
+
+**Save output to file:**
+```bash
+contract-cli image-spec \
+  --in quay.io/sclorg/postgresql-15-c9s:latest \
+  --out postgres-pod.yaml
+```
+
+---
 
 ### list-encryptioncert-versions
 
