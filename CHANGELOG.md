@@ -1,3 +1,17 @@
+## [1.36.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.35.0...v1.36.0) (2026-09-15)
+
+### Features
+
+* add imagespec feature for RegistryMapping ([#165](https://github.com/ibm-hyper-protect/contract-cli/issues/165)) ([c85ca5a](https://github.com/ibm-hyper-protect/contract-cli/commit/c85ca5a3759aac145e617b3aa8cbd3e487f34496))
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.43.1 ([#177](https://github.com/ibm-hyper-protect/contract-cli/issues/177)) ([2a5bfe2](https://github.com/ibm-hyper-protect/contract-cli/commit/2a5bfe2de5b897c2aeab91b1877f571acd302a83))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.35.0 ([a406137](https://github.com/ibm-hyper-protect/contract-cli/commit/a4061377217f385ad083365c6c05bd0efd2e7a5a))
+
 ## [1.35.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.34.0...v1.35.0) (2026-09-03)
 
 ### Features
