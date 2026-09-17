@@ -44,6 +44,7 @@ Complete command reference and usage guide for the IBM Confidential Computing Co
   - [validate-network](#validate-network)
   - [validate-encryption-certificate](#validate-encryption-certificate)
   - [initdata](#initdata)
+  - [crypto](#crypto)
 - [Common Workflows](#common-workflows)
 - [CI/CD Integration](#cicd-integration)
 - [Exit Codes](#exit-codes)
@@ -1406,6 +1407,204 @@ cat signed_encrypted_contract.yaml | contract-cli initdata --in -
 - Without `--sehdr`, the command generates initdata for Peer Pod solution
 - The SE header binary file is automatically encoded to base64 before being included in the initdata
 - Output is gzipped and base64 encoded, ready to use as an initdata annotation
+
+---
+
+### crypto
+
+Generate an OpenSSL RSA key pair or a CA-signed certificate bundle. Produces PEM-encoded artifacts on disk or to stdout.
+
+#### Usage
+
+```bash
+contract-cli crypto [flags]
+```
+
+#### Flags
+
+| Flag | Type | Required | Description |
+|------|------|----------|-------------|
+| `--type` | string | Yes | Generation mode: `key` for RSA key pair, `cert` for CA + client certificate bundle |
+| `--out` | string | No | Comma-separated output filenames (see [Output filenames](#output-filenames) below). Prints to stdout when omitted. |
+| `--size` | int | No | RSA key size in bits: `2048`, `3072`, or `4096` (default: `4096`) |
+| `--password` | string | No | Passphrase to encrypt the private key with AES-256 (unencrypted when not specified) |
+| `--san` | string | No | Comma-separated Subject Alternative Names, e.g. `example.com,www.example.com,192.168.1.1` (default: `example.com`, cert only) |
+| `--days` | int | No | Validity period in days. **For `--type key`:** when provided, a self-signed X.509 certificate embedding the public key is written to the public key slot instead of a plain public key — giving the key an expiry. Omit (or pass `0`) for a plain public key with no expiry. **For `--type cert`:** sets the certificate validity period (default: `365`). |
+| `--cn` | string | No | X.509 subject Common Name for the client certificate (default: first SAN entry, cert only) |
+| `-h, --help` | — | No | Display help information |
+
+#### Output filenames
+
+The `--out` flag accepts **comma-separated filenames** — one per output file.
+The number of accepted values depends on `--type`:
+
+**`--type key` — up to 2 values:**
+
+```
+--out <private-key-file>,<public-key-file-or-cert>
+        position 1                position 2
+```
+
+> When `--days` is **not** provided, position 2 receives a plain RSA public key.
+> When `--days N` is provided, position 2 receives a **self-signed X.509 certificate**
+> valid for N days — verify with `openssl x509 -in <file> -noout -dates`.
+
+| Values provided | Private key file | Public key / certificate file |
+|-----------------|-----------------|-------------------------------|
+| 0 (omit `--out`) | stdout | stdout |
+| 1 (`--out priv.pem`) | `priv.pem` | `public.pem` *(default)* + log |
+| 2 (`--out priv.pem,pub.pem`) | `priv.pem` | `pub.pem` |
+| 3+ | first 2 used | warning logged, extras ignored |
+
+**`--type cert` — up to 3 values:**
+
+```
+--out <ca-cert-file>,<client-cert-file>,<client-key-file>
+        position 1       position 2         position 3
+```
+
+| Values provided | CA cert | Client cert | Client private key |
+|-----------------|---------|-------------|-------------------|
+| 0 (omit `--out`) | stdout | stdout | stdout |
+| 1 (`--out ca.crt`) | `ca.crt` | `cert.pem` *(default)* + log | `privatekey.pem` *(default)* + log |
+| 2 (`--out ca.crt,client.crt`) | `ca.crt` | `client.crt` | `privatekey.pem` *(default)* + log |
+| 3 (`--out ca.crt,client.crt,key.pem`) | `ca.crt` | `client.crt` | `key.pem` |
+| 4+ | first 3 used | warning logged, extras ignored |
+
+**Default filenames** (used when a slot is not supplied):
+
+| Type | Slot | Default filename |
+|------|------|-----------------|
+| `key` | public key | `public.pem` |
+| `cert` | client cert | `cert.pem` |
+| `cert` | client private key | `privatekey.pem` |
+
+**File permissions:**
+
+| File | Permissions |
+|------|-------------|
+| Private key | `0600` (owner read/write only) |
+| Public key / certificates | `0644` |
+
+#### Examples
+
+**Print key pair to stdout (plain public key, no expiry):**
+```bash
+contract-cli crypto --type key
+```
+
+**Generate key pair with explicit filenames (plain public key, no expiry):**
+```bash
+contract-cli crypto \
+  --type key \
+  --size 4096 \
+  --out mykey_private.pem,mykey_public.pem
+```
+
+**Generate key pair with expiry (self-signed certificate in public key slot):**
+```bash
+contract-cli crypto \
+  --type key \
+  --size 4096 \
+  --days 365 \
+  --out my_private.key,my_public.pem
+# my_private.key  ← RSA private key
+# my_public.pem   ← self-signed X.509 certificate (valid 365 days)
+```
+
+**Verify the expiry of the generated certificate:**
+```bash
+# Show notBefore and notAfter dates
+openssl x509 -in my_public.pem -noout -dates
+
+# Show only the expiry date
+openssl x509 -in my_public.pem -noout -enddate
+
+# Full certificate details (subject, issuer, key size, validity)
+openssl x509 -in my_public.pem -noout -text
+
+# Confirm the private key and certificate are a matched pair
+openssl x509 -in my_public.pem    -pubkey -noout | openssl md5
+openssl rsa   -in my_private.key  -pubout        | openssl md5
+# Both MD5 hashes must match
+```
+
+**Generate key pair with expiry and password protection:**
+```bash
+contract-cli crypto \
+  --type key \
+  --size 4096 \
+  --days 365 \
+  --password "my-passphrase" \
+  --out private.pem,cert.pem
+# private.pem  ← AES-256-encrypted RSA private key
+# cert.pem     ← self-signed X.509 certificate (valid 365 days)
+```
+
+**Generate key pair — one name, public key gets default filename:**
+```bash
+contract-cli crypto --type key --out mykey_private.pem
+# mykey_private.pem  ← private key
+# public.pem         ← public key (default)
+```
+
+**Generate password-protected key pair (no expiry):**
+```bash
+contract-cli crypto \
+  --type key \
+  --size 2048 \
+  --password "my-passphrase" \
+  --out private.pem,public.pem
+```
+
+**Print certificate bundle to stdout:**
+```bash
+contract-cli crypto \
+  --type cert \
+  --san "example.com,www.example.com" \
+  --cn "example.com" \
+  --days 365
+```
+
+**Generate certificate bundle with explicit filenames:**
+```bash
+contract-cli crypto \
+  --type cert \
+  --san "example.com,192.168.1.10" \
+  --days 365 \
+  --out ca.crt,client.crt,client_private.pem
+```
+
+**Generate certificate bundle — one name, remaining slots get defaults:**
+```bash
+contract-cli crypto --type cert --out ca.crt
+# ca.crt          ← CA certificate
+# cert.pem        ← client certificate (default)
+# privatekey.pem  ← client private key (default)
+```
+
+**Generate certificate bundle — two names:**
+```bash
+contract-cli crypto --type cert --out ca.crt,client.crt
+# ca.crt          ← CA certificate
+# client.crt      ← client certificate
+# privatekey.pem  ← client private key (default)
+```
+
+**Use as input for rsyslog TLS setup:**
+```bash
+# Step 1 — generate CA + client cert bundle
+contract-cli crypto \
+  --type cert \
+  --san "rsyslog.example.com" \
+  --days 730 \
+  --out rsyslog-ca.crt,rsyslog-client.crt,rsyslog-client.pem
+
+# Step 2 — reference certs in contract env section
+RSYSLOG_CA=$(cat rsyslog-ca.crt)
+RSYSLOG_CERT=$(cat rsyslog-client.crt)
+RSYSLOG_KEY=$(cat rsyslog-client.pem)
+```
 
 ---
 
