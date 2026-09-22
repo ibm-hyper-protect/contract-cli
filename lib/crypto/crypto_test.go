@@ -475,95 +475,68 @@ func TestGenerate_KeyWithPasswordToFiles(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// ValidateInput — --days for --type key
+// ValidateInput — --days for --type key (rejected)
 // ---------------------------------------------------------------------------
 
-// TestValidateInput_KeyDaysDefault verifies that --days defaults to 0 (no
-// expiry) when --type key is used without an explicit --days flag.
+// TestValidateInput_KeyDaysDefault verifies that --days defaults to 0 (not
+// set) when --type key is used without an explicit --days flag.
 func TestValidateInput_KeyDaysDefault(t *testing.T) {
 	cmd := newCmd(t, map[string]string{
 		TypeFlagName: "key",
 	})
 	_, _, _, _, _, _, _, _, _, _, validDays, err := ValidateInput(cmd)
 	require.NoError(t, err)
-	assert.Equal(t, 0, validDays, "--days should default to 0 for --type key")
+	assert.Equal(t, 0, validDays, "--days should be 0 for --type key when not provided")
 }
 
-// TestValidateInput_KeyDaysExplicit verifies that an explicit --days value is
-// forwarded unchanged for --type key.
-func TestValidateInput_KeyDaysExplicit(t *testing.T) {
+// TestValidateInput_KeyDaysRejected verifies that passing --days with --type
+// key returns an error, since key pairs do not carry an expiry.
+func TestValidateInput_KeyDaysRejected(t *testing.T) {
 	cmd := newCmd(t, map[string]string{
 		TypeFlagName: "key",
 		DaysFlagName: "180",
 	})
-	_, _, _, _, _, _, _, _, _, _, validDays, err := ValidateInput(cmd)
-	require.NoError(t, err)
-	assert.Equal(t, 180, validDays, "--days should be 180 when explicitly set for --type key")
+	_, _, _, _, _, _, _, _, _, _, _, err := ValidateInput(cmd)
+	require.Error(t, err, "--days with --type key must produce an error")
+	assert.Contains(t, err.Error(), "--days is not supported for --type key")
 }
 
 // ---------------------------------------------------------------------------
-// Generate — --type key with --days (self-signed cert in public slot)
+// ValidateInput — negative / invalid input test cases
 // ---------------------------------------------------------------------------
 
-// TestGenerate_KeyWithDaysToStdout verifies that when validDays > 0 for --type
-// key, the second PEM block printed to stdout is a certificate, not a plain
-// public key.
-func TestGenerate_KeyWithDaysToStdout(t *testing.T) {
-	var err error
-	out := captureStdout(t, func() {
-		err = Generate("key", "", "", "", "", "", "", "", "", 2048, 90)
-	})
-	require.NoError(t, err)
-	assert.Contains(t, out, "PRIVATE KEY", "output must contain the private key")
-	assert.Contains(t, out, "BEGIN CERTIFICATE", "output must contain a certificate when --days is set for --type key")
+// TestValidateInput_TypeValidation verifies that only "key" and "cert" are
+// accepted as valid --type values.
+//
+// Note: passing a truly invalid type through ValidateInput is not testable here
+// because the invalid-type path calls common.SetMandatoryFlagError → os.Exit(1),
+// which would terminate the test process. Following the project convention
+// (see cmd/signContract_test.go), we test the acceptance boundary instead:
+// confirm "key" and "cert" pass, and document that other values exit via the
+// SetMandatoryFlagError path in cmd/crypto.go.
+func TestValidateInput_TypeValidation(t *testing.T) {
+	for _, validType := range []string{"key", "cert"} {
+		cmd := newCmd(t, map[string]string{
+			TypeFlagName: validType,
+		})
+		artifactType, _, _, _, _, _, _, _, _, _, _, err := ValidateInput(cmd)
+		require.NoError(t, err)
+		assert.Equal(t, validType, artifactType,
+			"valid --type %q must be accepted without error", validType)
+	}
 }
 
-// TestGenerate_KeyWithDaysToFiles verifies that when validDays > 0 for --type
-// key and output paths are provided, the public key file contains a certificate.
-func TestGenerate_KeyWithDaysToFiles(t *testing.T) {
-	tmpDir := t.TempDir()
-	privPath := filepath.Join(tmpDir, "key-expiry.pem")
-	pubPath := filepath.Join(tmpDir, "key-expiry-cert.pem")
-
-	var err error
-	captureStdout(t, func() {
-		err = Generate("key", "", "", "", privPath, pubPath, "", "", "", 2048, 90)
+// TestValidateInput_NegativeDays verifies that a negative --days value is
+// rejected with a descriptive error.
+func TestValidateInput_NegativeDays(t *testing.T) {
+	cmd := newCmd(t, map[string]string{
+		TypeFlagName: "cert",
+		DaysFlagName: "-5",
 	})
-	require.NoError(t, err)
-
-	assert.FileExists(t, privPath)
-	assert.FileExists(t, pubPath)
-
-	privData, err := os.ReadFile(privPath)
-	require.NoError(t, err)
-	assert.Contains(t, string(privData), "PRIVATE KEY")
-
-	pubData, err := os.ReadFile(pubPath)
-	require.NoError(t, err)
-	assert.Contains(t, string(pubData), "BEGIN CERTIFICATE",
-		"public key slot must contain a certificate when --days is set")
-}
-
-// TestGenerate_KeyWithDaysAndPasswordToFiles verifies that an encrypted private
-// key is still produced correctly when both --password and --days are set.
-func TestGenerate_KeyWithDaysAndPasswordToFiles(t *testing.T) {
-	tmpDir := t.TempDir()
-	privPath := filepath.Join(tmpDir, "key-enc-expiry.pem")
-	pubPath := filepath.Join(tmpDir, "key-enc-expiry-cert.pem")
-
-	var err error
-	captureStdout(t, func() {
-		err = Generate("key", "test-passphrase", "", "", privPath, pubPath, "", "", "", 2048, 60)
-	})
-	require.NoError(t, err)
-
-	privData, err := os.ReadFile(privPath)
-	require.NoError(t, err)
-	assert.Contains(t, string(privData), "ENCRYPTED",
-		"private key must be encrypted when --password is provided alongside --days")
-
-	pubData, err := os.ReadFile(pubPath)
-	require.NoError(t, err)
-	assert.Contains(t, string(pubData), "BEGIN CERTIFICATE",
-		"public key slot must contain a certificate when --days is set")
+	_, _, _, _, _, _, _, _, _, _, _, err := ValidateInput(cmd)
+	require.Error(t, err, "a negative --days value must produce an error")
+	assert.Contains(t, err.Error(), "--days",
+		"error message should reference the --days flag")
+	assert.Contains(t, err.Error(), "-5",
+		"error message should include the bad value")
 }

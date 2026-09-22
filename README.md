@@ -40,6 +40,7 @@ A command-line tool for automating the provisioning and management of IBM Confid
 - [Contributing](#contributing)
 - [License](#license)
 - [Support](#support)
+- [Crypto (OpenSSL Key & Certificate Generation)](#crypto-openssl-key--certificate-generation)
 
 ## Overview
 
@@ -134,6 +135,13 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - Generate Kubernetes pod YAML snippet with correct `env`, `command`, `args`, `securityContext`, and `ports`
   - Designed for use with `registryMapping` in confidential-containers workload contracts
   - Auto-derives container name from image reference when not specified
+
+- **Crypto (OpenSSL Key & Certificate Generation)**
+  - Generate RSA private/public key pairs (2048, 3072, or 4096 bits)
+  - Optionally produce a self-signed certificate in the public key slot by supplying `--days`
+  - Generate a full CA + client certificate bundle (`--type cert`)
+  - Encrypt private keys with AES-256 passphrase (`--password`)
+  - Write artifacts to named files or print directly to stdout
 
 
 ## Installation
@@ -628,6 +636,93 @@ contract-cli image-spec \
   --container-name my-app \
   --out my-app-spec.yaml
 ```
+
+### Generate RSA Keys and Certificates (`crypto`)
+
+The `crypto` command generates OpenSSL RSA key pairs or CA-signed certificate bundles without needing OpenSSL on your `PATH` directly — it wraps the underlying `contract-go` crypto library.
+
+#### Flags
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--type` | string | *(required)* | `key` — RSA key pair; `cert` — CA + client certificate bundle |
+| `--out` | string | stdout | Comma-separated output filenames (see below) |
+| `--size` | int | `4096` | RSA key size in bits: `2048`, `3072`, or `4096` |
+| `--days` | int | `0` (no expiry) for keys; `365` for certs | Validity period in days (must be > 0 when specified) |
+| `--password` | string | *(none)* | AES-256 passphrase to encrypt the private key |
+| `--san` | string | `example.com` | Comma-separated SANs, e.g. `example.com,www.example.com` (cert only) |
+| `--cn` | string | first SAN entry | X.509 Common Name (cert only) |
+
+#### `--type key` — RSA key pair
+
+```bash
+# Plain RSA key pair to stdout
+contract-cli crypto --type key
+
+# 2048-bit key pair written to files
+contract-cli crypto --type key --size 2048 --out private.pem,public.pem
+
+# Password-protected private key (AES-256)
+contract-cli crypto --type key --size 4096 --password "s3cr3t" --out private.pem,public.pem
+
+# Key pair where the public slot holds a self-signed certificate (valid 90 days)
+contract-cli crypto --type key --days 90 --out private.pem,cert.pem
+```
+
+`--out` for `--type key` accepts **1 or 2** comma-separated paths:
+
+```
+--out <private-key>,<public-key>
+        position 1 (private)   position 2 (public / cert-when-days-set)
+```
+
+If only one name is given, the public key uses the default name `public.pem`.
+Omit `--out` entirely to print both PEM blocks to stdout.
+
+#### `--type cert` — CA + client certificate bundle
+
+```bash
+# CA + client certificate bundle to stdout (default 365-day validity)
+contract-cli crypto --type cert
+
+# Custom SAN and CN, written to files
+contract-cli crypto --type cert \
+  --san "example.com,www.example.com" \
+  --cn "example.com" \
+  --days 180 \
+  --out ca.crt,client.crt,client.pem
+
+# Password-protected client private key
+contract-cli crypto --type cert \
+  --san "myservice.internal" \
+  --password "s3cr3t" \
+  --out ca.crt,client.crt,client.pem
+```
+
+`--out` for `--type cert` accepts **1, 2, or 3** comma-separated paths:
+
+```
+--out <ca-cert>,<client-cert>,<client-key>
+        position 1 (CA cert)  position 2 (client cert)  position 3 (client key)
+```
+
+Missing slots fall back to defaults: `cert.pem`, `cert.pem`, `privatekey.pem`.
+Omit `--out` entirely to print all three PEM blocks to stdout.
+
+#### Output — file mode
+
+```
+Private key written to: private.pem
+Public key written to:  public.pem
+```
+
+```
+CA certificate written to:     ca.crt
+Client certificate written to: client.crt
+Client private key written to: client.pem
+```
+
+> ⚠️ **Private key files are written with `0600` permissions** — readable only by the owner.
 
 ## Usage
 

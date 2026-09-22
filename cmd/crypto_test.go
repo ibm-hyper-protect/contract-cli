@@ -180,35 +180,3 @@ func TestCryptoCmd_KeyTypeWithPassword(t *testing.T) {
 	assert.Contains(t, string(privData), "ENCRYPTED",
 		"private key on disk must be encrypted when --password is provided")
 }
-
-// TestCryptoCmd_KeyTypeWithDays verifies end-to-end execution for --type key
-// with --days, expecting the "public key" output file to contain a certificate.
-func TestCryptoCmd_KeyTypeWithDays(t *testing.T) {
-	tmpDir := t.TempDir()
-	privPath := filepath.Join(tmpDir, "key-days-private.pem")
-	pubPath := filepath.Join(tmpDir, "key-days-cert.pem")
-	outVal := privPath + "," + pubPath
-
-	rootCmd.SetArgs([]string{
-		cryptoLib.ParameterName,
-		"--" + cryptoLib.TypeFlagName, "key",
-		"--" + cryptoLib.SizeFlagName, "2048",
-		"--" + cryptoLib.DaysFlagName, "90",
-		"--" + cryptoLib.OutFlagName, outVal,
-	})
-	silenceStdout(t, func() {
-		require.NoError(t, cryptoCmd.Execute())
-	})
-
-	assert.FileExists(t, privPath)
-	assert.FileExists(t, pubPath)
-
-	privData, err := os.ReadFile(privPath)
-	require.NoError(t, err)
-	assert.Contains(t, string(privData), "PRIVATE KEY")
-
-	pubData, err := os.ReadFile(pubPath)
-	require.NoError(t, err)
-	assert.Contains(t, string(pubData), "BEGIN CERTIFICATE",
-		"--days with --type key must produce a certificate in the public key slot")
-}

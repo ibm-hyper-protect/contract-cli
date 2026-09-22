@@ -31,9 +31,8 @@ const (
 	ParameterLongDescription  = `Generate OpenSSL RSA key pair or CA-signed certificate bundle.
 
 Use --type key to generate an RSA private/public key pair.
-	 Without --days: outputs a plain RSA public key PEM alongside the private key.
-	 With --days N:  outputs a self-signed certificate (valid for N days) embedding
-	                 the public key instead of a plain public key PEM.
+	 Always outputs a plain RSA public key PEM alongside the private key.
+	 --days is not supported for --type key (key pairs do not carry an expiry).
 
 Use --type cert to generate a self-signed CA certificate and a client
 certificate signed by that CA, along with the client's private key.
@@ -52,7 +51,7 @@ When --out is omitted entirely, all PEM artifacts are printed to stdout.`
 	OutFlagDescription = "Comma-separated output filenames. For --type key: <private>,<public>. For --type cert: <ca>,<client-cert>,<client-key>. Missing slots use defaults. Omit to print to stdout."
 
 	SizeFlagName        = "size"
-	SizeFlagDescription = "RSA key size in bits: 2048, 3072, or 4096 (default: 4096)"
+	SizeFlagDescription = "RSA key size in bits: 2048, 3072, or 4096 (default: 4096; omit flag to use default)"
 
 	PasswordFlagName        = "password"
 	PasswordFlagDescription = "Passphrase to encrypt the private key with AES-256 (optional, key is unencrypted when not specified)"
@@ -61,7 +60,7 @@ When --out is omitted entirely, all PEM artifacts are printed to stdout.`
 	SANFlagDescription = "Comma-separated Subject Alternative Names, e.g. 'example.com,www.example.com,192.168.1.1' (default: 'example.com', used only with --type cert)"
 
 	DaysFlagName        = "days"
-	DaysFlagDescription = "Validity period in days (default: 0 = no expiry for keys, 365 for certs). For --type key: when provided, a self-signed certificate embedding the public key is generated instead of a plain public key. For --type cert: sets the certificate validity period."
+	DaysFlagDescription = "Certificate validity period in days (must be > 0; default: 365). Only valid for --type cert."
 
 	CNFlagName        = "cn"
 	CNFlagDescription = "X.509 subject Common Name for the client certificate (default: first SAN entry, used only with --type cert)"
@@ -206,7 +205,7 @@ func ValidateInput(cmd *cobra.Command) (
 	if err != nil {
 		return
 	}
-	if keySize == 0 {
+	if !cmd.Flags().Changed(SizeFlagName) {
 		keySize = DefaultKeySize
 	}
 
@@ -227,9 +226,19 @@ func ValidateInput(cmd *cobra.Command) (
 	if err != nil {
 		return
 	}
-	// For cert, apply the 365-day default when --days is not provided.
-	// For key, leave validDays as 0 (plain public key) unless explicitly set.
-	if validDays == 0 && artifactType == "cert" {
+	if cmd.Flags().Changed(DaysFlagName) {
+		// --days is not allowed for --type key
+		if artifactType == "key" {
+			err = fmt.Errorf("Error: --days is not supported for --type key: key pairs do not carry an expiry; use --type cert to generate a certificate with a validity period")
+			return
+		}
+		// For --type cert, --days must be a positive integer
+		if validDays <= 0 {
+			err = fmt.Errorf("Error: invalid value for '--days': must be a positive integer, got %d", validDays)
+			return
+		}
+	} else if artifactType == "cert" {
+		// Apply the 365-day default when --days is not provided for cert
 		validDays = DefaultValidDays
 	}
 
