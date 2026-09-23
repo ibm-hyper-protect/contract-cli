@@ -16,7 +16,6 @@
 package listCertVersions
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -101,7 +100,7 @@ func TestProcess_SpecificPlatform_Json(t *testing.T) {
 	assert.NotEmpty(t, result)
 	assert.Contains(t, result, "ccrt")
 	// Should contain version numbers
-	assert.True(t, strings.Contains(result, "26.2.0") || strings.Contains(result, "25."))
+	assert.Regexp(t, `\d+\.\d+\.\d+`, result)
 }
 
 // TestProcess_SpecificPlatform_Yaml tests Process function with ccrt platform and YAML format

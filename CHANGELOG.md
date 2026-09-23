@@ -1,3 +1,13 @@
+## [1.37.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.36.2...v1.37.0) (2026-09-23)
+
+### Features
+
+* Add latest CCRT 2.2.4.2 encryption cert ([#184](https://github.com/ibm-hyper-protect/contract-cli/issues/184)) ([3d59509](https://github.com/ibm-hyper-protect/contract-cli/commit/3d5950976fc9e7243af917084e3b6bee39f91a25))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.36.2 ([67f2644](https://github.com/ibm-hyper-protect/contract-cli/commit/67f264480506b0f5b83ddb1747edaf7336eca5e2))
+
 ## [1.36.2](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.36.1...v1.36.2) (2026-09-23)
 
 ### Bug Fixes
