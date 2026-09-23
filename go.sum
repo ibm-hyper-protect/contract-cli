@@ -24,6 +24,8 @@ github.com/ibm-hyper-protect/contract-go/v2 v2.43.1 h1:yXiQK3y+EEe5N2N/yhNmXFc9z
 github.com/ibm-hyper-protect/contract-go/v2 v2.43.1/go.mod h1:zk+JrLqZe/HIGscrx4ZB5+a/orD9T5mdlY7C6MWy5Y4=
 github.com/ibm-hyper-protect/contract-go/v2 v2.44.0 h1:9fXensLnwRJ1y7lnHmZWwKWLxRqnwYjt7EJejniTQ+E=
 github.com/ibm-hyper-protect/contract-go/v2 v2.44.0/go.mod h1:zk+JrLqZe/HIGscrx4ZB5+a/orD9T5mdlY7C6MWy5Y4=
+github.com/ibm-hyper-protect/contract-go/v2 v2.45.0 h1:EcIeK3pK5BO5cWJoP8woBgCynnhkTCFVdEPY6IvWfVQ=
+github.com/ibm-hyper-protect/contract-go/v2 v2.45.0/go.mod h1:zk+JrLqZe/HIGscrx4ZB5+a/orD9T5mdlY7C6MWy5Y4=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
