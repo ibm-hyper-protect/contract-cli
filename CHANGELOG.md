@@ -1,3 +1,9 @@
+## [1.38.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.37.0...v1.38.0) (2026-09-24)
+
+### Features
+
+* Contract-cli support for openssl cert and key generation ([#180](https://github.com/ibm-hyper-protect/contract-cli/issues/180)) ([3b05ea9](https://github.com/ibm-hyper-protect/contract-cli/commit/3b05ea9f81d5f9c85536bb027dfaa8e7236ba898))
+
 ## [1.37.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.36.2...v1.37.0) (2026-09-23)
 
 ### Features
