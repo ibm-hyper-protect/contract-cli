@@ -1,3 +1,13 @@
+## [1.39.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.38.0...v1.39.0) (2026-09-25)
+
+### Features
+
+* Added Rev30 encryption cert ([#185](https://github.com/ibm-hyper-protect/contract-cli/issues/185)) ([50a9e95](https://github.com/ibm-hyper-protect/contract-cli/commit/50a9e95eb04200f0a3680986d3be391c12dbbb49))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.38.0 ([067aadf](https://github.com/ibm-hyper-protect/contract-cli/commit/067aadf2d067b2c05d02e121345c3b58d9470a30))
+
 ## [1.38.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.37.0...v1.38.0) (2026-09-24)
 
 ### Features
