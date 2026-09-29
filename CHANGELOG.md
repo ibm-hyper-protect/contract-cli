@@ -1,3 +1,14 @@
+## [1.39.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.39.0...v1.39.1) (2026-09-29)
+
+### Bug Fixes
+
+* Enabled contract-basic string for CCCO ([#187](https://github.com/ibm-hyper-protect/contract-cli/issues/187)) ([57f61fb](https://github.com/ibm-hyper-protect/contract-cli/commit/57f61fb0b305923af1ece89ccafee3ace1f931a0))
+
+### Miscellaneous Chores
+
+* add Anjana A R K as maintainer ([#183](https://github.com/ibm-hyper-protect/contract-cli/issues/183)) ([27265ce](https://github.com/ibm-hyper-protect/contract-cli/commit/27265ce11d78f72f8bc22ceef82f13f02198167c))
+* **homebrew:** update cask for contract-cli v1.39.0 ([3443c7a](https://github.com/ibm-hyper-protect/contract-cli/commit/3443c7af715f26f0899512c7af3962d6c9e3da24))
+
 ## [1.39.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.38.0...v1.39.0) (2026-09-25)
 
 ### Features
