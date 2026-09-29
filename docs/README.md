@@ -710,7 +710,7 @@ cat workload.yaml | contract-cli encrypt-string --in -
 
 ### decrypt
 
-Decrypt encrypted strings in IBM Confidential Computing format using an RSA private key. Supports both `contract-basic` (CCRT/CCRV) and `hyper-protect-basic` (CCCO/HPVS) encryption formats.
+Decrypt encrypted strings in IBM Confidential Computing format using an RSA private key. Supports both `contract-basic` (CCRT/CCRV/CCCO) and `hyper-protect-basic` (HPVS) encryption formats.
 
 #### Usage
 

@@ -31,8 +31,8 @@ const (
 	ParameterLongDescription  = `Decrypt encrypted strings in IBM Confidential Computing format using an RSA private key.
 
 Supports both encryption formats:
-  - contract-basic.<encrypted-password>.<encrypted-data>  (CCRT/CCRV)
-  - hyper-protect-basic.<encrypted-password>.<encrypted-data>  (CCCO/HPVS)
+  - contract-basic.<encrypted-password>.<encrypted-data>  (CCRT/CCRV/CCCO)
+  - hyper-protect-basic.<encrypted-password>.<encrypted-data>  (HPVS)
 
 The private key must correspond to the key used during encryption.`
 

@@ -284,13 +284,13 @@ func TestValidateInput_EmptyFormat(t *testing.T) {
 	assert.Equal(t, testOutputPath, outputPath)
 }
 
-// TestProcess_CCCO tests CCCO uses hyper-protect-basic format
+// TestProcess_CCCO tests CCCO uses contract-basic format
 func TestProcess_CCCO(t *testing.T) {
 	result, err := Process(testInputText, TextFormat, "ccco", testCertPath, "")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
-	assert.NotContains(t, result, "contract-basic")
+	assert.Contains(t, result, "contract-basic")
+	assert.NotContains(t, result, "hyper-protect-basic")
 }
 
 // TestProcess_HPVS tests HPVS uses hyper-protect-basic format
@@ -311,11 +311,11 @@ func TestProcess_CCRV(t *testing.T) {
 	assert.NotContains(t, result, "hyper-protect-basic")
 }
 
-// TestProcess_EmptyOS tests empty OS defaults to hyper-protect-basic
+// TestProcess_EmptyOS tests empty OS defaults to contract-basic
 func TestProcess_EmptyOS(t *testing.T) {
 	result, err := Process(testInputText, TextFormat, "", testCertPath, "")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
-	assert.Contains(t, result, "hyper-protect-basic")
-	assert.NotContains(t, result, "contract-basic")
+	assert.Contains(t, result, "contract-basic")
+	assert.NotContains(t, result, "hyper-protect-basic")
 }
