@@ -29,12 +29,12 @@ var signContractCmd = &cobra.Command{
 	Short: signContract.ParameterShortDescription,
 	Long:  signContract.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		contract, privateKey, output, password, err := signContract.ValidateInput(cmd)
+		contract, privateKey, output, password, envPath, workloadPath, err := signContract.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		contractSign, err := signContract.GenerateSignContract(contract, privateKey, password)
+		contractSign, err := signContract.GenerateSignContract(contract, privateKey, password, envPath, workloadPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -49,11 +49,13 @@ var signContractCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(signContractCmd)
 
-	requiredFlags := map[string]bool{
-		"in": true,
-	}
+	// No flags are individually "required" in Cobra — ValidateInput enforces
+	// the mutual-exclusion and pairing rules at runtime.
+	requiredFlags := map[string]bool{}
 
 	signContractCmd.PersistentFlags().String(signContract.InputFlagName, "", signContract.InputFlagDescription)
+	signContractCmd.PersistentFlags().String(signContract.EnvFlagName, "", signContract.EnvFlagDescription)
+	signContractCmd.PersistentFlags().String(signContract.WorkloadFlagName, "", signContract.WorkloadFlagDescription)
 	signContractCmd.PersistentFlags().String(signContract.PrivateKeyFlagName, "", signContract.PrivateKeyFlagDescription)
 	signContractCmd.PersistentFlags().String(signContract.PasswordFlagName, "", signContract.PasswordFlagDescription)
 	signContractCmd.PersistentFlags().String(signContract.OutputFlagName, "", signContract.OutputFlagDescription)

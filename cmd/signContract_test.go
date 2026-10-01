@@ -31,6 +31,8 @@ const (
 	testSignInvalidPath       = "../build/file/file_not_exists.txt"
 	testSignCorruptedContract = "../build/corrupted_contract_cmd.yaml"
 	testSignCorruptedKey      = "../build/corrupted_key_cmd.pem"
+	testSignEncryptedEnvPath  = "../samples/sign/encrypted-env.txt"
+	testSignEncryptedWlPath   = "../samples/sign/encrypted-workload.txt"
 )
 
 // getSignContractCmd returns a fresh instance of the sign-contract command for testing
@@ -40,13 +42,13 @@ func getSignContractCmd() *cobra.Command {
 		Short: signContract.ParameterShortDescription,
 		Long:  signContract.ParameterLongDescription,
 		Run: func(cmd *cobra.Command, args []string) {
-			contract, privateKey, output, password, err := signContract.ValidateInput(cmd)
+			contract, privateKey, output, password, envPath, workloadPath, err := signContract.ValidateInput(cmd)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return
 			}
 
-			contractSign, err := signContract.GenerateSignContract(contract, privateKey, password)
+			contractSign, err := signContract.GenerateSignContract(contract, privateKey, password, envPath, workloadPath)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return
@@ -61,6 +63,8 @@ func getSignContractCmd() *cobra.Command {
 	}
 
 	cmd.PersistentFlags().String(signContract.InputFlagName, "", signContract.InputFlagDescription)
+	cmd.PersistentFlags().String(signContract.EnvFlagName, "", signContract.EnvFlagDescription)
+	cmd.PersistentFlags().String(signContract.WorkloadFlagName, "", signContract.WorkloadFlagDescription)
 	cmd.PersistentFlags().String(signContract.PrivateKeyFlagName, "", signContract.PrivateKeyFlagDescription)
 	cmd.PersistentFlags().String(signContract.PasswordFlagName, "", signContract.PasswordFlagDescription)
 	cmd.PersistentFlags().String(signContract.OutputFlagName, "", signContract.OutputFlagDescription)
@@ -68,12 +72,12 @@ func getSignContractCmd() *cobra.Command {
 	return cmd
 }
 
-// TestSignContractCmd_Success tests successful contract signing via command
+// ─── Existing --in path (backward-compatible) ─────────────────────────────────
+
+// TestSignContractCmd_Success tests successful contract signing via --in
 func TestSignContractCmd_Success(t *testing.T) {
-	// Clean up any existing output file
 	os.Remove(testSignOutputPath)
 
-	// Get fresh command instance
 	cmd := getSignContractCmd()
 	cmd.SetArgs([]string{
 		"--" + signContract.InputFlagName, testSignContractPath,
@@ -84,16 +88,13 @@ func TestSignContractCmd_Success(t *testing.T) {
 	err := cmd.Execute()
 	assert.NoError(t, err)
 
-	// Verify output file was created
 	_, statErr := os.Stat(testSignOutputPath)
 	assert.NoError(t, statErr)
 
-	// Verify output contains signed contract (YAML format with signature)
 	content, readErr := os.ReadFile(testSignOutputPath)
 	assert.NoError(t, readErr)
 	assert.Contains(t, string(content), "envWorkloadSignature")
 
-	// Clean up
 	os.Remove(testSignOutputPath)
 }
 
@@ -112,11 +113,9 @@ func TestSignContractCmd_WithPassword(t *testing.T) {
 	err := cmd.Execute()
 	assert.NoError(t, err)
 
-	// Verify output file was created
 	_, statErr := os.Stat(testSignOutputPath)
 	assert.NoError(t, statErr)
 
-	// Verify output contains signed contract (YAML format with signature)
 	content, readErr := os.ReadFile(testSignOutputPath)
 	assert.NoError(t, readErr)
 	assert.Contains(t, string(content), "envWorkloadSignature")
@@ -157,12 +156,30 @@ func TestSignContractCmd_WithoutOutputPath(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// Note: Error test cases (missing flags, invalid paths, etc.) are not included here
-// because they call os.Exit() via common.SetMandatoryFlagError(), which terminates
-// the test process. These error scenarios are thoroughly tested at the library level
-// in lib/signContract/signContract_test.go where they can be properly validated.
+// TestSignContractCmd_WithPasswordAndOutput tests complete --in workflow with password and output
+func TestSignContractCmd_WithPasswordAndOutput(t *testing.T) {
+	os.Remove(testSignOutputPath)
 
-// TestSignContractCmd_CorruptedContract tests error with corrupted contract
+	cmd := getSignContractCmd()
+	cmd.SetArgs([]string{
+		"--" + signContract.InputFlagName, testSignContractPath,
+		"--" + signContract.PrivateKeyFlagName, testSignPrivateKeyPath,
+		"--" + signContract.PasswordFlagName, "securePass456",
+		"--" + signContract.OutputFlagName, testSignOutputPath,
+	})
+
+	err := cmd.Execute()
+	assert.NoError(t, err)
+
+	content, readErr := os.ReadFile(testSignOutputPath)
+	assert.NoError(t, readErr)
+	assert.NotEmpty(t, content)
+	assert.Contains(t, string(content), "envWorkloadSignature")
+
+	os.Remove(testSignOutputPath)
+}
+
+// TestSignContractCmd_CorruptedContract tests error with corrupted --in contract
 func TestSignContractCmd_CorruptedContract(t *testing.T) {
 	err := os.WriteFile(testSignCorruptedContract, []byte("invalid: yaml: content: ["), 0644)
 	assert.NoError(t, err)
@@ -175,7 +192,6 @@ func TestSignContractCmd_CorruptedContract(t *testing.T) {
 	})
 
 	err = cmd.Execute()
-	// Command will print error but not return error due to custom error handling
 	assert.NoError(t, err)
 }
 
@@ -192,34 +208,87 @@ func TestSignContractCmd_CorruptedPrivateKey(t *testing.T) {
 	})
 
 	err = cmd.Execute()
-	// Command will print error but not return error due to custom error handling
 	assert.NoError(t, err)
 }
 
-// TestSignContractCmd_WithPasswordAndOutput tests complete workflow with password and output
-func TestSignContractCmd_WithPasswordAndOutput(t *testing.T) {
+// ─── New --env + --workload path ──────────────────────────────────────────────
+
+// TestSignContractCmd_FromEnvWorkload_Success tests end-to-end with --env + --workload
+func TestSignContractCmd_FromEnvWorkload_Success(t *testing.T) {
 	os.Remove(testSignOutputPath)
 
 	cmd := getSignContractCmd()
 	cmd.SetArgs([]string{
-		"--" + signContract.InputFlagName, testSignContractPath,
+		"--" + signContract.EnvFlagName, testSignEncryptedEnvPath,
+		"--" + signContract.WorkloadFlagName, testSignEncryptedWlPath,
 		"--" + signContract.PrivateKeyFlagName, testSignPrivateKeyPath,
-		"--" + signContract.PasswordFlagName, "securePass456",
 		"--" + signContract.OutputFlagName, testSignOutputPath,
 	})
 
 	err := cmd.Execute()
 	assert.NoError(t, err)
 
-	// Verify output contains signed contract (YAML format with signature)
+	_, statErr := os.Stat(testSignOutputPath)
+	assert.NoError(t, statErr)
+
 	content, readErr := os.ReadFile(testSignOutputPath)
 	assert.NoError(t, readErr)
-	assert.NotEmpty(t, content)
+	assert.Contains(t, string(content), "envWorkloadSignature")
+	assert.Contains(t, string(content), "env:")
+	assert.Contains(t, string(content), "workload:")
+
+	os.Remove(testSignOutputPath)
+}
+
+// TestSignContractCmd_FromEnvWorkload_ToStdout tests new path writing to stdout
+func TestSignContractCmd_FromEnvWorkload_ToStdout(t *testing.T) {
+	cmd := getSignContractCmd()
+	cmd.SetArgs([]string{
+		"--" + signContract.EnvFlagName, testSignEncryptedEnvPath,
+		"--" + signContract.WorkloadFlagName, testSignEncryptedWlPath,
+		"--" + signContract.PrivateKeyFlagName, testSignPrivateKeyPath,
+	})
+
+	err := cmd.Execute()
+	assert.NoError(t, err)
+}
+
+// TestSignContractCmd_FromEnvWorkload_WithPassword tests new path with password flag
+func TestSignContractCmd_FromEnvWorkload_WithPassword(t *testing.T) {
+	os.Remove(testSignOutputPath)
+
+	cmd := getSignContractCmd()
+	cmd.SetArgs([]string{
+		"--" + signContract.EnvFlagName, testSignEncryptedEnvPath,
+		"--" + signContract.WorkloadFlagName, testSignEncryptedWlPath,
+		"--" + signContract.PrivateKeyFlagName, testSignPrivateKeyPath,
+		"--" + signContract.PasswordFlagName, "anyPassword",
+		"--" + signContract.OutputFlagName, testSignOutputPath,
+	})
+
+	err := cmd.Execute()
+	assert.NoError(t, err)
+
+	content, readErr := os.ReadFile(testSignOutputPath)
+	assert.NoError(t, readErr)
 	assert.Contains(t, string(content), "envWorkloadSignature")
 
 	os.Remove(testSignOutputPath)
 }
 
-// Note: TestSignContractCmd_EmptyContract removed because it causes a panic in contract-go
-// when processing empty contract data. This is expected behavior - empty contracts are invalid.
-// The error handling happens at a lower level and can't be gracefully tested at the command level.
+// TestSignContractCmd_FlagRegistration verifies that --env and --workload flags are
+// registered on the command. Mutual-exclusion and pair-validation logic is tested at
+// the library level (signContract_test.go) where os.Exit is not triggered.
+func TestSignContractCmd_FlagRegistration(t *testing.T) {
+	cmd := getSignContractCmd()
+	_, err := cmd.PersistentFlags().GetString(signContract.EnvFlagName)
+	assert.NoError(t, err, "--env flag should be registered")
+	_, err = cmd.PersistentFlags().GetString(signContract.WorkloadFlagName)
+	assert.NoError(t, err, "--workload flag should be registered")
+	_, err = cmd.PersistentFlags().GetString(signContract.InputFlagName)
+	assert.NoError(t, err, "--in flag should be registered")
+}
+
+// Note: Error test cases that trigger SetMandatoryFlagError (os.Exit(1)) — e.g. missing flags,
+// --in + --env conflict, partial pairs — are thoroughly covered at the library level in
+// lib/signContract/signContract_test.go where they can be validated without process exit.
