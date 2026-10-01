@@ -483,7 +483,9 @@ contract-cli download-certificate \
 
 ### sign-contract
 
-Generates a signed contract from a contract with encrypted workload and env sections.
+Signs a pre-encrypted contract. Accepts either a combined encrypted contract file via
+`--in`, or separate encrypted env and workload files via `--env` and `--workload`.
+The signing key is always provided via `--priv`.
 
 #### Usage
 
@@ -495,33 +497,70 @@ contract-cli sign-contract [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to encrypted IBM Confidential Computing contract YAML file (use '-' for standard input) |
-| `--priv` | string | Yes | Path to private key for signing |
+| `--in` | string | conditional | Path to pre-assembled encrypted contract YAML (`env:` + `workload:` keys). Use `-` for standard input. Mutually exclusive with `--env`/`--workload`. |
+| `--env` | string | conditional | Path to file containing the encrypted env section (`contract-basic.…`). Must be used together with `--workload`. Mutually exclusive with `--in`. |
+| `--workload` | string | conditional | Path to file containing the encrypted workload section (`contract-basic.…`). Must be used together with `--env`. Mutually exclusive with `--in`. |
+| `--priv` | string | **Yes** | Path to private key for signing |
 | `--password` | string | No | Password for encrypted private key |
-| `--out` | string | No | Path to save signed and encrypted contract |
+| `--out` | string | No | Path to save signed contract (prints to stdout if omitted) |
 | `-h, --help` | - | No | Display help information |
+
+> **Input rules**
+> - Provide either `--in` **or** both `--env` + `--workload` — not both groups at once.
+> - `--env` and `--workload` must always be supplied as a pair; providing only one is an error.
+> - `--priv` is always required regardless of which input mode is used.
 
 #### Examples
 
-**Sign a contract:**
+**Sign a pre-assembled encrypted contract file:**
 ```bash
-contract-cli sign-contract --in contract.yaml --priv private.pem
+contract-cli sign-contract --in encrypted-contract.yaml --priv private.pem
 ```
 
 **Sign and save to file:**
 ```bash
-contract-cli sign-contract --in contract.yaml --priv private.pem --out signed-contract.yaml
+contract-cli sign-contract \
+  --in encrypted-contract.yaml \
+  --priv private.pem \
+  --out signed-contract.yaml
 ```
 
-**Using standard input:**
+**Sign by providing encrypted env and workload as separate files:**
 ```bash
-cat contract.yaml | contract-cli sign-contract --in - --priv private.pem
+contract-cli sign-contract \
+  --env  encrypted-env.txt \
+  --workload encrypted-workload.txt \
+  --priv private.pem \
+  --out signed-contract.yaml
+```
+
+**Sign from separate files — output to stdout:**
+```bash
+contract-cli sign-contract \
+  --env  encrypted-env.txt \
+  --workload encrypted-workload.txt \
+  --priv private.pem
+```
+
+**Using standard input (--in path only):**
+```bash
+cat encrypted-contract.yaml | contract-cli sign-contract --in - --priv private.pem
 ```
 
 **Using password-protected private key:**
 ```bash
 contract-cli sign-contract \
-  --in contract.yaml \
+  --in encrypted-contract.yaml \
+  --priv private-encrypted.pem \
+  --password "your-secure-password" \
+  --out signed-contract.yaml
+```
+
+**Using password-protected private key with separate env/workload files:**
+```bash
+contract-cli sign-contract \
+  --env  encrypted-env.txt \
+  --workload encrypted-workload.txt \
   --priv private-encrypted.pem \
   --password "your-secure-password" \
   --out signed-contract.yaml
