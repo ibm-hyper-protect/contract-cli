@@ -37,13 +37,15 @@ func TestValidateInput_Success(t *testing.T) {
 	cmd.Flags().String(InputFlagName, testContractPath, "")
 	cmd.Flags().String(SehdrBinFlagName, "", "")
 	cmd.Flags().String(OutputFlagName, testOutputPath, "")
+	cmd.Flags().StringArray(ExtraRootCertsFlagName, []string{}, "")
 
-	inputData, sehdrBinPath, outputPath, err := ValidateInput(cmd)
+	inputData, sehdrBinPath, outputPath, extraCerts, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testContractPath, inputData)
 	assert.Equal(t, "", sehdrBinPath)
 	assert.Equal(t, testOutputPath, outputPath)
+	assert.Empty(t, extraCerts)
 }
 
 // TestValidateInput_WithoutOutputPath tests ValidateInput without output path
@@ -52,13 +54,15 @@ func TestValidateInput_WithoutOutputPath(t *testing.T) {
 	cmd.Flags().String(InputFlagName, testContractPath, "")
 	cmd.Flags().String(SehdrBinFlagName, "", "")
 	cmd.Flags().String(OutputFlagName, "", "")
+	cmd.Flags().StringArray(ExtraRootCertsFlagName, []string{}, "")
 
-	inputData, sehdrBinPath, outputPath, err := ValidateInput(cmd)
+	inputData, sehdrBinPath, outputPath, extraCerts, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testContractPath, inputData)
 	assert.Equal(t, "", sehdrBinPath)
 	assert.Equal(t, "", outputPath)
+	assert.Empty(t, extraCerts)
 }
 
 // Note: TestValidateInput_WithoutFlags removed because ValidateInput calls
@@ -70,14 +74,14 @@ func TestValidateInput_FlagErrors(t *testing.T) {
 	cmd := &cobra.Command{}
 	// Don't define flags to trigger errors
 
-	_, _, _, err := ValidateInput(cmd)
+	_, _, _, _, err := ValidateInput(cmd)
 
 	assert.Error(t, err)
 }
 
 // TestGenerateInitdata_Success tests successful initdata generation
 func TestGenerateInitdata_Success(t *testing.T) {
-	result, isBaremetal, err := GenerateInitdata(testContractPath, "")
+	result, isBaremetal, err := GenerateInitdata(testContractPath, "", nil)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -91,7 +95,7 @@ func TestGenerateInitdata_InvalidPath(t *testing.T) {
 	tmpDir := t.TempDir()
 	testInvalidPath := filepath.Join(tmpDir, "file", "file_not_exists.txt")
 
-	result, isBaremetal, err := GenerateInitdata(testInvalidPath, "")
+	result, isBaremetal, err := GenerateInitdata(testInvalidPath, "", nil)
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -101,7 +105,7 @@ func TestGenerateInitdata_InvalidPath(t *testing.T) {
 
 // TestGenerateInitdata_EmptyPath tests with empty path
 func TestGenerateInitdata_EmptyPath(t *testing.T) {
-	result, isBaremetal, err := GenerateInitdata("", "")
+	result, isBaremetal, err := GenerateInitdata("", "", nil)
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -118,7 +122,7 @@ func TestGenerateInitdata_CorruptedContract(t *testing.T) {
 	err := os.WriteFile(testCorruptedContract, []byte("invalid: yaml: content: ["), 0644)
 	assert.NoError(t, err)
 
-	result, isBaremetal, err := GenerateInitdata(testCorruptedContract, "")
+	result, isBaremetal, err := GenerateInitdata(testCorruptedContract, "", nil)
 
 	// HpccInitdata accepts any content and gzips it
 	assert.NoError(t, err)
@@ -134,7 +138,7 @@ func TestGenerateInitdata_EmptyContract(t *testing.T) {
 	err := os.WriteFile(testEmptyContract, []byte(""), 0644)
 	assert.NoError(t, err)
 
-	result, isBaremetal, err := GenerateInitdata(testEmptyContract, "")
+	result, isBaremetal, err := GenerateInitdata(testEmptyContract, "", nil)
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -150,7 +154,7 @@ func TestGenerateInitdata_NonYamlFile(t *testing.T) {
 	err := os.WriteFile(testTextFile, []byte("This is just plain text, not a contract"), 0644)
 	assert.NoError(t, err)
 
-	result, isBaremetal, err := GenerateInitdata(testTextFile, "")
+	result, isBaremetal, err := GenerateInitdata(testTextFile, "", nil)
 
 	// HpccInitdata accepts any content and gzips it
 	assert.NoError(t, err)
@@ -239,7 +243,7 @@ func TestPrintInitdata_LargeData(t *testing.T) {
 
 // TestGenerateInitdata_ValidContract tests with a valid encrypted contract
 func TestGenerateInitdata_ValidContract(t *testing.T) {
-	result, isBaremetal, err := GenerateInitdata(testContractPath, "")
+	result, isBaremetal, err := GenerateInitdata(testContractPath, "", nil)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -252,7 +256,7 @@ func TestGenerateInitdata_ValidContract(t *testing.T) {
 
 // TestGenerateInitdata_RelativePath tests with relative path
 func TestGenerateInitdata_RelativePath(t *testing.T) {
-	result, isBaremetal, err := GenerateInitdata("../../samples/hpcc/signed-encrypt-hpcc.yaml", "")
+	result, isBaremetal, err := GenerateInitdata("../../samples/hpcc/signed-encrypt-hpcc.yaml", "", nil)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -267,7 +271,7 @@ func TestGenerateInitdata_AbsolutePath(t *testing.T) {
 
 	fullPath := absPath + "/../../samples/hpcc/signed-encrypt-hpcc.yaml"
 
-	result, isBaremetal, err := GenerateInitdata(fullPath, "")
+	result, isBaremetal, err := GenerateInitdata(fullPath, "", nil)
 
 	// May fail if path doesn't resolve correctly, but that's okay
 	if err == nil {
@@ -286,13 +290,15 @@ func TestValidateInput_WithSehdrBin(t *testing.T) {
 	cmd.Flags().String(InputFlagName, testContractPath, "")
 	cmd.Flags().String(SehdrBinFlagName, testSehdrBinPath, "")
 	cmd.Flags().String(OutputFlagName, testOutputPath, "")
+	cmd.Flags().StringArray(ExtraRootCertsFlagName, []string{}, "")
 
-	inputData, sehdrBinPath, outputPath, err := ValidateInput(cmd)
+	inputData, sehdrBinPath, outputPath, extraCerts, err := ValidateInput(cmd)
 
 	assert.NoError(t, err)
 	assert.Equal(t, testContractPath, inputData)
 	assert.Equal(t, testSehdrBinPath, sehdrBinPath)
 	assert.Equal(t, testOutputPath, outputPath)
+	assert.Empty(t, extraCerts)
 }
 
 // TestGenerateInitdata_WithSehdrBin_Success tests successful initdata generation with SE header binary
@@ -305,7 +311,7 @@ func TestGenerateInitdata_WithSehdrBin_Success(t *testing.T) {
 	err := os.WriteFile(testSehdrBinPath, testBinaryData, 0644)
 	assert.NoError(t, err)
 
-	result, isBaremetal, err := GenerateInitdata(testContractPath, testSehdrBinPath)
+	result, isBaremetal, err := GenerateInitdata(testContractPath, testSehdrBinPath, nil)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -319,7 +325,7 @@ func TestGenerateInitdata_WithSehdrBin_InvalidPath(t *testing.T) {
 	tmpDir := t.TempDir()
 	testInvalidBinPath := filepath.Join(tmpDir, "file", "invalid_sehdr.bin")
 
-	result, isBaremetal, err := GenerateInitdata(testContractPath, testInvalidBinPath)
+	result, isBaremetal, err := GenerateInitdata(testContractPath, testInvalidBinPath, nil)
 
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
@@ -336,7 +342,7 @@ func TestGenerateInitdata_WithSehdrBin_EmptyFile(t *testing.T) {
 	err := os.WriteFile(testSehdrBinPath, []byte{}, 0644)
 	assert.NoError(t, err)
 
-	result, isBaremetal, err := GenerateInitdata(testContractPath, testSehdrBinPath)
+	result, isBaremetal, err := GenerateInitdata(testContractPath, testSehdrBinPath, nil)
 
 	// Empty binary file should cause an error in HpcrText
 	assert.Error(t, err)
@@ -357,12 +363,101 @@ func TestGenerateInitdata_WithSehdrBin_LargeBinary(t *testing.T) {
 	err := os.WriteFile(testSehdrBinPath, largeBinaryData, 0644)
 	assert.NoError(t, err)
 
-	result, isBaremetal, err := GenerateInitdata(testContractPath, testSehdrBinPath)
+	result, isBaremetal, err := GenerateInitdata(testContractPath, testSehdrBinPath, nil)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 	assert.True(t, isBaremetal)
 	assert.Greater(t, len(result), 100, "Generated initdata with large binary should be substantial")
+}
+
+// TestGenerateInitdata_WithExtraRootCerts tests GenerateInitdata with extra root certificate files
+func TestGenerateInitdata_WithExtraRootCerts(t *testing.T) {
+	tmpDir := t.TempDir()
+	certPath := filepath.Join(tmpDir, "root_ca.pem")
+
+	certContent := "-----BEGIN CERTIFICATE-----\nMIIBcert1\n-----END CERTIFICATE-----\n"
+	err := os.WriteFile(certPath, []byte(certContent), 0644)
+	assert.NoError(t, err)
+
+	result, isBaremetal, err := GenerateInitdata(testContractPath, "", []string{certPath})
+
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.False(t, isBaremetal)
+	assert.Greater(t, len(result), 10, "Generated initdata with extra root certs should be substantial")
+}
+
+// TestGenerateInitdata_WithExtraRootCerts_InvalidPath tests GenerateInitdata with non-existent cert path
+func TestGenerateInitdata_WithExtraRootCerts_InvalidPath(t *testing.T) {
+	tmpDir := t.TempDir()
+	invalidCertPath := filepath.Join(tmpDir, "nonexistent", "root_ca.pem")
+
+	result, isBaremetal, err := GenerateInitdata(testContractPath, "", []string{invalidCertPath})
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.False(t, isBaremetal)
+	assert.Contains(t, err.Error(), "doesn't exist")
+}
+
+// TestGenerateInitdata_WithMultipleExtraRootCerts tests GenerateInitdata with multiple cert files
+func TestGenerateInitdata_WithMultipleExtraRootCerts(t *testing.T) {
+	tmpDir := t.TempDir()
+	certPath1 := filepath.Join(tmpDir, "root_ca1.pem")
+	certPath2 := filepath.Join(tmpDir, "root_ca2.pem")
+
+	err := os.WriteFile(certPath1, []byte("-----BEGIN CERTIFICATE-----\nMIIBcert1\n-----END CERTIFICATE-----\n"), 0644)
+	assert.NoError(t, err)
+	err = os.WriteFile(certPath2, []byte("-----BEGIN CERTIFICATE-----\nMIIBcert2\n-----END CERTIFICATE-----\n"), 0644)
+	assert.NoError(t, err)
+
+	result, isBaremetal, err := GenerateInitdata(testContractPath, "", []string{certPath1, certPath2})
+
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.False(t, isBaremetal)
+	assert.Greater(t, len(result), 10)
+}
+
+// TestGenerateInitdata_WithSehdrBinAndExtraRootCerts tests GenerateInitdata with both sehdr bin and certs
+func TestGenerateInitdata_WithSehdrBinAndExtraRootCerts(t *testing.T) {
+	tmpDir := t.TempDir()
+	testSehdrBinPath := filepath.Join(tmpDir, "test_sehdr.bin")
+	certPath := filepath.Join(tmpDir, "root_ca.pem")
+
+	err := os.WriteFile(testSehdrBinPath, []byte{0x00, 0x01, 0x02, 0x03}, 0644)
+	assert.NoError(t, err)
+	err = os.WriteFile(certPath, []byte("-----BEGIN CERTIFICATE-----\nMIIBcert1\n-----END CERTIFICATE-----\n"), 0644)
+	assert.NoError(t, err)
+
+	result, isBaremetal, err := GenerateInitdata(testContractPath, testSehdrBinPath, []string{certPath})
+
+	assert.NoError(t, err)
+	assert.NotEmpty(t, result)
+	assert.True(t, isBaremetal)
+	assert.Greater(t, len(result), 10)
+}
+
+// TestValidateInput_WithExtraRootCerts tests ValidateInput with extra_root_certificates flag
+func TestValidateInput_WithExtraRootCerts(t *testing.T) {
+	tmpDir := t.TempDir()
+	certPath := filepath.Join(tmpDir, "root_ca.pem")
+	testOutputPath := filepath.Join(tmpDir, "test_initdata_output.txt")
+
+	cmd := &cobra.Command{}
+	cmd.Flags().String(InputFlagName, testContractPath, "")
+	cmd.Flags().String(SehdrBinFlagName, "", "")
+	cmd.Flags().String(OutputFlagName, testOutputPath, "")
+	cmd.Flags().StringArray(ExtraRootCertsFlagName, []string{certPath}, "")
+
+	inputData, sehdrBinPath, outputPath, extraCerts, err := ValidateInput(cmd)
+
+	assert.NoError(t, err)
+	assert.Equal(t, testContractPath, inputData)
+	assert.Equal(t, "", sehdrBinPath)
+	assert.Equal(t, testOutputPath, outputPath)
+	assert.Equal(t, []string{certPath}, extraCerts)
 }
 
 // TestPrintInitdata_Baremetal tests PrintInitdata with baremetal flag set to true

@@ -424,6 +424,13 @@ contract-cli initdata \
   --in signed_encrypted_contract.yaml \
   --sehdr se-header.bin \
   --out initdata.txt
+
+# Embed extra root certificates into cdh.toml inside the initdata
+contract-cli initdata \
+  --in signed_encrypted_contract.yaml \
+  --extra_root_certificates root-ca1.pem \
+  --extra_root_certificates root-ca2.pem \
+  --out initdata.txt
 ```
 
 ### Using Password-Protected Private Keys
