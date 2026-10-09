@@ -1460,7 +1460,7 @@ The command outputs a complete OPA v1 Rego policy including:
 ---
 
 ### initdata
-Create initdata annotation from signed and encrypted contract for IBM Confidential Computing Containers for Red Hat OpenShift Container Platform. Supports both Peer Pod and Baremetal solutions.
+Create initdata annotation from signed and encrypted contract for IBM Confidential Computing Containers for Red Hat OpenShift Container Platform. Supports both Peer Pod and Baremetal solutions, and optionally embeds extra root certificates into the `cdh.toml` section.
 
 #### Usage
 
@@ -1472,14 +1472,15 @@ contract-cli initdata [flags]
 
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
-| `--in` | string | Yes | Path to signed & encrypted contract YAML file (use '-' for standard input) |
+| `--in` | string | Yes | Path to signed & encrypted contract YAML file (use `-` for standard input) |
 | `--sehdr` | string | No | Path to SE header binary file (.bin) for baremetal solution |
+| `--extra_root_certificates` | string (repeatable) | No | Path to a PEM certificate file to embed in `cdh.toml` `extra_root_certificates`. Can be specified multiple times for multiple certs |
 | `--out` | string | No | Path to store gzipped & encoded initdata value |
 | `-h, --help` | - | No | Display help information |
 
 #### Examples
 
-**Create initdata for Peer Pod solution without SE header binary:**
+**Create initdata for Peer Pod solution:**
 ```bash
 contract-cli initdata --in signed_encrypted_contract.yaml
 ```
@@ -1492,21 +1493,32 @@ contract-cli initdata \
   --out initdata.txt
 ```
 
-**Save output to file for peerpod solution without SE header binary:**
+**Embed a single extra root certificate:**
 ```bash
 contract-cli initdata \
   --in signed_encrypted_contract.yaml \
-  --out initdata-annotation.txt
+  --extra_root_certificates root-ca.pem \
+  --out initdata.txt
 ```
 
-**Save output to file for baremetal solution with SE header binary:**
+**Embed multiple extra root certificates:**
+```bash
+contract-cli initdata \
+  --in signed_encrypted_contract.yaml \
+  --extra_root_certificates root-ca1.pem \
+  --extra_root_certificates root-ca2.pem \
+  --out initdata.txt
+```
+
+**Baremetal with SE header and extra root certificates:**
 ```bash
 contract-cli initdata \
   --in signed_encrypted_contract.yaml \
   --sehdr se-header.bin \
-  --out initdata-annotation.txt
+  --extra_root_certificates root-ca1.pem \
+  --extra_root_certificates root-ca2.pem \
+  --out initdata.txt
 ```
-
 
 **Using standard input:**
 ```bash
@@ -1518,6 +1530,8 @@ cat signed_encrypted_contract.yaml | contract-cli initdata --in -
 - With `--sehdr`, the command generates initdata for baremetal solution
 - Without `--sehdr`, the command generates initdata for Peer Pod solution
 - The SE header binary file is automatically encoded to base64 before being included in the initdata
+- When `--extra_root_certificates` is provided, the certificates are embedded in a `cdh.toml` entry inside the initdata with an `aa.toml` entry included automatically
+- `--extra_root_certificates` can be specified multiple times to include more than one certificate
 - Output is gzipped and base64 encoded, ready to use as an initdata annotation
 
 ---
