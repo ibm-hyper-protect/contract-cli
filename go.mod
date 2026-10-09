@@ -15,7 +15,7 @@
 
 module github.com/ibm-hyper-protect/contract-cli
 
-go 1.26.4
+go 1.27.1
 
 require (
 	github.com/ibm-hyper-protect/contract-go/v2 v2.50.0
@@ -59,5 +59,3 @@ require (
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2 // indirect
 )
-
-replace github.com/ibm-hyper-protect/contract-go/v2 => ../contract-go
