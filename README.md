@@ -97,6 +97,7 @@ This CLI is for **developers, DevOps engineers, and platform teams** who need to
   - **Specify encryption certificate version** for encryption operations with `--ver` flag
   - Validate contract schemas
   - Create Gzipped & Encoded initdata for IBM Confidential Computing Containers (Peer Pod and Baremetal solutions)
+  - **Sign contracts from separate encrypted files** — provide `--env` and `--workload` as individual file paths; the CLI stitches them in-memory before signing (no intermediate file required)
 
 - **Sealed Secret Management**
   - Generate sealed secrets for CCCO workload and environment sections
@@ -433,6 +434,34 @@ contract-cli initdata \
   --out initdata.txt
 ```
 
+### Sign a Contract from Separate Encrypted Files
+
+When the encrypted env and workload sections are stored as individual files (for example,
+output from a multi-persona workflow where different teams encrypt each section), you can
+pass them directly to `sign-contract` without manually assembling a combined YAML file:
+
+```bash
+# sign-contract stitches the two files in-memory and signs them
+contract-cli sign-contract \
+  --env      encrypted-env.txt \
+  --workload encrypted-workload.txt \
+  --priv     private.pem \
+  --out      signed-contract.yaml
+```
+
+The `--env` and `--workload` flags are mutually exclusive with `--in`.
+Both must always be supplied together — providing only one is an error.
+
+```bash
+# With a password-protected private key
+contract-cli sign-contract \
+  --env      encrypted-env.txt \
+  --workload encrypted-workload.txt \
+  --priv     private-encrypted.pem \
+  --password "your-secure-password" \
+  --out      signed-contract.yaml
+```
+
 ### Using Password-Protected Private Keys
 
 The CLI supports password-protected private keys for enhanced security:
@@ -448,9 +477,9 @@ contract-cli decrypt-attestation \
   --password "your-secure-password" \
   --out decrypted-attestation.txt
 
-# Sign contract with password-protected key
+# Sign contract with password-protected key (--in path)
 contract-cli sign-contract \
-  --in contract.yaml \
+  --in encrypted-contract.yaml \
   --priv private-encrypted.pem \
   --password "your-secure-password" \
   --out signed-contract.yaml
