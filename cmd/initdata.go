@@ -29,12 +29,12 @@ var initdataCmd = &cobra.Command{
 	Short: initdata.ParameterShortDescription,
 	Long:  initdata.ParameterLongDescription,
 	Run: func(cmd *cobra.Command, args []string) {
-		inputDataPath, sehdrBinPath, outputPath, err := initdata.ValidateInput(cmd)
+		inputDataPath, sehdrBinPath, outputPath, extraRootCertPaths, err := initdata.ValidateInput(cmd)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		gzipInitdata, isBaremetal, err := initdata.GenerateInitdata(inputDataPath, sehdrBinPath)
+		gzipInitdata, isBaremetal, err := initdata.GenerateInitdata(inputDataPath, sehdrBinPath, extraRootCertPaths)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -56,6 +56,7 @@ func init() {
 	initdataCmd.PersistentFlags().String(initdata.InputFlagName, "", initdata.InputFlagDescription)
 	initdataCmd.PersistentFlags().String(initdata.SehdrBinFlagName, "", initdata.SehdrBinFlagDescription)
 	initdataCmd.PersistentFlags().String(initdata.OutputFlagName, "", initdata.OutputFlagDescription)
+	initdataCmd.PersistentFlags().StringArray(initdata.ExtraRootCertsFlagName, []string{}, initdata.ExtraRootCertsFlagDescription)
 	common.SetCustomHelpTemplate(initdataCmd, requiredFlags)
 	common.SetCustomErrorTemplate(initdataCmd)
 }

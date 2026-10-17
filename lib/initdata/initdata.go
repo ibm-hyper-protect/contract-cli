@@ -36,13 +36,16 @@ const (
 
 	OutputFlagName        = "out"
 	OutputFlagDescription = "Path to save Gzipped and encoded initdata value"
+
+	ExtraRootCertsFlagName        = "extra_root_certificates"
+	ExtraRootCertsFlagDescription = "Path(s) to PEM certificate file(s) to embed as extra_root_certificates in cdh.toml (can be specified multiple times)"
 )
 
 // ValidateInput - function to validate inputs of initdata
-func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
+func ValidateInput(cmd *cobra.Command) (string, string, string, []string, error) {
 	inputData, err := cmd.Flags().GetString(InputFlagName)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", nil, err
 	}
 
 	if inputData == "" {
@@ -55,18 +58,24 @@ func ValidateInput(cmd *cobra.Command) (string, string, string, error) {
 
 	sehdrBinPath, err := cmd.Flags().GetString(SehdrBinFlagName)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", nil, err
 	}
 
 	outputPath, err := cmd.Flags().GetString(OutputFlagName)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", nil, err
 	}
-	return inputData, sehdrBinPath, outputPath, nil
+
+	extraRootCertPaths, err := cmd.Flags().GetStringArray(ExtraRootCertsFlagName)
+	if err != nil {
+		return "", "", "", nil, err
+	}
+
+	return inputData, sehdrBinPath, outputPath, extraRootCertPaths, nil
 }
 
 // GenerateInitdata - function to generate gzipped initdata
-func GenerateInitdata(inputDataPath, sehdrBinPath string) (string, bool, error) {
+func GenerateInitdata(inputDataPath, sehdrBinPath string, extraRootCertPaths []string) (string, bool, error) {
 	var inputData string
 	var err error
 
@@ -105,7 +114,23 @@ func GenerateInitdata(inputDataPath, sehdrBinPath string) (string, bool, error) 
 		isBaremetal = true
 	}
 
-	gzipInitdata, _, _, err := contract.HpccInitdata(inputData, sehdrBase64)
+	// Read each extra root certificate file
+	var extraRootCerts []string
+	for _, certPath := range extraRootCertPaths {
+		if certPath == "" {
+			continue
+		}
+		if !common.CheckFileFolderExists(certPath) {
+			return "", false, fmt.Errorf("the extra root certificate path doesn't exist: %s", certPath)
+		}
+		certData, err := common.ReadDataFromFile(certPath)
+		if err != nil {
+			return "", false, fmt.Errorf("unable to read extra root certificate file %s: %w", certPath, err)
+		}
+		extraRootCerts = append(extraRootCerts, certData)
+	}
+
+	gzipInitdata, _, _, err := contract.HpccInitdata(inputData, sehdrBase64, extraRootCerts)
 	if err != nil {
 		return "", false, err
 	}

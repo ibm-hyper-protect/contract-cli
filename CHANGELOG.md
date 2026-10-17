@@ -1,3 +1,24 @@
+## [1.41.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.40.0...v1.41.0) (2026-10-09)
+
+### Features
+
+* update Go version to 1.27.1 ([#193](https://github.com/ibm-hyper-protect/contract-cli/issues/193)) ([eb9bcda](https://github.com/ibm-hyper-protect/contract-cli/commit/eb9bcda192c0d57e55ad72ad0f4d6bce0b780f34))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.40.0 ([5a08a2d](https://github.com/ibm-hyper-protect/contract-cli/commit/5a08a2d810c76490ba49e681aee1394b63fe049c))
+
+## [1.40.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.39.1...v1.40.0) (2026-10-09)
+
+### Features
+
+* Initdata cert handling ([#192](https://github.com/ibm-hyper-protect/contract-cli/issues/192)) ([f051e2d](https://github.com/ibm-hyper-protect/contract-cli/commit/f051e2d24ec27009aa565de93e8e33a182922bf3))
+
+### Miscellaneous Chores
+
+* **deps:** update anchore/sbom-action action to v0.24.3 ([#189](https://github.com/ibm-hyper-protect/contract-cli/issues/189)) ([dde6655](https://github.com/ibm-hyper-protect/contract-cli/commit/dde6655e995f973d4d53a7b44453cc20d709c015))
+* **homebrew:** update cask for contract-cli v1.39.1 ([37dc017](https://github.com/ibm-hyper-protect/contract-cli/commit/37dc0174149c80c66278d659bf668d0b754ac1ec))
+
 ## [1.39.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.39.0...v1.39.1) (2026-09-29)
 
 ### Bug Fixes
