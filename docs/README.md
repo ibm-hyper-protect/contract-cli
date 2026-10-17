@@ -502,7 +502,7 @@ contract-cli sign-contract [flags]
 | `--workload` | string | conditional | Path to file containing the encrypted workload section (`contract-basic.…`). Must be used together with `--env`. Mutually exclusive with `--in`. |
 | `--priv` | string | **Yes** | Path to private key for signing |
 | `--password` | string | No | Password for encrypted private key |
-| `--out` | string | No | Path to save signed contract (prints to stdout if omitted) |
+| `--out` | string | No | Path to save signed and encrypted contract (prints to stdout if omitted) |
 | `-h, --help` | - | No | Display help information |
 
 > **Input rules**

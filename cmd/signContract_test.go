@@ -289,6 +289,3 @@ func TestSignContractCmd_FlagRegistration(t *testing.T) {
 	assert.NoError(t, err, "--in flag should be registered")
 }
 
-// Note: Error test cases that trigger SetMandatoryFlagError (os.Exit(1)) — e.g. missing flags,
-// --in + --env conflict, partial pairs — are thoroughly covered at the library level in
-// lib/signContract/signContract_test.go where they can be validated without process exit.

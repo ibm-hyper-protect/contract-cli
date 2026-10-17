@@ -151,6 +151,32 @@ func TestBuildContractFromParts_InvalidWorkloadPath(t *testing.T) {
 	assert.Contains(t, err.Error(), "workload file path doesn't exist")
 }
 
+// TestBuildContractFromParts_InvalidEnvFormat tests that a non-contract-basic. env blob is rejected
+func TestBuildContractFromParts_InvalidEnvFormat(t *testing.T) {
+	invalidEnvFile := "../../build/test_build_invalid_env_format.txt"
+	defer os.Remove(invalidEnvFile)
+	os.WriteFile(invalidEnvFile, []byte("not-a-valid-encrypted-blob"), 0644)
+
+	result, err := BuildContractFromParts(invalidEnvFile, testEncryptedWlPath)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "invalid env encryption format")
+}
+
+// TestBuildContractFromParts_InvalidWorkloadFormat tests that a non-contract-basic. workload blob is rejected
+func TestBuildContractFromParts_InvalidWorkloadFormat(t *testing.T) {
+	invalidWlFile := "../../build/test_build_invalid_wl_format.txt"
+	defer os.Remove(invalidWlFile)
+	os.WriteFile(invalidWlFile, []byte("not-a-valid-encrypted-blob"), 0644)
+
+	result, err := BuildContractFromParts(testEncryptedEnvPath, invalidWlFile)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "invalid workload encryption format")
+}
+
 // TestBuildContractFromParts_TrimsWhitespace tests that trailing newlines in files are trimmed
 func TestBuildContractFromParts_TrimsWhitespace(t *testing.T) {
 	envFile := "../../build/test_env_with_newline.txt"
@@ -242,6 +268,34 @@ func TestGenerateSignContract_InvalidWorkloadPath(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 	assert.Contains(t, err.Error(), "workload file path doesn't exist")
+}
+
+// TestGenerateSignContract_InvalidEnvEncryptionFormat tests signing fails when
+// the env file does not contain a valid contract-basic.* encrypted blob.
+func TestGenerateSignContract_InvalidEnvEncryptionFormat(t *testing.T) {
+	invalidEnvFile := "../../build/test_invalid_env_format.txt"
+	defer os.Remove(invalidEnvFile)
+	os.WriteFile(invalidEnvFile, []byte("not-a-valid-encrypted-blob"), 0644)
+
+	result, err := GenerateSignContract("", testPrivateKeyPath, "", invalidEnvFile, testEncryptedWlPath)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "invalid env encryption format")
+}
+
+// TestGenerateSignContract_InvalidWorkloadEncryptionFormat tests signing fails when
+// the workload file does not contain a valid contract-basic.* encrypted blob.
+func TestGenerateSignContract_InvalidWorkloadEncryptionFormat(t *testing.T) {
+	invalidWlFile := "../../build/test_invalid_wl_format.txt"
+	defer os.Remove(invalidWlFile)
+	os.WriteFile(invalidWlFile, []byte("not-a-valid-encrypted-blob"), 0644)
+
+	result, err := GenerateSignContract("", testPrivateKeyPath, "", testEncryptedEnvPath, invalidWlFile)
+
+	assert.Error(t, err)
+	assert.Equal(t, "", result)
+	assert.Contains(t, err.Error(), "invalid workload encryption format")
 }
 
 // TestGenerateSignContract_CorruptedContract tests with corrupted --in contract file

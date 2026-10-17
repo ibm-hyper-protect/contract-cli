@@ -39,7 +39,7 @@ const (
 	PasswordFlagName          = "password"
 	PasswordFlagDescription   = "Password for encrypted private key"
 	OutputFlagName            = "out"
-	OutputFlagDescription     = "Path to save signed output"
+	OutputFlagDescription     = "Path to save signed and encrypted contract output"
 )
 
 // ValidateInput validates inputs of sign-contract and returns:
@@ -131,6 +131,14 @@ func BuildContractFromParts(envPath, workloadPath string) (string, error) {
 
 	envBlob = strings.TrimSpace(envBlob)
 	workloadBlob = strings.TrimSpace(workloadBlob)
+
+	if !strings.HasPrefix(envBlob, "contract-basic.") {
+		return "", fmt.Errorf("invalid env encryption format: expected content starting with 'contract-basic.'")
+	}
+
+	if !strings.HasPrefix(workloadBlob, "contract-basic.") {
+		return "", fmt.Errorf("invalid workload encryption format: expected content starting with 'contract-basic.'")
+	}
 
 	contractYAML := fmt.Sprintf("env: %s\nworkload: %s\n", envBlob, workloadBlob)
 	return contractYAML, nil

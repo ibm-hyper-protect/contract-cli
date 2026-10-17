@@ -49,9 +49,11 @@ var signContractCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(signContractCmd)
 
-	// No flags are individually "required" in Cobra — ValidateInput enforces
-	// the mutual-exclusion and pairing rules at runtime.
-	requiredFlags := map[string]bool{}
+	// --priv is always required; ValidateInput enforces it at runtime and
+	// the help template uses this map to display it under "Mandatory Flags".
+	requiredFlags := map[string]bool{
+		signContract.PrivateKeyFlagName: true,
+	}
 
 	signContractCmd.PersistentFlags().String(signContract.InputFlagName, "", signContract.InputFlagDescription)
 	signContractCmd.PersistentFlags().String(signContract.EnvFlagName, "", signContract.EnvFlagDescription)
