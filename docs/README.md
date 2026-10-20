@@ -52,6 +52,7 @@ Complete command reference and usage guide for the IBM Confidential Computing Co
 - [Exit Codes](#exit-codes)
 - [Troubleshooting](#troubleshooting)
 - [Examples](#examples)
+- [Plugins](#plugins)
 
 ## Introduction
 
@@ -1999,3 +2000,77 @@ The [`samples/`](../samples/) directory contains working examples:
 - [Open an issue](https://github.com/ibm-hyper-protect/contract-cli/issues/new/choose)
 - [Ask a question](https://github.com/ibm-hyper-protect/contract-cli/discussions)
 - Check the [troubleshooting](#troubleshooting) section above
+
+## Plugins
+
+`contract-cli` supports a binary plugin model. Plugins are standalone executables named `contract-plugin-<name>`, stored in `~/.contract-cli/plugins/`. Any unknown sub-command is transparently delegated to the matching plugin binary.
+
+For a full plugin author guide see [docs/plugins.md](plugins.md).
+
+### Plugin Management Commands
+
+| Command | Description |
+|---|---|
+| `contract-cli plugin install <ref>` | Install a plugin from GitHub or a local path |
+| `contract-cli plugin list` | List installed plugins and their versions |
+| `contract-cli plugin uninstall <name>` | Remove an installed plugin |
+| `contract-cli plugin update [<name[@version]>]` | Update one or all plugins |
+
+### Installing a Plugin
+
+```sh
+# Install latest release from GitHub
+contract-cli plugin install github.com/org/contract-plugin-ccrv
+
+# Install a specific version
+contract-cli plugin install github.com/org/contract-plugin-ccrv@v1.2.0
+
+# Install from a local binary
+contract-cli plugin install ./contract-plugin-ccrv
+```
+
+GitHub installs and updates verify the binary against the SHA-256 checksum file published in the release (`<asset>.sha256`, `checksums.txt` or `SHA256SUMS`). If the file is missing or the digest does not match, the install fails. To skip verification (not recommended), use `--insecure`:
+
+```sh
+contract-cli plugin install github.com/org/contract-plugin-ccrv --insecure
+contract-cli plugin update ccrv --insecure
+```
+
+### Using a Plugin
+
+Once installed, invoke the plugin using its short name as a sub-command:
+
+```sh
+contract-cli ccrv --help
+contract-cli ccrv generate --env prod
+```
+
+All arguments after the plugin name are passed through to the plugin binary unchanged.
+
+### Updating Plugins
+
+```sh
+# Update a specific plugin to latest
+contract-cli plugin update ccrv
+
+# Pin to a specific version
+contract-cli plugin update ccrv@v2.0.0
+
+# Update all GitHub-sourced plugins
+contract-cli plugin update
+```
+
+### Uninstalling a Plugin
+
+```sh
+contract-cli plugin uninstall ccrv
+```
+
+### Direct Execution Protection
+
+Plugins cannot be executed directly. They require `contract-cli` to set the `CONTRACT_CLI_PLUGIN=1` environment variable. Running a plugin binary directly produces:
+
+```
+Error: this plugin must be run through contract-cli
+```
+
