@@ -39,7 +39,7 @@ go test ./lib/encrypt -v -run TestGenerateSignedEncryptContract_Success  # singl
 
 ## Plugins (`cmd/plugin.go`, `lib/plugin/`, `docs/plugins.md`)
 
-- Binaries `contract-plugin-<name>` live in `~/.contract-cli/plugins` (`common.PluginDir()`, auto-created); sources tracked in `.sources.json`.
+- Binaries `contract-plugin-<name>` live in `~/.contract-cli/plugins` (`plugin.PluginDir()` in `lib/plugin`, auto-created); sources tracked in `.sources.json`.
 - Dispatch happens in `rootCmd.Args` in `cmd/root.go`: unknown first arg → `plugin.FindPlugin` → `plugin.Exec` (`syscall.Exec` on Unix, child process on Windows; sets `CONTRACT_CLI_PLUGIN=1`). Built-in commands always win over a same-named plugin.
 - Group command `pluginCmd` must NOT get `SetCustomHelpTemplate` (it would hide the subcommand list); leaf plugin commands pass an empty required-flags map.
 - Tests isolate by `t.Setenv("HOME", tmp)` (`setPluginDir` in `cmd/plugin_test.go`); `plugin.Exec` can't be tested in-process.
