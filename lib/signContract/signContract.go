@@ -133,11 +133,11 @@ func BuildContractFromParts(envPath, workloadPath string) (string, error) {
 	workloadBlob = strings.TrimSpace(workloadBlob)
 
 	if !strings.HasPrefix(envBlob, "contract-basic.") {
-		return "", fmt.Errorf("invalid env encryption format: expected content starting with 'contract-basic.'")
+		return "", fmt.Errorf("invalid env encryption format %q: expected prefix 'contract-basic.'", envBlob)
 	}
 
 	if !strings.HasPrefix(workloadBlob, "contract-basic.") {
-		return "", fmt.Errorf("invalid workload encryption format: expected content starting with 'contract-basic.'")
+		return "", fmt.Errorf("invalid workload encryption format %q: expected prefix 'contract-basic.'", workloadBlob)
 	}
 
 	contractYAML := fmt.Sprintf("env: %s\nworkload: %s\n", envBlob, workloadBlob)

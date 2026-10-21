@@ -509,6 +509,7 @@ contract-cli sign-contract [flags]
 > - Provide either `--in` **or** both `--env` + `--workload` — not both groups at once.
 > - `--env` and `--workload` must always be supplied as a pair; providing only one is an error.
 > - `--priv` is always required regardless of which input mode is used.
+> - Standard input (`-`) is supported **only** with `--in`. Pass a full pre-assembled encrypted contract YAML (containing both `env:` and `workload:` keys) on stdin. `--env` and `--workload` accept file paths only and do not support stdin.
 
 #### Examples
 

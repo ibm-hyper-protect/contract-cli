@@ -162,6 +162,8 @@ func TestBuildContractFromParts_InvalidEnvFormat(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 	assert.Contains(t, err.Error(), "invalid env encryption format")
+	assert.Contains(t, err.Error(), "not-a-valid-encrypted-blob")
+	assert.Contains(t, err.Error(), "expected prefix 'contract-basic.'")
 }
 
 // TestBuildContractFromParts_InvalidWorkloadFormat tests that a non-contract-basic. workload blob is rejected
@@ -175,6 +177,8 @@ func TestBuildContractFromParts_InvalidWorkloadFormat(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "", result)
 	assert.Contains(t, err.Error(), "invalid workload encryption format")
+	assert.Contains(t, err.Error(), "not-a-valid-encrypted-blob")
+	assert.Contains(t, err.Error(), "expected prefix 'contract-basic.'")
 }
 
 // TestBuildContractFromParts_TrimsWhitespace tests that trailing newlines in files are trimmed
