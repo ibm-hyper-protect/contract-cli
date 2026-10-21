@@ -1,3 +1,14 @@
+## [1.42.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.41.0...v1.42.0) (2026-10-21)
+
+### Features
+
+* Enhanced sign-contract to support encrypted enc and workload ([#188](https://github.com/ibm-hyper-protect/contract-cli/issues/188)) ([3c71d2d](https://github.com/ibm-hyper-protect/contract-cli/commit/3c71d2dae9c4bb185c0f87f9ea77a6aea63e0140))
+
+### Miscellaneous Chores
+
+* **deps:** update docker.io/library/hello-world docker digest to 11a3eb1 ([#191](https://github.com/ibm-hyper-protect/contract-cli/issues/191)) ([d126e7b](https://github.com/ibm-hyper-protect/contract-cli/commit/d126e7b02f22de3830c8b5fc2eb977b7f94a9242))
+* **homebrew:** update cask for contract-cli v1.41.0 ([a0e3dcf](https://github.com/ibm-hyper-protect/contract-cli/commit/a0e3dcf7f7552e070777b7775322d4e74ce79ad9))
+
 ## [1.41.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.40.0...v1.41.0) (2026-10-09)
 
 ### Features
