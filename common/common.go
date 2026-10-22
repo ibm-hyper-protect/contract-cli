@@ -87,6 +87,13 @@ func ValidateStdinInput(cmd *cobra.Command, inputData string) {
 
 // WriteDataToFile - function to write data to file (create file if doesn't exists)
 func WriteDataToFile(filePath, data string) error {
+	// Remove any pre-existing file before opening so that O_CREATE always
+	// applies the 0600 mode. Without this, os.OpenFile does not change the
+	// permissions or ownership of an existing file, allowing a local attacker
+	// to pre-create the path with permissive permissions (e.g. 0666) and read
+	// sensitive output written by another user.
+	_ = os.Remove(filePath)
+
 	DataFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
 		return fmt.Errorf("failed to create file - %v", err)
