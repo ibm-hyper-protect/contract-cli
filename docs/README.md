@@ -253,7 +253,7 @@ contract-cli base64-tgz \
   --in ./compose-folder \
   --output encrypted \
   --os ccco \
-  --ver 25.12.0
+  --ver 1.2.2.1
 ```
 
 **Using standard input (pipe input):**
@@ -1040,7 +1040,21 @@ contract-cli list-encryptioncert-versions
 
 Output:
 ```json
-{"ccco":["25.12.0","25.10.0"],"ccrt":["26.5.0","26.2.0"],"ccrv":["26.4.1","25.11.0"],"hpvs":["26.5.0","26.2.0"]}
+{"ccco":["1.2.2.2","1.2.2.1","1.2.2","1.2.1","1.2.0"],"ccrt":["26.5.0","26.2.0"],"ccrv":["26.4.1","25.11.0"],"hpvs":["26.5.0","26.2.0"]}
+```
+
+> **Note:** CCCO versions are product bundle versions (`x.x.x` for mod release, `x.x.x.x` for fixpack).
+> Three mod releases are supported (1.2.2, 1.2.1, 1.2.0); fixpacks share their parent mod's certificate.
+> Only declared versions are accepted by `--ver`.
+
+**List CCCO versions grouped by mod release:**
+```bash
+contract-cli list-encryptioncert-versions --os ccco
+```
+
+Output:
+```json
+{"ccco":[{"mod":"1.2.2","fixpacks":["1.2.2.1","1.2.2.2"]},{"mod":"1.2.1","fixpacks":[]},{"mod":"1.2.0","fixpacks":[]}]}
 ```
 
 **List all available encryption certificate versions in YAML format:**
@@ -1051,8 +1065,11 @@ contract-cli list-encryptioncert-versions --format yaml
 Output:
 ```yaml
 ccco:
-  - 25.12.0
-  - 25.10.0
+  - 1.2.2.2
+  - 1.2.2.1
+  - 1.2.2
+  - 1.2.1
+  - 1.2.0
 ccrt:
   - 26.5.0
   - 26.2.0

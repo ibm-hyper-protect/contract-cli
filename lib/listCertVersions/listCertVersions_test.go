@@ -158,3 +158,28 @@ func TestProcess_VersionOrdering(t *testing.T) {
 	assert.Contains(t, result, "ccrt")
 	assert.Regexp(t, `\d+\.\d+\.\d+`, result)
 }
+
+// TestProcess_Ccco_GroupedJson tests that --os ccco returns mod releases with fixpacks grouped beneath them
+func TestProcess_Ccco_GroupedJson(t *testing.T) {
+	result, err := Process("ccco", "json")
+
+	assert.NoError(t, err)
+	assert.JSONEq(t, `{"ccco":[{"mod":"1.2.2","fixpacks":["1.2.2.1","1.2.2.2"]},{"mod":"1.2.1","fixpacks":[]},{"mod":"1.2.0","fixpacks":[]}]}`, result)
+}
+
+// TestProcess_Ccco_GroupedYaml tests that --os ccco supports YAML grouped output
+func TestProcess_Ccco_GroupedYaml(t *testing.T) {
+	result, err := Process("CCCO", "yaml")
+
+	assert.NoError(t, err)
+	assert.Contains(t, result, "mod: 1.2.2")
+	assert.Contains(t, result, "fixpacks:")
+}
+
+// TestProcess_NoFilter_CccoIsFlat tests that the unfiltered listing keeps the flat version list
+func TestProcess_NoFilter_CccoIsFlat(t *testing.T) {
+	result, err := Process("", "json")
+
+	assert.NoError(t, err)
+	assert.Contains(t, result, `"ccco":["1.2.2.2","1.2.2.1","1.2.2","1.2.1","1.2.0"]`)
+}

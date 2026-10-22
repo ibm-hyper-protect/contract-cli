@@ -29,7 +29,10 @@ const (
 	ParameterLongDescription  = `List all available embedded encryption certificate versions for IBM Confidential Computing platforms.
 
 Shows certificate versions organized by platform (ccrt, ccrv, ccco, hpvs). Use this to discover
-which certificate versions are available before using the --ver flag with encrypt commands.`
+which certificate versions are available before using the --ver flag with encrypt commands.
+
+For --os ccco, versions are product bundle versions (x.x.x for a mod release, x.x.x.x for a fixpack),
+grouped by mod release. Fixpacks share the certificate of their parent mod release.`
 	OsVersionFlagName        = "os"
 	OsVersionFlagDescription = "Filter by platform (ccrt, ccrv, ccco, or hpvs). Shows all platforms if not specified"
 	OutputFlagName           = "out"
@@ -77,6 +80,15 @@ func Process(osVersion, format string) (string, error) {
 
 	// For JSON and YAML formats, return the raw output from the library
 	if format == "json" || format == "yaml" {
+		// CCCO is listed grouped by mod release, with fixpacks nested under each
+		if osVersion == "ccco" {
+			result, err := certificate.HpcrListCccoEncCertVersions(format)
+			if err != nil {
+				return "", fmt.Errorf("failed to get ccco certificate versions - %v", err)
+			}
+			return result, nil
+		}
+
 		result, err := certificate.HpcrListAvailableEncCertVersions(osVersion, format)
 		if err != nil {
 			if osVersion != "" {
