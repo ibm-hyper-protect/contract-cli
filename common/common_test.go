@@ -17,6 +17,7 @@ package common
 
 import (
 	"bytes"
+	"os"
 	"strings"
 	"testing"
 
@@ -59,6 +60,33 @@ func TestWriteDataToFile(t *testing.T) {
 	err := WriteDataToFile(simpleSampleWritePath, simpleSampleText)
 	if err != nil {
 		t.Errorf("failed to write data to file - %v", err)
+	}
+}
+
+// Testcase to verify WriteDataToFile() resets permissions on a pre-existing
+// permissive file. A file pre-created with mode 0666 must be replaced by a
+// 0600 file after the write, so that other OS users cannot read sensitive content.
+func TestWriteDataToFile_PreExistingPermissiveFile(t *testing.T) {
+	path := "../build/permissive_overwrite_test.txt"
+
+	// Simulate a pre-existing file with mode 0666.
+	if err := os.WriteFile(path, []byte("existing"), 0666); err != nil {
+		t.Fatalf("failed to pre-create file: %v", err)
+	}
+	t.Cleanup(func() { os.Remove(path) })
+
+	if err := WriteDataToFile(path, simpleSampleText); err != nil {
+		t.Fatalf("WriteDataToFile failed: %v", err)
+	}
+
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatalf("failed to stat written file: %v", err)
+	}
+
+	got := info.Mode().Perm()
+	if got != 0600 {
+		t.Errorf("expected mode 0600 after overwrite, got %04o", got)
 	}
 }
 
