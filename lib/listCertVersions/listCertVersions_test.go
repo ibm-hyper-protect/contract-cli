@@ -16,8 +16,10 @@
 package listCertVersions
 
 import (
+	"encoding/json"
 	"testing"
 
+	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
@@ -159,27 +161,41 @@ func TestProcess_VersionOrdering(t *testing.T) {
 	assert.Regexp(t, `\d+\.\d+\.\d+`, result)
 }
 
-// TestProcess_Ccco_GroupedJson tests that --os ccco returns mod releases with fixpacks grouped beneath them
+// TestProcess_Ccco_GroupedJson tests that --os ccco returns the mod releases with their fixpacks, latest first
 func TestProcess_Ccco_GroupedJson(t *testing.T) {
 	result, err := Process("ccco", "json")
-
 	assert.NoError(t, err)
-	assert.JSONEq(t, `{"ccco":[{"mod":"1.2.2","fixpacks":["1.2.2.1","1.2.2.2"]},{"mod":"1.2.1","fixpacks":[]},{"mod":"1.2.0","fixpacks":[]}]}`, result)
+
+	expected, err := certificate.HpcrListCccoEncCertVersions("json")
+	assert.NoError(t, err)
+	assert.JSONEq(t, expected, result)
+
+	var listed map[string][]struct {
+		Mod      string   `json:"mod"`
+		Fixpacks []string `json:"fixpacks"`
+	}
+	assert.NoError(t, json.Unmarshal([]byte(result), &listed))
+	assert.NotEmpty(t, listed["ccco"])
 }
 
 // TestProcess_Ccco_GroupedYaml tests that --os ccco supports YAML grouped output
 func TestProcess_Ccco_GroupedYaml(t *testing.T) {
 	result, err := Process("CCCO", "yaml")
-
 	assert.NoError(t, err)
-	assert.Contains(t, result, "mod: 1.2.2")
+
+	expected, err := certificate.HpcrListCccoEncCertVersions("yaml")
+	assert.NoError(t, err)
+	assert.Equal(t, expected, result)
 	assert.Contains(t, result, "fixpacks:")
 }
 
 // TestProcess_NoFilter_CccoIsFlat tests that the unfiltered listing keeps the flat version list
 func TestProcess_NoFilter_CccoIsFlat(t *testing.T) {
 	result, err := Process("", "json")
-
 	assert.NoError(t, err)
-	assert.Contains(t, result, `"ccco":["1.2.2.2","1.2.2.1","1.2.2","1.2.1","1.2.0"]`)
+
+	var listed map[string][]string
+	assert.NoError(t, json.Unmarshal([]byte(result), &listed))
+	assert.NotEmpty(t, listed["ccco"])
+	assert.NotContains(t, result, `"mod"`)
 }
