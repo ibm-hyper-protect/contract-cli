@@ -18,11 +18,15 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/ibm-hyper-protect/contract-cli/lib/plugin"
 	"github.com/spf13/cobra"
 )
 
 const (
+	builtinGroupID       = "builtin"
+	pluginGroupID        = "plugins"
 	toolName             = "contract-cli"
 	toolShortDescription = "A CLI tool for managing IBM Confidential Computing contracts and configurations"
 	toolLongDescription  = `Contract CLI automates contract generation and management for IBM Confidential Computing services.
@@ -53,11 +57,94 @@ var (
 	cliBuildDate = "unknown"
 )
 
+// registerPluginCommands adds a stub command for every installed plugin so that
+// they are listed under "Plugin Commands" in `contract-cli --help`.
+// Dispatch itself is still performed by plugin.Exec; the stub passes all arguments
+// (including --help) straight through to the plugin binary.
+// Plugins whose name collides with a built-in command are skipped (built-ins win).
+func registerPluginCommands(pluginDir string) {
+	names, err := plugin.ListPlugins(pluginDir)
+	if err != nil {
+		return
+	}
+
+	builtins := map[string]bool{}
+	for _, c := range rootCmd.Commands() {
+		builtins[c.Name()] = true
+	}
+
+	groupAdded := false
+	for _, bin := range names {
+		name := strings.TrimSuffix(strings.TrimPrefix(bin, plugin.PluginPrefix), ".exe")
+		if name == "" || builtins[name] {
+			continue
+		}
+		path, found := plugin.FindPlugin(name, pluginDir)
+		if !found {
+			continue
+		}
+		if !groupAdded {
+			// Cobra relabels ungrouped commands "Additional Commands" once any group
+			// exists, so put the built-ins in an explicit group listed first.
+			rootCmd.AddGroup(
+				&cobra.Group{ID: builtinGroupID, Title: "Available Commands:"},
+				&cobra.Group{ID: pluginGroupID, Title: "Plugin Commands:"},
+			)
+			for _, c := range rootCmd.Commands() {
+				c.GroupID = builtinGroupID
+			}
+			rootCmd.SetHelpCommandGroupID(builtinGroupID)
+			groupAdded = true
+		}
+		rootCmd.AddCommand(&cobra.Command{
+			Use:                name,
+			Short:              fmt.Sprintf("Plugin command (run '%s %s --help')", toolName, name),
+			GroupID:            pluginGroupID,
+			DisableFlagParsing: true,
+			RunE: func(cmd *cobra.Command, args []string) error {
+				return plugin.Exec(path, args)
+			},
+		})
+	}
+}
+
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	// Disable completion command
 	rootCmd.Root().CompletionOptions.DisableDefaultCmd = true
+
+	// List installed plugins in the help output.
+	if pluginDir, err := plugin.PluginDir(); err == nil {
+		registerPluginCommands(pluginDir)
+	}
+
+	// Install the plugin dispatch hook before Cobra runs.
+	// If the first argument is not a known built-in command, delegate to a plugin binary.
+	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+		return nil // built-in commands execute normally
+	}
+
+	// Override the Args validator on rootCmd so unknown sub-commands are intercepted
+	// before Cobra emits an "unknown command" error.
+	rootCmd.Args = func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return nil
+		}
+		// Check whether a plugin binary exists for the first argument.
+		pluginDir, err := plugin.PluginDir()
+		if err != nil {
+			return err
+		}
+		if path, found := plugin.FindPlugin(args[0], pluginDir); found {
+			// Delegate to the plugin — this replaces (Unix) or exits (Windows) the process.
+			if err := plugin.Exec(path, args[1:]); err != nil {
+				return err
+			}
+		}
+		// No plugin found — fall through to Cobra's default unknown-command error.
+		return fmt.Errorf("unknown command %q for %q", args[0], cmd.CommandPath())
+	}
 
 	err := rootCmd.Execute()
 	if err != nil {
