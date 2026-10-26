@@ -18,7 +18,7 @@ description: Report a bug or unexpected behavior in contract-cli
 title: "[Bug]: "
 labels: ["bug", "triage"]
 assignees:
-  - Sashwat-K
+  - contract-maintainers
 
 body:
   - type: markdown
