@@ -341,6 +341,9 @@ contract-cli list-encryptioncert-versions --os ccrv --format yaml
 # List HPVS certificate versions
 contract-cli list-encryptioncert-versions --os hpvs --format json
 
+# List CCCO versions grouped by mod release, with fixpacks
+contract-cli list-encryptioncert-versions --os ccco
+
 # Save output to file
 contract-cli list-encryptioncert-versions --os ccco --format yaml --out ccco-versions.yaml
 ```
@@ -361,6 +364,12 @@ contract-cli encrypt-string \
   --in "sensitive data" \
   --os ccrv \
   --ver 25.11.0
+
+# Encrypt string for CCCO with a bundle version (a fixpack uses its mod release certificate)
+contract-cli encrypt-string \
+  --in "sensitive data" \
+  --os ccco \
+  --ver 1.2.2.1
 
 # Create encrypted base64 tar with specific certificate version for HPVS
 contract-cli base64-tgz \

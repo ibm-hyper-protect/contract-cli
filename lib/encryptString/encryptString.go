@@ -44,7 +44,7 @@ Use this to encrypt sensitive data like passwords or API keys for contracts.`
 	CertFlagName                = "cert"
 	CertFlagDescription         = "Path to encryption certificate file"
 	CertVersionFlagName         = "ver"
-	CertVersionFlagDescription  = "Encryption certificate version (e.g., 26.2.0, 25.11.0). Uses latest if not specified"
+	CertVersionFlagDescription  = common.CertVersionFlagDescription
 )
 
 // ValidateInput - function to validate encrypt-string inputs

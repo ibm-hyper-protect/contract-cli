@@ -29,7 +29,10 @@ const (
 	ParameterLongDescription  = `List all available embedded encryption certificate versions for IBM Confidential Computing platforms.
 
 Shows certificate versions organized by platform (ccrt, ccrv, ccco, hpvs). Use this to discover
-which certificate versions are available before using the --ver flag with encrypt commands.`
+which certificate versions are available before using the --ver flag with encrypt commands.
+
+For --os ccco, versions are product bundle versions (x.x.x for a mod release, x.x.x.x for a fixpack),
+grouped by mod release. Fixpacks share the certificate of their parent mod release.`
 	OsVersionFlagName        = "os"
 	OsVersionFlagDescription = "Filter by platform (ccrt, ccrv, ccco, or hpvs). Shows all platforms if not specified"
 	OutputFlagName           = "out"

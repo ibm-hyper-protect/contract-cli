@@ -202,7 +202,7 @@ contract-cli base64-tgz [flags]
 | `--output` | string | No | Output type: `plain` or `encrypted` (default: `plain`) |
 | `--cert` | string | No | Path to encryption certificate (uses latest embedded certificate for the provided IBM Confidential Computing platform, if not specified) |
 | `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
-| `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
+| `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`; for `--os ccco` a bundle version such as `1.2.2` or `1.2.2.1`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
 | `--out` | string | No | Path to save the output |
 | `-h, --help` | - | No | Display help information |
 
@@ -253,7 +253,7 @@ contract-cli base64-tgz \
   --in ./compose-folder \
   --output encrypted \
   --os ccco \
-  --ver 25.12.0
+  --ver 1.2.2.1
 ```
 
 **Using standard input (pipe input):**
@@ -588,7 +588,7 @@ contract-cli encrypt [flags]
 | `--password` | string | No | Password for encrypted private key |
 | `--cert` | string | No | Path to encryption certificate (uses latest embedded certificate for the provided IBM Confidential Computing platform, if not specified) |
 | `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
-| `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
+| `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`; for `--os ccco` a bundle version such as `1.2.2` or `1.2.2.1`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
 | `--out` | string | No | Path to save signed and encrypted contract |
 | `--contract-expiry` | bool | No | Enable contract expiry feature |
 | `--cacert` | string | No** | Path to CA certificate (required with expiry) |
@@ -697,7 +697,7 @@ contract-cli encrypt-string [flags]
 | `--format` | string | No | Input data format (text or json) |
 | `--cert` | string | No | Path to encryption certificate (uses latest embedded certificate for the provided IBM Confidential Computing platform, if not specified) |
 | `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
-| `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
+| `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`; for `--os ccco` a bundle version such as `1.2.2` or `1.2.2.1`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
 | `--out` | string | No | Path to save encrypted output |
 | `-h, --help` | - | No | Display help information |
 
@@ -1040,7 +1040,40 @@ contract-cli list-encryptioncert-versions
 
 Output:
 ```json
-{"ccco":["25.12.0","25.10.0"],"ccrt":["26.5.0","26.2.0"],"ccrv":["26.4.1","25.11.0"],"hpvs":["26.5.0","26.2.0"]}
+{"ccco":[{"mod":"1.2.2","fixpacks":["1.2.2.1","1.2.2.2"]},{"mod":"1.2.1","fixpacks":[]},{"mod":"1.2.0","fixpacks":[]}],"ccrt":["26.5.0","26.2.0"],"ccrv":["26.4.1","25.11.0"],"hpvs":["26.5.0","26.2.0"]}
+```
+
+> **Note:** CCCO versions are product bundle versions (`x.x.x` for a mod release, `x.x.x.x` for a fixpack).
+> Three mod releases are supported, and a fixpack uses the certificate of its parent mod release.
+> `--ver` accepts only the versions listed here (mod releases and fixpacks); any other value returns an error.
+> `ccco` is always grouped by mod release (latest first) with its fixpacks, with or without `--os`. ccrt, ccrv and hpvs are flat lists.
+
+**List only the CCCO versions (grouped by mod release):**
+```bash
+contract-cli list-encryptioncert-versions --os ccco
+```
+
+Output (latest mod release first; `--ver` accepts any `mod` or `fixpacks` value shown):
+```json
+{"ccco":[{"mod":"1.2.2","fixpacks":["1.2.2.1","1.2.2.2"]},{"mod":"1.2.1","fixpacks":[]},{"mod":"1.2.0","fixpacks":[]}]}
+```
+
+YAML (`--format yaml`):
+```yaml
+ccco:
+    - mod: 1.2.2
+      fixpacks:
+        - 1.2.2.1
+        - 1.2.2.2
+    - mod: 1.2.1
+      fixpacks: []
+    - mod: 1.2.0
+      fixpacks: []
+```
+
+**Encrypt with a fixpack version** (uses the certificate of its parent mod release):
+```bash
+contract-cli encrypt-string --in "my-secret" --os ccco --ver 1.2.2.1
 ```
 
 **List all available encryption certificate versions in YAML format:**
@@ -1051,8 +1084,14 @@ contract-cli list-encryptioncert-versions --format yaml
 Output:
 ```yaml
 ccco:
-  - 25.12.0
-  - 25.10.0
+  - mod: 1.2.2
+    fixpacks:
+      - 1.2.2.1
+      - 1.2.2.2
+  - mod: 1.2.1
+    fixpacks: []
+  - mod: 1.2.0
+    fixpacks: []
 ccrt:
   - 26.5.0
   - 26.2.0
