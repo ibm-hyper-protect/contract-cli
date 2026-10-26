@@ -18,7 +18,7 @@ description: Suggest a new feature or enhancement for contract-cli
 title: "[Feature]: "
 labels: ["enhancement", "triage"]
 assignees:
-  - Sashwat-K
+  - contract-maintainers
 
 body:
   - type: markdown
