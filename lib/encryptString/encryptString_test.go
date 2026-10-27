@@ -319,3 +319,34 @@ func TestProcess_EmptyOS(t *testing.T) {
 	assert.Contains(t, result, "contract-basic")
 	assert.NotContains(t, result, "hyper-protect-basic")
 }
+
+// TestProcess_CCCO_InvalidCertVersion tests that an unsupported CCCO version returns an error and no encrypted output
+func TestProcess_CCCO_InvalidCertVersion(t *testing.T) {
+	invalidVersions := []string{
+		"1.2.3",   // undeclared mod release
+		"1.2.2.9", // undeclared fixpack of a valid mod release
+		"1.1.0",   // mod release outside the supported window
+		"26.7.1",  // old date-style CCCO version
+		"abc",     // not a version
+	}
+
+	for _, version := range invalidVersions {
+		t.Run(version, func(t *testing.T) {
+			result, err := Process(testInputText, TextFormat, "ccco", "", version)
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "not found for platform ccco")
+			assert.Empty(t, result)
+		})
+	}
+}
+
+// TestProcess_CCCO_ValidCertVersion tests that declared CCCO mod releases and fixpacks are accepted
+func TestProcess_CCCO_ValidCertVersion(t *testing.T) {
+	for _, version := range []string{"1.2.2", "1.2.2.1", "1.2.1"} {
+		t.Run(version, func(t *testing.T) {
+			result, err := Process(testInputText, TextFormat, "ccco", "", version)
+			assert.NoError(t, err)
+			assert.Contains(t, result, "contract-basic")
+		})
+	}
+}
