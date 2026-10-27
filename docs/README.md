@@ -202,7 +202,7 @@ contract-cli base64-tgz [flags]
 | `--output` | string | No | Output type: `plain` or `encrypted` (default: `plain`) |
 | `--cert` | string | No | Path to encryption certificate (uses latest embedded certificate for the provided IBM Confidential Computing platform, if not specified) |
 | `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
-| `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`; for `--os ccco` a bundle version such as `1.2.2` or `1.2.2.1`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
+| `--ver` | string | No | Specific encryption certificate version (`x.x.x`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
 | `--out` | string | No | Path to save the output |
 | `-h, --help` | - | No | Display help information |
 
@@ -588,7 +588,7 @@ contract-cli encrypt [flags]
 | `--password` | string | No | Password for encrypted private key |
 | `--cert` | string | No | Path to encryption certificate (uses latest embedded certificate for the provided IBM Confidential Computing platform, if not specified) |
 | `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
-| `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`; for `--os ccco` a bundle version such as `1.2.2` or `1.2.2.1`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
+| `--ver` | string | No | Specific encryption certificate version (`x.x.x`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
 | `--out` | string | No | Path to save signed and encrypted contract |
 | `--contract-expiry` | bool | No | Enable contract expiry feature |
 | `--cacert` | string | No** | Path to CA certificate (required with expiry) |
@@ -697,7 +697,7 @@ contract-cli encrypt-string [flags]
 | `--format` | string | No | Input data format (text or json) |
 | `--cert` | string | No | Path to encryption certificate (uses latest embedded certificate for the provided IBM Confidential Computing platform, if not specified) |
 | `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
-| `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`; for `--os ccco` a bundle version such as `1.2.2` or `1.2.2.1`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
+| `--ver` | string | No | Specific encryption certificate version (`x.x.x`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
 | `--out` | string | No | Path to save encrypted output |
 | `-h, --help` | - | No | Display help information |
 
@@ -1043,10 +1043,10 @@ Output:
 {"ccco":[{"mod":"1.2.2","fixpacks":["1.2.2.1","1.2.2.2"]},{"mod":"1.2.1","fixpacks":[]},{"mod":"1.2.0","fixpacks":[]}],"ccrt":["26.5.0","26.2.0"],"ccrv":["26.4.1","25.11.0"],"hpvs":["26.5.0","26.2.0"]}
 ```
 
-> **Note:** CCCO versions are product bundle versions (`x.x.x` for a mod release, `x.x.x.x` for a fixpack).
-> Three mod releases are supported, and a fixpack uses the certificate of its parent mod release.
-> `--ver` accepts only the versions listed here (mod releases and fixpacks); any other value returns an error.
-> `ccco` is always grouped by mod release (latest first) with its fixpacks, with or without `--os`. ccrt, ccrv and hpvs are flat lists.
+> **Note:** CCRT, CCRV and HPVS list the latest three certificate versions as flat lists.
+> CCCO lists the latest three mod releases (`x.x.x`), each with its fixpacks (`x.x.x.x`) grouped under it, with or without `--os`.
+> A fixpack uses the certificate of its parent mod release.
+> `--ver` accepts only the versions listed here; any other value returns an error.
 
 **List only the CCCO versions (grouped by mod release):**
 ```bash

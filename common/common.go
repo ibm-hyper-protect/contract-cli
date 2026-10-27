@@ -28,7 +28,7 @@ import (
 )
 
 // CertVersionFlagDescription is the help text of the --ver flag shared by the encryption commands.
-const CertVersionFlagDescription = "Encryption certificate version. For --os ccco: use the product bundle version (x.x.x for a mod release, x.x.x.x for a fixpack; see list-encryptioncert-versions). For --os ccrt/ccrv/hpvs: use the cert version (e.g. 26.9.1). Uses latest if not specified"
+const CertVersionFlagDescription = "Encryption certificate version (x.x.x). Use list-encryptioncert-versions to see available versions. Uses latest if not specified"
 
 // CheckFileFolderExists - function to check if file or folder exists
 func CheckFileFolderExists(folderFilePath string) bool {
