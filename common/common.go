@@ -27,6 +27,9 @@ import (
 	"github.com/spf13/pflag"
 )
 
+// CertVersionFlagDescription is the help text of the --ver flag shared by the encryption commands.
+const CertVersionFlagDescription = "Encryption certificate version (x.x.x). Use list-encryptioncert-versions to see available versions. Uses latest if not specified"
+
 // CheckFileFolderExists - function to check if file or folder exists
 func CheckFileFolderExists(folderFilePath string) bool {
 	_, err := os.Stat(folderFilePath)

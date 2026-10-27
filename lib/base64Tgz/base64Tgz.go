@@ -46,7 +46,7 @@ for inclusion in IBM Confidential Computing contracts. Supports both plain and e
 	CertFlagName             = "cert"
 	CertPathDescription      = "Path to encryption certificate file"
 	CertVersionFlagName      = "ver"
-	CertVersionDescription   = "Encryption certificate version (e.g., 26.2.0, 25.11.0). Uses latest if not specified"
+	CertVersionDescription   = common.CertVersionFlagDescription
 )
 
 // ValidateInput - function to validate base64-tgz inputs

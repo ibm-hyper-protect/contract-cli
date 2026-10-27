@@ -16,8 +16,10 @@
 package listCertVersions
 
 import (
+	"encoding/json"
 	"testing"
 
+	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
@@ -157,4 +159,58 @@ func TestProcess_VersionOrdering(t *testing.T) {
 	// Just verify the output contains version numbers in JSON format
 	assert.Contains(t, result, "ccrt")
 	assert.Regexp(t, `\d+\.\d+\.\d+`, result)
+}
+
+// TestProcess_Ccco_GroupedJson tests that --os ccco returns the mod releases with their fixpacks, latest first
+func TestProcess_Ccco_GroupedJson(t *testing.T) {
+	result, err := Process("ccco", "json")
+	assert.NoError(t, err)
+
+	expected, err := certificate.HpcrListAvailableEncCertVersions("ccco", "json")
+	assert.NoError(t, err)
+	assert.JSONEq(t, expected, result)
+
+	var listed map[string][]struct {
+		Mod      string   `json:"mod"`
+		Fixpacks []string `json:"fixpacks"`
+	}
+	assert.NoError(t, json.Unmarshal([]byte(result), &listed))
+	assert.NotEmpty(t, listed["ccco"])
+	for _, r := range listed["ccco"] {
+		assert.NotEmpty(t, r.Mod)
+		assert.NotNil(t, r.Fixpacks)
+	}
+}
+
+// TestProcess_Ccco_GroupedYaml tests that --os ccco supports YAML grouped output
+func TestProcess_Ccco_GroupedYaml(t *testing.T) {
+	result, err := Process("CCCO", "yaml")
+	assert.NoError(t, err)
+
+	expected, err := certificate.HpcrListAvailableEncCertVersions("ccco", "yaml")
+	assert.NoError(t, err)
+	assert.Equal(t, expected, result)
+	assert.Contains(t, result, "fixpacks:")
+}
+
+// TestProcess_NoFilter_OnlyCccoGrouped tests that the unfiltered listing groups ccco and keeps other platforms flat
+func TestProcess_NoFilter_OnlyCccoGrouped(t *testing.T) {
+	result, err := Process("", "json")
+	assert.NoError(t, err)
+
+	var listed map[string]json.RawMessage
+	assert.NoError(t, json.Unmarshal([]byte(result), &listed))
+
+	var ccco []struct {
+		Mod      string   `json:"mod"`
+		Fixpacks []string `json:"fixpacks"`
+	}
+	assert.NoError(t, json.Unmarshal(listed["ccco"], &ccco))
+	assert.NotEmpty(t, ccco)
+
+	for _, platform := range []string{"ccrt", "ccrv", "hpvs"} {
+		var versions []string
+		assert.NoError(t, json.Unmarshal(listed[platform], &versions), platform)
+		assert.NotEmpty(t, versions, platform)
+	}
 }
