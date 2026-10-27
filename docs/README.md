@@ -199,7 +199,7 @@ contract-cli base64-tgz [flags]
 | Flag | Type | Required | Description |
 |------|------|----------|-------------|
 | `--in` | string | Yes | Path to folder containing `docker-compose.yaml` or `pods.yaml` (use '-' for standard input) |
-| `--output` | string | No | Output type: `plain` or `encrypt` (default: `plain`) |
+| `--output` | string | No | Output type: `plain` or `encrypted` (default: `plain`) |
 | `--cert` | string | No | Path to encryption certificate (uses latest embedded certificate for the provided IBM Confidential Computing platform, if not specified) |
 | `--os` | string | No | Target IBM Confidential Computing platform: `ccrt`, `ccrv`, `ccco`, or `hpvs` (default: `hpvs`) |
 | `--ver` | string | No | Specific encryption certificate version (e.g., `26.2.0`; for `--os ccco` a bundle version such as `1.2.2` or `1.2.2.1`). Uses latest version if not specified. Use `list-encryptioncert-versions` to see available versions |
@@ -215,14 +215,14 @@ contract-cli base64-tgz --in ./compose-folder
 
 **Encrypted archive with latest certificate:**
 ```bash
-contract-cli base64-tgz --in ./compose-folder --output encrypt
+contract-cli base64-tgz --in ./compose-folder --output encrypted
 ```
 
 **Encrypted archive with custom certificate:**
 ```bash
 contract-cli base64-tgz \
   --in ./compose-folder \
-  --output encrypt \
+  --output encrypted \
   --cert encryption.crt
 ```
 
@@ -230,7 +230,7 @@ contract-cli base64-tgz \
 ```bash
 contract-cli base64-tgz \
   --in ./pods-folder \
-  --output encrypt \
+  --output encrypted \
   --os ccrv
 ```
 
@@ -238,7 +238,7 @@ contract-cli base64-tgz \
 ```bash
 contract-cli base64-tgz \
   --in ./pods-folder \
-  --output encrypt \
+  --output encrypted \
   --os ccco
 ```
 
@@ -251,7 +251,7 @@ contract-cli base64-tgz --in ./compose-folder --out archive.txt
 ```bash
 contract-cli base64-tgz \
   --in ./compose-folder \
-  --output encrypt \
+  --output encrypted \
   --os ccco \
   --ver 1.2.2.1
 ```
@@ -1826,7 +1826,7 @@ contract-cli download-certificate --version 1.0.23 --out certs.json
 contract-cli get-certificate --in certs.json --version 1.0.23 --out cert.crt
 
 # Step 3: Create docker-compose archive
-contract-cli base64-tgz --in ./compose-folder --output encrypt --cert cert.crt --out archive.txt
+contract-cli base64-tgz --in ./compose-folder --output encrypted --cert cert.crt --out archive.txt
 
 # Step 4: Create contract YAML (with archive from step 3)
 cat > contract.yaml <<EOF
