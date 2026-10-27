@@ -1,3 +1,17 @@
+## [1.44.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.43.0...v1.44.0) (2026-10-27)
+
+### Features
+
+* use product versions for CCCO encryption ([#200](https://github.com/ibm-hyper-protect/contract-cli/issues/200)) ([76df19b](https://github.com/ibm-hyper-protect/contract-cli/commit/76df19bffeb178d303051276ba7d3b5707e1ae81))
+
+### Bug Fixes
+
+* enforce 0600 permissions when overwriting existing output files ([#197](https://github.com/ibm-hyper-protect/contract-cli/issues/197)) ([cb6e027](https://github.com/ibm-hyper-protect/contract-cli/commit/cb6e027824ddcb8f93862dfaee489f342df36073))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.43.0 ([52551bc](https://github.com/ibm-hyper-protect/contract-cli/commit/52551bcfd8f98e73427bcb5688eb69e61cf72792))
+
 ## [1.43.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.42.0...v1.43.0) (2026-10-22)
 
 ### Features
