@@ -1,3 +1,17 @@
+## [1.45.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.44.0...v1.45.0) (2026-10-29)
+
+### Features
+
+* Add Aman Dhasmana as Security Maintainer ([#203](https://github.com/ibm-hyper-protect/contract-cli/issues/203)) ([cbd69db](https://github.com/ibm-hyper-protect/contract-cli/commit/cbd69db233d78910c703ea4f087fd2c302dd81c0))
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v2 to v2.51.1 ([#198](https://github.com/ibm-hyper-protect/contract-cli/issues/198)) ([4abf9d7](https://github.com/ibm-hyper-protect/contract-cli/commit/4abf9d785d329b83785b4e7db70dc27343b4b0cf))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.44.0 ([63f842c](https://github.com/ibm-hyper-protect/contract-cli/commit/63f842cb57f759049d79809cda831c395acd80af))
+
 ## [1.44.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.43.0...v1.44.0) (2026-10-27)
 
 ### Features
