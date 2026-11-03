@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
+	"github.com/ibm-hyper-protect/contract-go/v3/certificate"
 	"github.com/spf13/cobra"
 )
 
