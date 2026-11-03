@@ -22,7 +22,7 @@ import (
 	"strings"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
-	"github.com/ibm-hyper-protect/contract-go/v2/secrets"
+	"github.com/ibm-hyper-protect/contract-go/v3/secrets"
 	"github.com/spf13/cobra"
 )
 

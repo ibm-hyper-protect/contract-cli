@@ -22,8 +22,8 @@ import (
 	"strings"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
-	"github.com/ibm-hyper-protect/contract-go/v2/contract"
-	"github.com/ibm-hyper-protect/contract-go/v2/rego"
+	"github.com/ibm-hyper-protect/contract-go/v3/contract"
+	"github.com/ibm-hyper-protect/contract-go/v3/rego"
 	"github.com/spf13/cobra"
 	"sigs.k8s.io/yaml"
 )

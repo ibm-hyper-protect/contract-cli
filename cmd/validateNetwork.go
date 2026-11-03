@@ -21,7 +21,7 @@ import (
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-cli/lib/validateNetwork"
-	"github.com/ibm-hyper-protect/contract-go/v2/network"
+	"github.com/ibm-hyper-protect/contract-go/v3/network"
 	"github.com/spf13/cobra"
 )
 

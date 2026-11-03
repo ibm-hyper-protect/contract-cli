@@ -21,7 +21,7 @@ import (
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-cli/lib/validateEncryptionCertificate"
-	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
+	"github.com/ibm-hyper-protect/contract-go/v3/certificate"
 	"github.com/spf13/cobra"
 )
 

@@ -21,7 +21,7 @@ import (
 	"strings"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
-	"github.com/ibm-hyper-protect/contract-go/v2/attestation"
+	"github.com/ibm-hyper-protect/contract-go/v3/attestation"
 	"github.com/spf13/cobra"
 )
 

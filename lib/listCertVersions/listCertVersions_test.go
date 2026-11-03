@@ -19,7 +19,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
+	"github.com/ibm-hyper-protect/contract-go/v3/certificate"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )

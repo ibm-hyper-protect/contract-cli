@@ -19,7 +19,7 @@ import (
 	"fmt"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
-	goImageSpec "github.com/ibm-hyper-protect/contract-go/v2/imagespec"
+	goImageSpec "github.com/ibm-hyper-protect/contract-go/v3/imagespec"
 	"github.com/spf13/cobra"
 )
 
