@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	testRegoGeneratorPodFile = "../samples/hpcc/sample-pod.yaml"
+	testRegoGeneratorPodFile = "../samples/ccco/sample-pod.yaml"
 )
 
 // TestRegoGeneratorCmd_Success tests the rego-generator command — default format (base64)

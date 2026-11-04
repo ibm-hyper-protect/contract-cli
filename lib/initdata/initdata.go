@@ -130,7 +130,7 @@ func GenerateInitdata(inputDataPath, sehdrBinPath string, extraRootCertPaths []s
 		extraRootCerts = append(extraRootCerts, certData)
 	}
 
-	gzipInitdata, _, _, err := contract.HpccInitdata(inputData, sehdrBase64, extraRootCerts)
+	gzipInitdata, _, _, err := contract.CccoInitdata(inputData, sehdrBase64, extraRootCerts)
 	if err != nil {
 		return "", false, err
 	}

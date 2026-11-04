@@ -832,7 +832,7 @@ The [`samples/`](samples/) directory contains example configurations:
 - [Certificate Examples](samples/certificate/)
 - [Network Configuration](samples/network/)
 - [Docker Compose Examples](samples/tgz/)
-- [Signed & Encrypted Contract](samples/hpcc/signed-encrypt-hpcc.yaml)
+- [Signed & Encrypted Contract](samples/ccco/signed-encrypt-ccco.yaml)
 - [Contract Signing](samples/sign/)
 
 ## Related Projects

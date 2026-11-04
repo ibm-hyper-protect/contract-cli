@@ -2045,7 +2045,7 @@ The [`samples/`](../samples/) directory contains working examples:
 - **[Certificate Examples](../samples/certificate/)** - Encryption certificate samples
 - **[Network Configuration](../samples/network/)** - Network config examples
 - **[Docker Compose](../samples/tgz/)** - Compose file examples
-- **[Signed & Encrypted Contract](../samples/hpcc/signed-encrypt-hpcc.yaml)** - Signed & Encrypted contract
+- **[Signed & Encrypted Contract](../samples/ccco/signed-encrypt-ccco.yaml)** - Signed & Encrypted contract
 - **[Contract Signing](../samples/sign/)** - Contract signing examples
 
 ---

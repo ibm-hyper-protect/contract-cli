@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	testContractPath = "../../samples/hpcc/signed-encrypt-hpcc.yaml"
+	testContractPath = "../../samples/ccco/signed-encrypt-ccco.yaml"
 )
 
 // TestValidateInput_Success tests ValidateInput with all required flags
@@ -114,7 +114,7 @@ func TestGenerateInitdata_EmptyPath(t *testing.T) {
 }
 
 // TestGenerateInitdata_CorruptedContract tests with corrupted contract file
-// Note: HpccInitdata doesn't validate YAML format, it just gzips and encodes the content
+// Note: CccoInitdata doesn't validate YAML format, it just gzips and encodes the content
 func TestGenerateInitdata_CorruptedContract(t *testing.T) {
 	tmpDir := t.TempDir()
 	testCorruptedContract := filepath.Join(tmpDir, "corrupted_contract_initdata.yaml")
@@ -124,7 +124,7 @@ func TestGenerateInitdata_CorruptedContract(t *testing.T) {
 
 	result, isBaremetal, err := GenerateInitdata(testCorruptedContract, "", nil)
 
-	// HpccInitdata accepts any content and gzips it
+	// CccoInitdata accepts any content and gzips it
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 	assert.False(t, isBaremetal)
@@ -146,7 +146,7 @@ func TestGenerateInitdata_EmptyContract(t *testing.T) {
 }
 
 // TestGenerateInitdata_NonYamlFile tests with non-YAML file
-// Note: HpccInitdata doesn't validate file format, it just gzips and encodes the content
+// Note: CccoInitdata doesn't validate file format, it just gzips and encodes the content
 func TestGenerateInitdata_NonYamlFile(t *testing.T) {
 	tmpDir := t.TempDir()
 	testTextFile := filepath.Join(tmpDir, "test_text_file.txt")
@@ -156,7 +156,7 @@ func TestGenerateInitdata_NonYamlFile(t *testing.T) {
 
 	result, isBaremetal, err := GenerateInitdata(testTextFile, "", nil)
 
-	// HpccInitdata accepts any content and gzips it
+	// CccoInitdata accepts any content and gzips it
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
 	assert.False(t, isBaremetal)
@@ -256,7 +256,7 @@ func TestGenerateInitdata_ValidContract(t *testing.T) {
 
 // TestGenerateInitdata_RelativePath tests with relative path
 func TestGenerateInitdata_RelativePath(t *testing.T) {
-	result, isBaremetal, err := GenerateInitdata("../../samples/hpcc/signed-encrypt-hpcc.yaml", "", nil)
+	result, isBaremetal, err := GenerateInitdata("../../samples/ccco/signed-encrypt-ccco.yaml", "", nil)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, result)
@@ -269,7 +269,7 @@ func TestGenerateInitdata_AbsolutePath(t *testing.T) {
 	absPath, err := os.Getwd()
 	assert.NoError(t, err)
 
-	fullPath := absPath + "/../../samples/hpcc/signed-encrypt-hpcc.yaml"
+	fullPath := absPath + "/../../samples/ccco/signed-encrypt-ccco.yaml"
 
 	result, isBaremetal, err := GenerateInitdata(fullPath, "", nil)
 
