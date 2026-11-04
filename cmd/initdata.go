@@ -23,7 +23,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// initdataCmd represents the initdata command
+// initdataCmd represents the ccco initdata command
 var initdataCmd = &cobra.Command{
 	Use:   initdata.ParameterName,
 	Short: initdata.ParameterShortDescription,
