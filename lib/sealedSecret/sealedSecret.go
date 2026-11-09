@@ -149,7 +149,7 @@ func GenerateSealedSecret(inputDataPath, secretType, encryptionKeyPath, signingK
 
 	// Call the SealSecret API from contract-go secrets package
 	// The function now accepts PEM string content directly and returns multiple values
-	sealedSecret, decryptionKey, verificationKey, inputSecretSha, encryptedSecretSha, err := secrets.HpccSealedSecret(
+	sealedSecret, decryptionKey, verificationKey, inputSecretSha, encryptedSecretSha, err := secrets.CccoSealedSecret(
 		inputData,
 		secretType,
 		encryptionKeyContent,

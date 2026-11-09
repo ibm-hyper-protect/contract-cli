@@ -142,7 +142,7 @@ body:
       options:
         - HPVS (Hyper Protect Virtual Servers)
         - HPCR-RHVS (Hyper Protect Container Runtime)
-        - HPCC-PeerPod (Confidential Container Peer Pods)
+        - CCCO-PeerPod (Confidential Container Peer Pods)
         - Not applicable
     validations:
       required: true

@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	testPodFile = "../../samples/hpcc/sample-pod.yaml"
+	testPodFile = "../../samples/ccco/sample-pod.yaml"
 )
 
 // TestValidateInput_Success tests ValidateInput with all required flags

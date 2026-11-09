@@ -25,7 +25,7 @@ import (
 
 const (
 	//Initdata Test Case.
-	sampleSignedEncryptedContract = "../samples/hpcc/signed-encrypt-hpcc.yaml"
+	sampleSignedEncryptedContract = "../samples/ccco/signed-encrypt-ccco.yaml"
 	sampleGzippedInitdataValue    = "../build/gzipped-initdata"
 )
 

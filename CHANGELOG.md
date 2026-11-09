@@ -688,7 +688,7 @@
 
 ### Features
 
-* Added Support for HPCC Initdata annotation. ([bb08a05](https://github.com/ibm-hyper-protect/contract-cli/commit/bb08a059fb445896015be4d12a85940050121b78))
+* Added Support for CCCO Initdata annotation. ([bb08a05](https://github.com/ibm-hyper-protect/contract-cli/commit/bb08a059fb445896015be4d12a85940050121b78))
 * Added Support for Initdata(initdata) creation in contract-cli tool ([9e40b10](https://github.com/ibm-hyper-protect/contract-cli/commit/9e40b10b4615a2afb218491b6a2e21d3b79b7fb8))
 * Modified docs and comments ([48d9e09](https://github.com/ibm-hyper-protect/contract-cli/commit/48d9e0925463bd2da3cb3bbaa9b797704b10c14b))
 * Resloved review comments ([5b2d4dc](https://github.com/ibm-hyper-protect/contract-cli/commit/5b2d4dcc71d5ac4786a8067f094ec0e78223e2ef))
