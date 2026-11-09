@@ -1,3 +1,17 @@
+## [1.47.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.46.0...v1.47.0) (2026-11-09)
+
+### Features
+
+* rename HPCC to CCCO ([#209](https://github.com/ibm-hyper-protect/contract-cli/issues/209)) ([963b6c6](https://github.com/ibm-hyper-protect/contract-cli/commit/963b6c6eae1856ba1970dfc3ddd83b72bc05b5f8))
+
+### Bug Fixes
+
+* **deps:** update go dependencies ([#208](https://github.com/ibm-hyper-protect/contract-cli/issues/208)) ([9d2424c](https://github.com/ibm-hyper-protect/contract-cli/commit/9d2424ccac5eed44afe4fcc365b07a29959d40d0))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.46.0 ([e6b748f](https://github.com/ibm-hyper-protect/contract-cli/commit/e6b748f1d2e98a211449d6a0547b5a8f5164d1e7))
+
 ## [1.46.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.45.2...v1.46.0) (2026-11-03)
 
 ### Features
