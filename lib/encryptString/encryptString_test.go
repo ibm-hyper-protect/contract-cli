@@ -342,7 +342,7 @@ func TestProcess_CCCO_InvalidCertVersion(t *testing.T) {
 
 // TestProcess_CCCO_ValidCertVersion tests that declared CCCO mod releases and fixpacks are accepted
 func TestProcess_CCCO_ValidCertVersion(t *testing.T) {
-	for _, version := range []string{"1.2.2", "1.2.2.1", "1.2.1"} {
+	for _, version := range []string{"1.2.2", "1.2.2.1", "1.2.2.3", "1.2.1"} {
 		t.Run(version, func(t *testing.T) {
 			result, err := Process(testInputText, TextFormat, "ccco", "", version)
 			assert.NoError(t, err)
