@@ -18,7 +18,7 @@ module github.com/ibm-hyper-protect/contract-cli
 go 1.27.1
 
 require (
-	github.com/ibm-hyper-protect/contract-go/v3 v3.4.0
+	github.com/ibm-hyper-protect/contract-go/v3 v3.5.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.1.0
 	github.com/stretchr/testify v1.12.1
