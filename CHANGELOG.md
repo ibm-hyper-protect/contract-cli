@@ -1,3 +1,18 @@
+## [1.48.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.47.1...v1.48.0) (2026-11-12)
+
+### Features
+
+* accept CCCO fixpack 1.2.2.3 ([15ac644](https://github.com/ibm-hyper-protect/contract-cli/commit/15ac644ad69147337b129793bcfe7948cf5713c1))
+* accept CCCO fixpack 1.2.2.3 ([f01b5c7](https://github.com/ibm-hyper-protect/contract-cli/commit/f01b5c758396492e87dd02605817080b411458a6))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v1.47.1 ([07d260c](https://github.com/ibm-hyper-protect/contract-cli/commit/07d260cf58bd4cd50a44bca02d94be34fcf99cbf))
+
+### Tests
+
+* cover CCCO fixpack 1.2.2.2 in valid cert version test ([7bf311d](https://github.com/ibm-hyper-protect/contract-cli/commit/7bf311d88ceaded6f759c4af9b15e20a20c5a735))
+
 ## [1.47.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.47.0...v1.47.1) (2026-11-10)
 
 ### Bug Fixes
