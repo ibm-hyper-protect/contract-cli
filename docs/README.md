@@ -2011,8 +2011,8 @@ For a full plugin author guide see [docs/plugins.md](plugins.md).
 
 | Command | Description |
 |---|---|
-| `contract-cli plugin install <ref>` | Install a plugin from GitHub or a local path |
-| `contract-cli plugin list` | List installed plugins and their versions |
+| `contract-cli plugin install <ref[@version]>` | Install a plugin from GitHub (optionally pinned with `@version`) or a local path |
+| `contract-cli plugin list` | List installed plugins with their version, install method (`github` or `local`) and installation path |
 | `contract-cli plugin uninstall <name>` | Remove an installed plugin |
 | `contract-cli plugin update [<name[@version]>]` | Update one or all plugins |
 
@@ -2020,10 +2020,10 @@ For a full plugin author guide see [docs/plugins.md](plugins.md).
 
 ```sh
 # Install latest release from GitHub
-contract-cli plugin install github.com/org/contract-plugin-ccrv
+contract-cli plugin install github.com/ibm-hyper-protect/contract-plugin-ccrv
 
 # Install a specific version
-contract-cli plugin install github.com/org/contract-plugin-ccrv@v1.2.0
+contract-cli plugin install github.com/ibm-hyper-protect/contract-plugin-ccrv@v1.2.0
 
 # Install from a local binary
 contract-cli plugin install ./contract-plugin-ccrv
@@ -2032,9 +2032,23 @@ contract-cli plugin install ./contract-plugin-ccrv
 GitHub installs and updates verify the binary against the SHA-256 checksum file published in the release (`<asset>.sha256`, `checksums.txt` or `SHA256SUMS`). If the file is missing or the digest does not match, the install fails. To skip verification (not recommended), use `--insecure`:
 
 ```sh
-contract-cli plugin install github.com/org/contract-plugin-ccrv --insecure
+contract-cli plugin install github.com/ibm-hyper-protect/contract-plugin-ccrv --insecure
 contract-cli plugin update ccrv --insecure
 ```
+
+### Listing Plugins
+
+```sh
+contract-cli plugin list
+```
+
+```
+NAME   VERSION   INSTALL METHOD                         INSTALLATION PATH
+----   -------   --------------                         -----------------
+ccrv   v1.2.0        github       /home/user/.contract-cli/plugins/contract-plugin-ccrv
+```
+
+`INSTALL METHOD` is `github` for plugins installed from a GitHub release (these can be auto-updated with `plugin update`) and `local` for plugins installed from a local binary. `INSTALLATION PATH` is the location of the plugin binary. All columns are centre-aligned.
 
 ### Using a Plugin
 

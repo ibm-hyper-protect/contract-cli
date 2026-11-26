@@ -105,7 +105,7 @@ If no checksum file is found, the asset is not listed in it, or the digest does 
 To skip verification (not recommended), pass `--insecure`:
 
 ```sh
-contract-cli plugin install github.com/org/contract-plugin-ccrv --insecure
+contract-cli plugin install github.com/ibm-hyper-protect/contract-plugin-ccrv --insecure
 contract-cli plugin update ccrv --insecure
 ```
 
@@ -386,10 +386,10 @@ Install the `ccrv` plugin and use it:
 
 ```sh
 # Install latest release
-contract-cli plugin install github.com/org/contract-plugin-ccrv
+contract-cli plugin install github.com/ibm-hyper-protect/contract-plugin-ccrv
 
 # Install a specific version
-contract-cli plugin install github.com/org/contract-plugin-ccrv@v1.2.0
+contract-cli plugin install github.com/ibm-hyper-protect/contract-plugin-ccrv@v1.2.0
 
 # List installed plugins and their versions
 contract-cli plugin list
