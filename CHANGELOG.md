@@ -1,3 +1,16 @@
+## [2.0.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v2.0.0...v2.0.1) (2026-11-26)
+
+### Bug Fixes
+
+* **deps:** update module github.com/ibm-hyper-protect/contract-go/v3 to v3.5.1 ([#218](https://github.com/ibm-hyper-protect/contract-cli/issues/218)) ([4c996ea](https://github.com/ibm-hyper-protect/contract-cli/commit/4c996ea5245d7f318249fb2579b8c4e2aaa9460f))
+
+### Miscellaneous Chores
+
+* **deps:** update anchore/sbom-action action to v0.24.4 ([#216](https://github.com/ibm-hyper-protect/contract-cli/issues/216)) ([f889591](https://github.com/ibm-hyper-protect/contract-cli/commit/f8895910f6b19f4b89528b1c31d3f322faff8cc5))
+* **deps:** update docker.io/library/hello-world docker digest to 1e4c05b ([#215](https://github.com/ibm-hyper-protect/contract-cli/issues/215)) ([967f383](https://github.com/ibm-hyper-protect/contract-cli/commit/967f383c7c3d63007269caccbde60841ff53bf7b))
+* **deps:** update sigstore/cosign-installer action to v4.1.4 ([#217](https://github.com/ibm-hyper-protect/contract-cli/issues/217)) ([50e7c83](https://github.com/ibm-hyper-protect/contract-cli/commit/50e7c83154f7b62d81d17c248600d36b88ca80e6))
+* **homebrew:** update cask for contract-cli v2.0.0 ([d840ba9](https://github.com/ibm-hyper-protect/contract-cli/commit/d840ba9e22b001b0230165f864f868d49901f7b3))
+
 ## [2.0.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v1.48.0...v2.0.0) (2026-11-17)
 
 ### ⚠ BREAKING CHANGES
