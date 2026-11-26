@@ -25,6 +25,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
 )
@@ -56,15 +57,21 @@ Plugin repositories follow the naming convention contract-plugin-<name>.`
 	// SourcesFile is the JSON sidecar that maps plugin name → GitHub repo.
 	SourcesFile = ".sources.json"
 
+	// InstallMethodGitHub marks a plugin installed from a GitHub release.
+	InstallMethodGitHub = "github"
+	// InstallMethodLocal marks a plugin installed from a local binary.
+	InstallMethodLocal = "local"
+
 	// versionTimeout is the maximum time allowed for a plugin --version call.
 	versionTimeout = 3 * time.Second
 )
 
 // PluginInfo holds metadata about an installed plugin.
 type PluginInfo struct {
-	Name    string
-	Path    string
-	Version string
+	Name          string
+	Path          string
+	Version       string
+	InstallMethod string // InstallMethodGitHub or InstallMethodLocal
 }
 
 // PluginDir returns the absolute path to the plugin directory (~/.contract-cli/plugins),
@@ -149,7 +156,21 @@ func Install(ref, pluginDir string, insecure bool) error {
 	if strings.HasPrefix(ref, "github.com/") || strings.Contains(ref, "@") && strings.HasPrefix(ref[:strings.Index(ref, "@")], "github.com/") {
 		return installFromGitHub(ref, pluginDir, insecure)
 	}
-	return installFromLocal(ref, pluginDir)
+	if err := installFromLocal(ref, pluginDir); err != nil {
+		return err
+	}
+	// A local install replaces any earlier GitHub install of the same plugin, so drop its
+	// source entry; otherwise 'plugin list' and 'plugin update' would still treat it as GitHub-sourced.
+	sources, err := readSources(pluginDir)
+	if err != nil {
+		return err
+	}
+	binaryName := strings.TrimSuffix(filepath.Base(ref), ".exe")
+	if _, ok := sources[binaryName]; ok {
+		delete(sources, binaryName)
+		return writeSources(pluginDir, sources)
+	}
+	return nil
 }
 
 func installFromGitHub(ref, pluginDir string, insecure bool) error {
@@ -222,19 +243,81 @@ func PluginVersion(binaryPath string) string {
 	return line
 }
 
-// List returns metadata for all installed plugins, including their versions.
+// parseVersion extracts the version token from a plugin's --version line, e.g.
+// "contract-plugin-ccrv version v1.2.0" → "v1.2.0". If the line has no
+// "version <token>" pair it is returned unchanged.
+func parseVersion(line string) string {
+	fields := strings.Fields(line)
+	for i, f := range fields {
+		if strings.EqualFold(f, "version") && i+1 < len(fields) {
+			return fields[i+1]
+		}
+	}
+	return line
+}
+
+// FormatList renders plugins as a table with every column centre-aligned.
+// Trailing padding is omitted so lines carry no trailing whitespace.
+func FormatList(infos []PluginInfo) string {
+	headers := []string{"NAME", "VERSION", "INSTALL METHOD", "INSTALLATION PATH"}
+	rows := [][]string{headers, make([]string, len(headers))}
+	for i, h := range headers {
+		rows[1][i] = strings.Repeat("-", len(h))
+	}
+	for _, info := range infos {
+		rows = append(rows, []string{info.Name, info.Version, info.InstallMethod, info.Path})
+	}
+
+	widths := make([]int, len(headers))
+	for _, row := range rows {
+		for i, cell := range row {
+			if n := utf8.RuneCountInString(cell); n > widths[i] {
+				widths[i] = n
+			}
+		}
+	}
+
+	const gap = "   "
+	var sb strings.Builder
+	for _, row := range rows {
+		for i, cell := range row {
+			pad := widths[i] - utf8.RuneCountInString(cell)
+			left := pad / 2
+			sb.WriteString(strings.Repeat(" ", left))
+			sb.WriteString(cell)
+			if i < len(row)-1 {
+				sb.WriteString(strings.Repeat(" ", pad-left))
+				sb.WriteString(gap)
+			}
+		}
+		sb.WriteString("\n")
+	}
+	return sb.String()
+}
+
+// List returns metadata for all installed plugins, including their versions and how
+// they were installed (InstallMethodGitHub if tracked in .sources.json, else InstallMethodLocal).
 func List(pluginDir string) ([]PluginInfo, error) {
 	names, err := ListPlugins(pluginDir)
+	if err != nil {
+		return nil, err
+	}
+	sources, err := readSources(pluginDir)
 	if err != nil {
 		return nil, err
 	}
 	var infos []PluginInfo
 	for _, name := range names {
 		path := filepath.Join(pluginDir, name)
+		method := InstallMethodLocal
+		if _, ok := sources[strings.TrimSuffix(name, ".exe")]; ok {
+			method = InstallMethodGitHub
+		}
 		infos = append(infos, PluginInfo{
-			Name:    strings.TrimPrefix(name, PluginPrefix),
-			Path:    path,
-			Version: PluginVersion(path),
+			Name:          strings.TrimPrefix(name, PluginPrefix),
+			Path:          path,
+			Version:       parseVersion(PluginVersion(path)),
+			InstallMethod: method,
 		})
 	}
 	return infos, nil

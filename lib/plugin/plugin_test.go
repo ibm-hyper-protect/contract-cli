@@ -19,6 +19,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -110,6 +111,42 @@ func TestList_WithPlugins(t *testing.T) {
 	assert.Contains(t, names, "bar")
 }
 
+func TestList_InstallMethod_GitHubAndLocal(t *testing.T) {
+	tmpDir := t.TempDir()
+	makePluginBinary(t, tmpDir, "ccrv")
+	makePluginBinary(t, tmpDir, "bar")
+	// Only ccrv is tracked in .sources.json, i.e. installed from GitHub.
+	err := writeSources(tmpDir, sourcesMap{"contract-plugin-ccrv": "github.com/ibm-hyper-protect/contract-plugin-ccrv"})
+	assert.NoError(t, err)
+
+	infos, err := List(tmpDir)
+	assert.NoError(t, err)
+
+	methods := map[string]string{}
+	for _, i := range infos {
+		methods[i.Name] = i.InstallMethod
+	}
+	assert.Equal(t, InstallMethodGitHub, methods["ccrv"])
+	assert.Equal(t, InstallMethodLocal, methods["bar"])
+}
+
+func TestInstall_LocalOverGitHub_ClearsSource(t *testing.T) {
+	pluginDir := t.TempDir()
+	makePluginBinary(t, pluginDir, "foo")
+	err := writeSources(pluginDir, sourcesMap{"contract-plugin-foo": "github.com/org/contract-plugin-foo"})
+	assert.NoError(t, err)
+
+	srcDir := t.TempDir()
+	src := makePluginBinary(t, srcDir, "foo")
+
+	assert.NoError(t, Install(src, pluginDir, false))
+
+	infos, err := List(pluginDir)
+	assert.NoError(t, err)
+	assert.Len(t, infos, 1)
+	assert.Equal(t, InstallMethodLocal, infos[0].InstallMethod)
+}
+
 // ---------------------------------------------------------------------------
 // PluginVersion
 // ---------------------------------------------------------------------------
@@ -117,6 +154,25 @@ func TestList_WithPlugins(t *testing.T) {
 func TestPluginVersion_NonExistentBinary(t *testing.T) {
 	version := PluginVersion("/nonexistent/path/contract-plugin-fake")
 	assert.Equal(t, "unknown", version)
+}
+
+func TestParseVersion_Variants_ReturnsVersionToken(t *testing.T) {
+	assert.Equal(t, "v1.2.0", parseVersion("contract-plugin-ccrv version v1.2.0"))
+	assert.Equal(t, "dev", parseVersion("contract-plugin-ccrv version dev"))
+	assert.Equal(t, "v1.2.0", parseVersion("ccrv Version v1.2.0 (abc123)"))
+	// No "version <token>" pair: returned unchanged.
+	assert.Equal(t, "v1.2.0", parseVersion("v1.2.0"))
+	assert.Equal(t, "unknown", parseVersion("unknown"))
+}
+
+func TestFormatList_Rows_HaveNoTrailingWhitespace(t *testing.T) {
+	infos := []PluginInfo{
+		{Name: "a", Version: "v1", InstallMethod: InstallMethodGitHub, Path: "/x"},
+		{Name: "longer-name", Version: "v10.20.30", InstallMethod: InstallMethodLocal, Path: "/a/much/longer/path"},
+	}
+	for _, line := range strings.Split(strings.TrimRight(FormatList(infos), "\n"), "\n") {
+		assert.Equal(t, strings.TrimRight(line, " "), line)
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -140,7 +196,7 @@ func TestInstallFromLocal_BadName(t *testing.T) {
 	srcDir := t.TempDir()
 	destDir := t.TempDir()
 
-	srcPath := filepath.Join(srcDir, "myplugin") // missing prefix
+	srcPath := filepath.Join(srcDir, "myplugin")       // missing prefix
 	err := os.WriteFile(srcPath, []byte("fake"), 0755) // #nosec G306
 	assert.NoError(t, err)
 
@@ -162,7 +218,7 @@ func TestInstallFromLocal_PathNotExist(t *testing.T) {
 func TestReadWriteSources_RoundTrip(t *testing.T) {
 	tmpDir := t.TempDir()
 	m := sourcesMap{
-		"contract-plugin-ccrv": "github.com/org/contract-plugin-ccrv",
+		"contract-plugin-ccrv": "github.com/ibm-hyper-protect/contract-plugin-ccrv",
 	}
 	err := writeSources(tmpDir, m)
 	assert.NoError(t, err)

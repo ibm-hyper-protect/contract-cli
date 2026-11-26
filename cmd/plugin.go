@@ -18,11 +18,44 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/ibm-hyper-protect/contract-cli/common"
 	"github.com/ibm-hyper-protect/contract-cli/lib/plugin"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
+
+// setPluginHelp installs the help renderer used by the plugin leaf commands.
+// common.SetCustomHelpTemplate only prints "Usage: <path> [flags]" and the flags, which
+// hides the positional arguments, the long description and the examples that these
+// commands rely on. This renderer keeps the same flag layout and adds those sections.
+func setPluginHelp(cmd *cobra.Command) {
+	cmd.SetHelpFunc(func(cmd *cobra.Command, _ []string) {
+		out := cmd.OutOrStdout()
+
+		if desc := strings.TrimSpace(cmd.Long); desc != "" {
+			fmt.Fprintf(out, "%s\n\n", desc)
+		}
+
+		fmt.Fprintf(out, "Usage:\n  %s\n\n", cmd.UseLine())
+
+		if examples := strings.TrimRight(cmd.Example, "\n"); strings.TrimSpace(examples) != "" {
+			fmt.Fprintf(out, "Examples:\n%s\n\n", examples)
+		}
+
+		maxLen := 0
+		cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
+			if len(f.Name) > maxLen {
+				maxLen = len(f.Name)
+			}
+		})
+		fmt.Fprintln(out, "Optional Flags:")
+		cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
+			fmt.Fprintf(out, "  --%s%s%s\n", f.Name, strings.Repeat(" ", maxLen-len(f.Name)+2), f.Usage)
+		})
+	})
+}
 
 // pluginCmd is the parent command that groups all plugin management sub-commands.
 var pluginCmd = &cobra.Command{
@@ -35,16 +68,27 @@ var pluginCmd = &cobra.Command{
 var pluginInstallCmd = &cobra.Command{
 	Use:   "install <ref>",
 	Short: "Install a plugin from GitHub or a local path",
-	Long: `Install a contract-cli plugin.
+	Long: `Install a contract-cli plugin into ~/.contract-cli/plugins/.
 
 <ref> can be:
-  github.com/org/contract-plugin-<name>           install latest release
-  github.com/org/contract-plugin-<name>@v1.2.0    install specific version
-  /path/to/contract-plugin-<name>                 install from local binary
+  github.com/org/contract-plugin-<name>           install the latest GitHub release
+  github.com/org/contract-plugin-<name>@v1.2.0    install a specific GitHub release
+  /path/to/contract-plugin-<name>                 install from a local binary
 
-GitHub releases must include a SHA-256 checksum file (<asset>.sha256, checksums.txt
-or SHA256SUMS); the downloaded binary is verified against it. Use --insecure to skip
-this verification.`,
+GitHub installs download the release asset that matches this machine
+(contract-plugin-<name>-<os>-<arch>) and verify it against the SHA-256 checksum file
+published in the same release (<asset>.sha256, checksums.txt or SHA256SUMS). The
+install fails if the checksum file is missing or does not match. Use --insecure to
+skip this verification.
+
+Local binaries must be named contract-plugin-<name> and are copied as-is; they are
+never checksum-verified.
+
+Once installed, run the plugin with: contract-cli <name> [args]`,
+	Example: `  contract-cli plugin install github.com/ibm-hyper-protect/contract-plugin-ccrv
+  contract-cli plugin install github.com/ibm-hyper-protect/contract-plugin-ccrv@v1.2.0
+  contract-cli plugin install ./contract-plugin-ccrv
+  contract-cli plugin install github.com/ibm-hyper-protect/contract-plugin-ccrv --insecure`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		ref, err := plugin.ValidateInstallInput(args)
@@ -70,7 +114,12 @@ this verification.`,
 var pluginListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List installed plugins",
-	Long:  "List all plugins installed in ~/.contract-cli/plugins/ along with their versions.",
+	Long: `List all plugins installed in ~/.contract-cli/plugins/ with their version, install method and installation path.
+
+The version is taken from the plugin's --version output. The install method is 'github'
+for plugins installed from a GitHub release (these can be auto-updated) and 'local' for
+plugins installed from a local binary.`,
+	Example: `  contract-cli plugin list`,
 	Run: func(cmd *cobra.Command, args []string) {
 		pluginDir, err := plugin.PluginDir()
 		if err != nil {
@@ -85,20 +134,17 @@ var pluginListCmd = &cobra.Command{
 			fmt.Println("Install a plugin with: contract-cli plugin install github.com/org/contract-plugin-<name>")
 			return
 		}
-		fmt.Printf("%-25s %-15s %s\n", "NAME", "VERSION", "PATH")
-		fmt.Printf("%-25s %-15s %s\n", "----", "-------", "----")
-		for _, info := range infos {
-			fmt.Printf("%-25s %-15s %s\n", info.Name, info.Version, info.Path)
-		}
+		fmt.Print(plugin.FormatList(infos))
 	},
 }
 
 // pluginUninstallCmd handles `contract-cli plugin uninstall <name>`.
 var pluginUninstallCmd = &cobra.Command{
-	Use:   "uninstall <name>",
-	Short: "Uninstall a plugin",
-	Long:  "Remove an installed plugin by its short name (e.g. 'ccrv', not 'contract-plugin-ccrv').",
-	Args:  cobra.ExactArgs(1),
+	Use:     "uninstall <name>",
+	Short:   "Uninstall a plugin",
+	Long:    "Remove an installed plugin by its short name (e.g. 'ccrv', not 'contract-plugin-ccrv').",
+	Example: `  contract-cli plugin uninstall ccrv`,
+	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		name, err := plugin.ValidateInstallInput(args)
 		if err != nil {
@@ -169,14 +215,15 @@ func init() {
 	// and suppress the sub-command listing entirely.
 	common.SetCustomErrorTemplate(pluginCmd)
 
-	// Leaf sub-commands use positional args, not named flags.
-	// Pass an empty requiredFlags map — the template shows no Mandatory Flags section.
-	common.SetCustomHelpTemplate(pluginInstallCmd, map[string]bool{})
+	// Leaf sub-commands take positional args rather than mandatory flags, so they use
+	// setPluginHelp (which shows the args, long description and examples) instead of
+	// common.SetCustomHelpTemplate.
+	setPluginHelp(pluginInstallCmd)
 	common.SetCustomErrorTemplate(pluginInstallCmd)
-	common.SetCustomHelpTemplate(pluginListCmd, map[string]bool{})
+	setPluginHelp(pluginListCmd)
 	common.SetCustomErrorTemplate(pluginListCmd)
-	common.SetCustomHelpTemplate(pluginUninstallCmd, map[string]bool{})
+	setPluginHelp(pluginUninstallCmd)
 	common.SetCustomErrorTemplate(pluginUninstallCmd)
-	common.SetCustomHelpTemplate(pluginUpdateCmd, map[string]bool{})
+	setPluginHelp(pluginUpdateCmd)
 	common.SetCustomErrorTemplate(pluginUpdateCmd)
 }

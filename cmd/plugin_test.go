@@ -118,6 +118,35 @@ func TestPluginUninstallCmd_Success(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
+// plugin help
+// ---------------------------------------------------------------------------
+
+func TestPluginInstallCmd_Help_ShowsArgsExamplesAndFlags(t *testing.T) {
+	setPluginDir(t)
+
+	// Help is written to the command's writer, not process stdout, and other tests leave a
+	// buffer set on rootCmd, so capture it on the command itself. Cobra also keeps the
+	// --help flag value between runs on these shared commands, so reset it afterwards.
+	buf := new(strings.Builder)
+	pluginInstallCmd.SetOut(buf)
+	t.Cleanup(func() {
+		pluginInstallCmd.SetOut(nil)
+		_ = pluginInstallCmd.Flags().Set("help", "false")
+	})
+
+	rootCmd.SetArgs([]string{"plugin", "install", "--help"})
+	err := rootCmd.Execute()
+	out := buf.String()
+
+	assert.NoError(t, err)
+	assert.Contains(t, out, "contract-cli plugin install <ref>")
+	assert.Contains(t, out, "github.com/org/contract-plugin-<name>@v1.2.0")
+	assert.Contains(t, out, "Examples:")
+	assert.Contains(t, out, "--insecure")
+	assert.NotContains(t, out, "Mandatory Flags:")
+}
+
+// ---------------------------------------------------------------------------
 // plugin install (argument validation)
 // ---------------------------------------------------------------------------
 
