@@ -1,3 +1,13 @@
+## [2.1.0](https://github.com/ibm-hyper-protect/contract-cli/compare/v2.0.1...v2.1.0) (2026-11-27)
+
+### Features
+
+* add support for plugin ([#194](https://github.com/ibm-hyper-protect/contract-cli/issues/194)) ([85fa70d](https://github.com/ibm-hyper-protect/contract-cli/commit/85fa70de209cbd699600b134b89b0a6467d54093))
+
+### Miscellaneous Chores
+
+* **homebrew:** update cask for contract-cli v2.0.1 ([3b98808](https://github.com/ibm-hyper-protect/contract-cli/commit/3b9880838bc4f14f80131520de93daeadd5e45c3))
+
 ## [2.0.1](https://github.com/ibm-hyper-protect/contract-cli/compare/v2.0.0...v2.0.1) (2026-11-26)
 
 ### Bug Fixes
