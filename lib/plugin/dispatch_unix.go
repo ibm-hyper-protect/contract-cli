@@ -20,6 +20,6 @@ package plugin
 import "syscall"
 
 // execSyscall replaces the current process with the plugin binary on Unix systems.
-func execSyscall(binaryPath string, argv []string, env []string) error {
+func execSyscall(binaryPath string, argv, env []string) error {
 	return syscall.Exec(binaryPath, argv, env)
 }

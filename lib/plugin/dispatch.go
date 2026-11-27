@@ -84,13 +84,13 @@ func Exec(binaryPath string, args []string) error {
 
 // execUnix uses syscall.Exec to replace the current process on Linux/macOS.
 // This provides clean exit-code propagation.
-func execUnix(binaryPath string, args []string, env []string) error {
+func execUnix(binaryPath string, args, env []string) error {
 	argv := append([]string{binaryPath}, args...)
 	return execSyscall(binaryPath, argv, env)
 }
 
 // execWindows runs the plugin as a child process and forwards its exit code.
-func execWindows(binaryPath string, args []string, env []string) error {
+func execWindows(binaryPath string, args, env []string) error {
 	cmd := exec.Command(binaryPath, args...) // #nosec G204
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

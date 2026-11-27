@@ -21,6 +21,6 @@ import "fmt"
 
 // execSyscall is not used on Windows — execWindows handles dispatch instead.
 // This stub satisfies the build on Windows without pulling in syscall.
-func execSyscall(binaryPath string, argv []string, env []string) error {
+func execSyscall(binaryPath string, argv, env []string) error {
 	return fmt.Errorf("execSyscall is not available on Windows")
 }
